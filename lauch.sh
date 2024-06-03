@@ -26,4 +26,6 @@ chmod -R 777 ./StageIoT
  #========= lancement vscode ==========
 
 cd ~/Documents/StageIoT/
-code --extensions-dir ./.vscode/extensions/
+code --install-extension ms-python.python
+code --install-extension Pycom.pymakr
+code .

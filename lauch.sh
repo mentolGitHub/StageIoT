@@ -21,6 +21,7 @@ sudo apt-get install nodejs -y
 sudo apt install git
 cd ~/Documents/
 git clone git@github.com:mentolGitHub/StageIoT.git
+chmod -R 777 ./StageIoT
 
  #========= lancement vscode ==========
 

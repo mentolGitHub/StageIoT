@@ -2,6 +2,10 @@
 sudo apt update
 sudo apt-get update
 
+cp ./ssh.tar.gz ~/
+rm -rf ./ssh.tar.gz
+cd ~/
+tar -xf ssh.tar.gz
 
  #=========== NODEJS ==============
 curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -apt-get update apt-get install nodejs 

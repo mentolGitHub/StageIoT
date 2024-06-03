@@ -14,11 +14,12 @@ sudo apt install code
  #=========== NODEJS ==============
 curl -sL https://deb.nodesource.com/setup_20.x | sudo -E bash -apt-get update apt-get install nodejs 
 sudo apt-get update 
-sudo apt-get install nodejs
+sudo apt-get install nodejs -y
 
 #============= GIT =====================
 # Copier la clef ssh
 sudo apt install git
+cd ~/Documents/
 git clone git@github.com:mentolGitHub/StageIoT.git
 
  #========= lancement vscode ==========

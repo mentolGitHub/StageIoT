@@ -1,7 +1,0 @@
-.history
-.vscode-test
-node_modules
-test/workspaces/**
-
-*.vsix
-test/temp

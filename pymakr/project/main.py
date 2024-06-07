@@ -2,6 +2,9 @@ from network import LoRa
 import socket
 import time
 import ubinascii
+import pycom
+
+pycom.heartbeat(False)
 
 # Initialise LoRa in LORAWAN mode.
 # Please pick the region that matches where you are using the device:
@@ -24,10 +27,14 @@ lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
 
 # wait until the module has joined the network
 while not lora.has_joined():
-    time.sleep(2.5)
-    print('Not yet joined...')
+    pycom.rgbled(0x101000)
+    time.sleep(0.3)
+    pycom.rgbled(0x000000)
+    time.sleep(0.3)
+    
 
 print('Joined')
+pycom.rgbled(0x001000)
 # create a LoRa socket
 s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
@@ -39,12 +46,18 @@ s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
 s.setblocking(True)
 
 # send some data
-s.send(bytes([0x01, 0x02, 0x03]))
+while 1 :
 
-# make the socket non-blocking
-# (because if there's no data received it will block forever...)
-s.setblocking(False)
+    table = "1,2,3"
+    s.send(bytes(table))
 
-# get any data received (if any...)
-data = s.recv(64)
-print(data)
+    # make the socket non-blocking
+    # (because if there's no data received it will block forever...)
+    s.setblocking(False)
+
+    # get any data received (if any...)
+    data = s.recv(64)
+    if data :
+        print(data)
+    time.sleep(1)
+    

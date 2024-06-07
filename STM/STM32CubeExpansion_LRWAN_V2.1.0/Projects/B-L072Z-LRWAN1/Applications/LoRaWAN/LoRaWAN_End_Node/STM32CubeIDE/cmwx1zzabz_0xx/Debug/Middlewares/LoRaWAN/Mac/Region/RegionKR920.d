@@ -1,7 +1,7 @@
 Middlewares/LoRaWAN/Mac/Region/RegionKR920.o: \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c \
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.c \
  ../../../../../../../../Middlewares/Third_Party/SubGHz_Phy/radio.h \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionCommon.h \
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionCommon.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacTypes.h \
  ../../../LoRaWAN/Target/timer.h \
  ../../../../../../../../Utilities/timer/stm32_timer.h \
@@ -13,7 +13,7 @@ Middlewares/LoRaWAN/Mac/Region/RegionKR920.o: \
  ../../../LoRaWAN/Target/systime.h \
  ../../../../../../../../Utilities/misc/stm32_systime.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacHeaderTypes.h \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/Region.h \
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/Region.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Utilities/utilities.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMac.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacTypes.h \
@@ -22,9 +22,9 @@ Middlewares/LoRaWAN/Mac/Region/RegionKR920.o: \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacCryptoNvm.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/secure-element-nvm.h \
  ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassBNvm.h \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.h
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.h
 ../../../../../../../../Middlewares/Third_Party/SubGHz_Phy/radio.h:
-/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionCommon.h:
+/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionCommon.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacTypes.h:
 ../../../LoRaWAN/Target/timer.h:
 ../../../../../../../../Utilities/timer/stm32_timer.h:
@@ -36,7 +36,7 @@ Middlewares/LoRaWAN/Mac/Region/RegionKR920.o: \
 ../../../LoRaWAN/Target/systime.h:
 ../../../../../../../../Utilities/misc/stm32_systime.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacHeaderTypes.h:
-/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/Region.h:
+/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/Region.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Utilities/utilities.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMac.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacTypes.h:
@@ -45,4 +45,4 @@ Middlewares/LoRaWAN/Mac/Region/RegionKR920.o: \
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacCryptoNvm.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/secure-element-nvm.h:
 ../../../../../../../../Middlewares/Third_Party/LoRaWAN/Mac/LoRaMacClassBNvm.h:
-/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.h:
+/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionKR920.h:

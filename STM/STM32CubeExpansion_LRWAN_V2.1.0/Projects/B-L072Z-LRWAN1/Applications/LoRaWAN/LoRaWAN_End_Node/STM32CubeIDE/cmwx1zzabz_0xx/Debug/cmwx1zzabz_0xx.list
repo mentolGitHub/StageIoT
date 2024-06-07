@@ -7,25 +7,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   1 .text         0000e64c  080000c0  080000c0  000010c0  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .rodata       00000c08  0800e70c  0800e70c  0000f70c  2**2
+  2 .rodata       00000c04  0800e70c  0800e70c  0000f70c  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  3 .ARM          00000008  0800f314  0800f314  00010314  2**2
+  3 .ARM          00000008  0800f310  0800f310  00010310  2**2
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
-  4 .init_array   00000004  0800f31c  0800f31c  0001031c  2**2
+  4 .init_array   00000004  0800f318  0800f318  00010318  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  5 .fini_array   00000004  0800f320  0800f320  00010320  2**2
+  5 .fini_array   00000004  0800f31c  0800f31c  0001031c  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  6 .data         00000104  20000000  0800f324  00011000  2**2
+  6 .data         00000104  20000000  0800f320  00011000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  7 .bss          0000178c  20000104  0800f428  00011104  2**2
+  7 .bss          0000178c  20000104  0800f424  00011104  2**2
                   ALLOC
-  8 ._user_heap_stack 00000800  20001890  0800f428  00011890  2**0
+  8 ._user_heap_stack 00000800  20001890  0800f424  00011890  2**0
                   ALLOC
   9 .ARM.attributes 00000028  00000000  00000000  00011104  2**0
                   CONTENTS, READONLY
- 10 .debug_info   0003d8b8  00000000  00000000  0001112c  2**0
+ 10 .debug_info   0003d8b7  00000000  00000000  0001112c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 11 .debug_abbrev 0000aaf2  00000000  00000000  0004e9e4  2**0
+ 11 .debug_abbrev 0000aaf2  00000000  00000000  0004e9e3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  12 .debug_aranges 00002238  00000000  00000000  000594d8  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -33,17 +33,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  14 .debug_macro  00020ccb  00000000  00000000  0005dc1e  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_line   0003e0ba  00000000  00000000  0007e8e9  2**0
+ 15 .debug_line   0003e1fa  00000000  00000000  0007e8e9  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_str    000aed08  00000000  00000000  000bc9a3  2**0
+ 16 .debug_str    000aee4d  00000000  00000000  000bcae3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .comment      00000043  00000000  00000000  0016b6ab  2**0
+ 17 .comment      00000043  00000000  00000000  0016b930  2**0
                   CONTENTS, READONLY
- 18 .debug_frame  00005dd4  00000000  00000000  0016b6f0  2**2
+ 18 .debug_frame  00005dd4  00000000  00000000  0016b974  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_loclists 00010fc4  00000000  00000000  001714c4  2**0
+ 19 .debug_loclists 00010fc4  00000000  00000000  00171748  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_line_str 0000013d  00000000  00000000  00182488  2**0
+ 20 .debug_line_str 00000147  00000000  00000000  0018270c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4168,10 +4168,10 @@ static void OnMacProcessNotify(void)
   APP_LOG(TS_OFF, VLEVEL_M, "APP_VERSION:        V%X.%X.%X\r\n",
  8001fbe:	0022      	movs	r2, r4
  8001fc0:	0021      	movs	r1, r4
- 8001fc2:	4b37      	ldr	r3, [pc, #220]	@ (80020a0 <LoRaWAN_Init+0xfc>)
- 8001fc4:	9402      	str	r4, [sp, #8]
- 8001fc6:	9601      	str	r6, [sp, #4]
- 8001fc8:	9600      	str	r6, [sp, #0]
+ 8001fc2:	9601      	str	r6, [sp, #4]
+ 8001fc4:	9600      	str	r6, [sp, #0]
+ 8001fc6:	4b36      	ldr	r3, [pc, #216]	@ (80020a0 <LoRaWAN_Init+0xfc>)
+ 8001fc8:	9402      	str	r4, [sp, #8]
  8001fca:	2002      	movs	r0, #2
  8001fcc:	f00b fdb8 	bl	800db40 <UTIL_ADV_TRACE_COND_FSend>
   APP_LOG(TS_OFF, VLEVEL_M, "MW_LORAWAN_VERSION: V%X.%X.%X\r\n",
@@ -4179,20 +4179,20 @@ static void OnMacProcessNotify(void)
  8001fd2:	2203      	movs	r2, #3
  8001fd4:	0021      	movs	r1, r4
  8001fd6:	9201      	str	r2, [sp, #4]
- 8001fd8:	9700      	str	r7, [sp, #0]
+ 8001fd8:	0038      	movs	r0, r7
  8001fda:	0022      	movs	r2, r4
- 8001fdc:	0038      	movs	r0, r7
- 8001fde:	4b31      	ldr	r3, [pc, #196]	@ (80020a4 <LoRaWAN_Init+0x100>)
- 8001fe0:	9402      	str	r4, [sp, #8]
+ 8001fdc:	4b31      	ldr	r3, [pc, #196]	@ (80020a4 <LoRaWAN_Init+0x100>)
+ 8001fde:	9402      	str	r4, [sp, #8]
+ 8001fe0:	9700      	str	r7, [sp, #0]
  8001fe2:	f00b fdad 	bl	800db40 <UTIL_ADV_TRACE_COND_FSend>
   APP_LOG(TS_OFF, VLEVEL_M, "MW_RADIO_VERSION:   V%X.%X.%X\r\n",
  8001fe6:	0022      	movs	r2, r4
  8001fe8:	0021      	movs	r1, r4
- 8001fea:	0038      	movs	r0, r7
- 8001fec:	4b2e      	ldr	r3, [pc, #184]	@ (80020a8 <LoRaWAN_Init+0x104>)
- 8001fee:	9402      	str	r4, [sp, #8]
- 8001ff0:	9601      	str	r6, [sp, #4]
- 8001ff2:	9600      	str	r6, [sp, #0]
+ 8001fea:	9601      	str	r6, [sp, #4]
+ 8001fec:	9600      	str	r6, [sp, #0]
+ 8001fee:	0038      	movs	r0, r7
+ 8001ff0:	4b2d      	ldr	r3, [pc, #180]	@ (80020a8 <LoRaWAN_Init+0x104>)
+ 8001ff2:	9402      	str	r4, [sp, #8]
  8001ff4:	f00b fda4 	bl	800db40 <UTIL_ADV_TRACE_COND_FSend>
   UTIL_TIMER_Create(&TxLedTimer, 0xFFFFFFFFU, UTIL_TIMER_ONESHOT, OnTxTimerLedEvent, NULL);
  8001ff8:	2101      	movs	r1, #1
@@ -4248,18 +4248,18 @@ static void OnMacProcessNotify(void)
   LoraInfo_Init();
  800205e:	f000 f847 	bl	80020f0 <LoraInfo_Init>
   LmHandlerInit(&LmHandlerCallbacks);
- 8002062:	4f1b      	ldr	r7, [pc, #108]	@ (80020d0 <LoRaWAN_Init+0x12c>)
+ 8002062:	4e1b      	ldr	r6, [pc, #108]	@ (80020d0 <LoRaWAN_Init+0x12c>)
  8002064:	481b      	ldr	r0, [pc, #108]	@ (80020d4 <LoRaWAN_Init+0x130>)
  8002066:	f005 fa17 	bl	8007498 <LmHandlerInit>
   LmHandlerConfigure(&LmHandlerParams);
- 800206a:	0038      	movs	r0, r7
+ 800206a:	0030      	movs	r0, r6
  800206c:	3008      	adds	r0, #8
  800206e:	f004 fed7 	bl	8006e20 <LmHandlerConfigure>
   UTIL_TIMER_Start(&JoinLedTimer);
  8002072:	4814      	ldr	r0, [pc, #80]	@ (80020c4 <LoRaWAN_Init+0x120>)
  8002074:	f00c f8c8 	bl	800e208 <UTIL_TIMER_Start>
   LmHandlerJoin(ActivationType);
- 8002078:	0030      	movs	r0, r6
+ 8002078:	0038      	movs	r0, r7
  800207a:	f005 f819 	bl	80070b0 <LmHandlerJoin>
     UTIL_TIMER_Create(&TxTimer,  0xFFFFFFFFU, UTIL_TIMER_ONESHOT, OnTxTimerEvent, NULL);
  800207e:	2101      	movs	r1, #1
@@ -4745,7 +4745,7 @@ static uint32_t ADC_ReadChannels(uint32_t channel)
  80022f0:	1ff8007a 	.word	0x1ff8007a
  80022f4:	00000bb8 	.word	0x00000bb8
  80022f8:	1ff8007e 	.word	0x1ff8007e
- 80022fc:	0800efbd 	.word	0x0800efbd
+ 80022fc:	0800efbb 	.word	0x0800efbb
 
 08002300 <MX_DMA_Init>:
 
@@ -6303,7 +6303,7 @@ static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strForma
  80029c6:	bc08      	pop	{r3}
  80029c8:	b002      	add	sp, #8
  80029ca:	4718      	bx	r3
- 80029cc:	0800efc8 	.word	0x0800efc8
+ 80029cc:	0800efc6 	.word	0x0800efc6
 
 080029d0 <TimestampNow>:
 {
@@ -6332,7 +6332,7 @@ static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strForma
 }
  80029f8:	bd7f      	pop	{r0, r1, r2, r3, r4, r5, r6, pc}
  80029fa:	46c0      	nop			@ (mov r8, r8)
- 80029fc:	0800efc8 	.word	0x0800efc8
+ 80029fc:	0800efc6 	.word	0x0800efc6
 
 08002a00 <SystemApp_Init>:
 {
@@ -6525,7 +6525,7 @@ static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strForma
  8002b32:	bd16      	pop	{r1, r2, r4, pc}
  8002b34:	00000bb8 	.word	0x00000bb8
  8002b38:	fffff8f8 	.word	0xfffff8f8
- 8002b3c:	0800efd1 	.word	0x0800efd1
+ 8002b3c:	0800efcf 	.word	0x0800efcf
 
 08002b40 <GetTemperatureLevel>:
 {
@@ -7472,7 +7472,7 @@ LoopForever:
   ldr r1, =_edata
  8002f1c:	20000104 	.word	0x20000104
   ldr r2, =_sidata
- 8002f20:	0800f324 	.word	0x0800f324
+ 8002f20:	0800f320 	.word	0x0800f320
   ldr r2, =_sbss
  8002f24:	20000104 	.word	0x20000104
   ldr r4, =_ebss
@@ -18739,11 +18739,11 @@ return_type lorawan_aes_encrypt( const uint8_t in[N_BLOCK], uint8_t  out[N_BLOCK
  8006aa2:	4b05      	ldr	r3, [pc, #20]	@ (8006ab8 <PrintKey+0x94>)
  8006aa4:	0020      	movs	r0, r4
  8006aa6:	e7d0      	b.n	8006a4a <PrintKey+0x26>
- 8006aa8:	0800f006 	.word	0x0800f006
- 8006aac:	0800efdc 	.word	0x0800efdc
- 8006ab0:	0800eff1 	.word	0x0800eff1
- 8006ab4:	0800f030 	.word	0x0800f030
- 8006ab8:	0800f01b 	.word	0x0800f01b
+ 8006aa8:	0800f004 	.word	0x0800f004
+ 8006aac:	0800efda 	.word	0x0800efda
+ 8006ab0:	0800efef 	.word	0x0800efef
+ 8006ab4:	0800f02e 	.word	0x0800f02e
+ 8006ab8:	0800f019 	.word	0x0800f019
 
 08006abc <SecureElementInit>:
 {
@@ -18831,11 +18831,11 @@ return_type lorawan_aes_encrypt( const uint8_t in[N_BLOCK], uint8_t  out[N_BLOCK
  8006b4e:	b030      	add	sp, #192	@ 0xc0
  8006b50:	bd10      	pop	{r4, pc}
  8006b52:	46c0      	nop			@ (mov r8, r8)
- 8006b54:	0800f0ac 	.word	0x0800f0ac
- 8006b58:	0800f0bd 	.word	0x0800f0bd
+ 8006b54:	0800f0aa 	.word	0x0800f0aa
+ 8006b58:	0800f0bb 	.word	0x0800f0bb
  8006b5c:	200004f4 	.word	0x200004f4
- 8006b60:	0800f082 	.word	0x0800f082
- 8006b64:	0800f097 	.word	0x0800f097
+ 8006b60:	0800f080 	.word	0x0800f080
+ 8006b64:	0800f095 	.word	0x0800f095
 
 08006b68 <SecureElementComputeAesCmac>:
 #endif /* LORAWAN_KMS */
@@ -19712,11 +19712,11 @@ static void LmHandlerPackagesNotify( PackageNotifyTypes_t notifyType, void *para
  8006f82:	46c0      	nop			@ (mov r8, r8)
  8006f84:	20000528 	.word	0x20000528
  8006f88:	200004f8 	.word	0x200004f8
- 8006f8c:	0800f102 	.word	0x0800f102
+ 8006f8c:	0800f100 	.word	0x0800f100
  8006f90:	2000006c 	.word	0x2000006c
- 8006f94:	0800f14b 	.word	0x0800f14b
- 8006f98:	0800f185 	.word	0x0800f185
- 8006f9c:	0800f1bf 	.word	0x0800f1bf
+ 8006f94:	0800f149 	.word	0x0800f149
+ 8006f98:	0800f183 	.word	0x0800f183
+ 8006f9c:	0800f1bd 	.word	0x0800f1bd
 
 08006fa0 <LmHandlerProcess>:
 {
@@ -19908,7 +19908,7 @@ static void DisplayClassUpdate(DeviceClass_t deviceClass)
         return LORAMAC_HANDLER_NO_NETWORK_JOINED;
  80070a4:	2003      	movs	r0, #3
  80070a6:	e7f9      	b.n	800709c <LmHandlerRequestClass+0x98>
- 80070a8:	0800f1e5 	.word	0x0800f1e5
+ 80070a8:	0800f1e3 	.word	0x0800f1e3
  80070ac:	200004f8 	.word	0x200004f8
 
 080070b0 <LmHandlerJoin>:
@@ -21594,7 +21594,7 @@ static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
  8007a26:	46c0      	nop			@ (mov r8, r8)
  8007a28:	20000680 	.word	0x20000680
  8007a2c:	200009e4 	.word	0x200009e4
- 8007a30:	0800f1ff 	.word	0x0800f1ff
+ 8007a30:	0800f1fd 	.word	0x0800f1fd
 
 08007a34 <OnRadioTxTimeout>:
     LoRaMacRadioEvents.Events.TxTimeout = 1;
@@ -21629,7 +21629,7 @@ static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
  8007a62:	46c0      	nop			@ (mov r8, r8)
  8007a64:	20000680 	.word	0x20000680
  8007a68:	200009e4 	.word	0x200009e4
- 8007a6c:	0800f20f 	.word	0x0800f20f
+ 8007a6c:	0800f20d 	.word	0x0800f20d
 
 08007a70 <OnRadioRxDone>:
 {
@@ -21682,7 +21682,7 @@ static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
  8007ab2:	bdf8      	pop	{r3, r4, r5, r6, r7, pc}
  8007ab4:	20000680 	.word	0x20000680
  8007ab8:	200009e4 	.word	0x200009e4
- 8007abc:	0800f21f 	.word	0x0800f21f
+ 8007abc:	0800f21d 	.word	0x0800f21d
 
 08007ac0 <OnRadioTxDone>:
 {
@@ -21731,7 +21731,7 @@ static uint8_t GetMaxAppPayloadWithoutFOptsLength( int8_t datarate )
  8007b04:	20000680 	.word	0x20000680
  8007b08:	200009e4 	.word	0x200009e4
  8007b0c:	20000d1c 	.word	0x20000d1c
- 8007b10:	0800f22c 	.word	0x0800f22c
+ 8007b10:	0800f22a 	.word	0x0800f22a
 
 08007b14 <ResetMacParameters>:
     }
@@ -33233,8 +33233,8 @@ void RegionCommonRxConfigPrint(LoRaMacRxSlot_t rxSlot, uint32_t frequency, int8_
 }
  800b8ee:	e7f3      	b.n	800b8d8 <RegionCommonRxConfigPrint+0x30>
  800b8f0:	0800eb38 	.word	0x0800eb38
- 800b8f4:	0800f258 	.word	0x0800f258
- 800b8f8:	0800f277 	.word	0x0800f277
+ 800b8f4:	0800f256 	.word	0x0800f256
+ 800b8f8:	0800f275 	.word	0x0800f275
 
 0800b8fc <RegionCommonTxConfigPrint>:
 
@@ -33251,7 +33251,7 @@ void RegionCommonTxConfigPrint(uint32_t frequency, int8_t dr)
  800b90a:	f002 f919 	bl	800db40 <UTIL_ADV_TRACE_COND_FSend>
 }
  800b90e:	bd07      	pop	{r0, r1, r2, pc}
- 800b910:	0800f293 	.word	0x0800f293
+ 800b910:	0800f291 	.word	0x0800f291
 
 0800b914 <GetTimeOnAir>:
     }
@@ -37838,7 +37838,7 @@ static void SX1276SetOpMode( uint8_t opMode )
  800d270:	210a      	movs	r1, #10
  800d272:	e7e6      	b.n	800d242 <SX1276SetTxConfig+0x2fe>
  800d274:	20001018 	.word	0x20001018
- 800d278:	0800f2bf 	.word	0x0800f2bf
+ 800d278:	0800f2bd 	.word	0x0800f2bd
  800d27c:	00003d09 	.word	0x00003d09
  800d280:	00001e84 	.word	0x00001e84
  800d284:	01e84800 	.word	0x01e84800
@@ -41309,9 +41309,9 @@ int tiny_vsnprintf_like(char *buf, const int size, const char *fmt, va_list args
  800e57e:	0030      	movs	r0, r6
  800e580:	e7dc      	b.n	800e53c <tiny_vsnprintf_like+0x1fc>
  800e582:	46c0      	nop			@ (mov r8, r8)
- 800e584:	0800f2c0 	.word	0x0800f2c0
- 800e588:	0800f2c7 	.word	0x0800f2c7
- 800e58c:	0800f2ec 	.word	0x0800f2ec
+ 800e584:	0800f2be 	.word	0x0800f2be
+ 800e588:	0800f2c5 	.word	0x0800f2c5
+ 800e58c:	0800f2ea 	.word	0x0800f2ea
 
 0800e590 <memset>:
  800e590:	0003      	movs	r3, r0
@@ -41351,10 +41351,10 @@ int tiny_vsnprintf_like(char *buf, const int size, const char *fmt, va_list args
  800e5d2:	4798      	blx	r3
  800e5d4:	3601      	adds	r6, #1
  800e5d6:	e7f2      	b.n	800e5be <__libc_init_array+0x1e>
- 800e5d8:	0800f31c 	.word	0x0800f31c
- 800e5dc:	0800f31c 	.word	0x0800f31c
- 800e5e0:	0800f320 	.word	0x0800f320
- 800e5e4:	0800f31c 	.word	0x0800f31c
+ 800e5d8:	0800f318 	.word	0x0800f318
+ 800e5dc:	0800f318 	.word	0x0800f318
+ 800e5e0:	0800f31c 	.word	0x0800f31c
+ 800e5e4:	0800f318 	.word	0x0800f318
 
 0800e5e8 <memcpy>:
  800e5e8:	2300      	movs	r3, #0

@@ -1,6 +1,6 @@
 Drivers/BSP/IKS01A2/iks01a2_env_sensors.o: \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c \
- /home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.h \
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c \
+ /home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.h \
  ../../../LoRaWAN/Target/iks01a2_conf.h \
  ../../../../../../../../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h \
  ../../../Core/Inc/stm32l0xx_hal_conf.h \
@@ -45,7 +45,7 @@ Drivers/BSP/IKS01A2/iks01a2_env_sensors.o: \
  ../../../../../../../../Drivers/BSP/Components/lps22hb/lps22hb_reg.h \
  ../../../../../../../../Drivers/BSP/Components/hts221/hts221.h \
  ../../../../../../../../Drivers/BSP/Components/hts221/hts221_reg.h
-/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.h:
+/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.h:
 ../../../LoRaWAN/Target/iks01a2_conf.h:
 ../../../../../../../../Drivers/STM32L0xx_HAL_Driver/Inc/stm32l0xx_hal.h:
 ../../../Core/Inc/stm32l0xx_hal_conf.h:

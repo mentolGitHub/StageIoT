@@ -1,10 +1,15 @@
 from machine import Pin
 import utime
 import time
-trig = Pin('P23', mode = Pin.OUT)
-echo = Pin('P22', mode = Pin.IN)
+import machine 
 
+
+## renvoi la distance en cm (mesure par ultrasons)
 def distance():
+    #initialisation des pins
+    trig = Pin('P23', mode = Pin.OUT)
+    echo = Pin('P22', mode = Pin.IN)
+    
     # envoie d'une impulsion de 10us
     trig.value(0)
     time.sleep(2/1000000)
@@ -28,3 +33,9 @@ def distance():
     
     return distance
     
+    
+def niveau_liquide():
+    adc = machine.ADC()
+    apin = adc.channel(pin='P16')
+    niveau = apin.voltage()
+    return niveau

@@ -4,9 +4,12 @@ import paho.mqtt.publish as publish
 import json
 import time
 
-topics=['v3/dem@ttn/devices/lopy4/up']
-topicsdown=['v3/dem@ttn/devices/lopy4/down/push']
-auth={'username':"dem@ttn",'password':"NNSXS.I2HKSPE36TEGQ7OOR5JCNINKTJTYESZAGJYHANQ.MG6VOHTD66I7JHPIJ5JYHTIQWO5NS47FEVZ3QNNY2TDI6MNPXBTA"}
+mqtt_username = ""
+password = ""
+device_name = ""
+topics=['v3/'+mqtt_username+'/devices/'+device_name+'/up']
+topicsdown=['v3/'+mqtt_username+'/devices/'+device_name+'/down/push']
+auth={'username':mqtt_username,'password':password}
 hostname="eu1.cloud.thethings.network"
 port = 1883
 

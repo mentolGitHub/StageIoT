@@ -98,4 +98,11 @@ def loraP2P():
         i=0
 
 
-loraP2P()
+mode = 1
+
+match mode :
+    case 1 :
+        loraWAN()
+    case 2 :
+        loraP2P()
+

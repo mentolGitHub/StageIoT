@@ -5,7 +5,7 @@ import ubinascii
 import pycom
 
 pycom.heartbeat(False)
-
+print("=================== Starting program =======================")
 # Initialise LoRa in LORAWAN mode.
 # Please pick the region that matches where you are using the device:
 # Asia = LoRa.AS923
@@ -13,7 +13,7 @@ pycom.heartbeat(False)
 # Europe = LoRa.EU868
 # United States = LoRa.US915
 lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
-
+lora.init(mode=LoRa.LORAWAN,sf=12,bandwidth=LoRa.BW_500KHZ,coding_rate=LoRa.CODING_4_8)
 # create an OTAA authentication parameters, change them to the provided credentials
 app_eui = ubinascii.unhexlify('70B3D57ED0038811')
 app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
@@ -24,6 +24,19 @@ dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
 #uncomment below to use LoRaWAN application provided dev_eui
 #lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
 lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0)
+
+
+lorap2p = LoRa(mode=LoRa.LORA, region=LoRa.EU868)
+s2 = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
+s2.setblocking(False)
+i = 0
+while True:
+    s.send('Ping')
+    print('Ping {}'.format(i))
+    i= i+1
+    time.sleep(5)
+
+
 
 # wait until the module has joined the network
 while not lora.has_joined():

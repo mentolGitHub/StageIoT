@@ -28,4 +28,4 @@ code --install-extension MS-CEINTL.vscode-language-pack-fr
 
 
 #========= lancement vscode ==========
-code ./StageIoT-TP1
+code ./StageIoT-$branch

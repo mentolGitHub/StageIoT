@@ -1,3 +1,0 @@
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:75:17:RegionBaseUSComputeNext125kHzJoinChannel	11
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:137:6:RegionBaseUSVerifyFrequencyGroup	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Middlewares/Third_Party/LoRaWAN/Mac/Region/RegionBaseUS.c:148:10:RegionBaseUSCalcDownlinkFrequency	1

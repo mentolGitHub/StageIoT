@@ -4,10 +4,29 @@ import socket
 import time
 import ubinascii
 import pycom
+import utime
+from machine import Timer
+
+
+
+
+
 
 pycom.heartbeat(False)
 print("=================== Starting program =======================")
+
+chrono = Timer.Chrono()
+chrono.start()
+
+
+
 def loraWAN():
+    def rx_callback(lora):
+        lora.events()
+        data = s.recv(64)
+        if data :
+            print(data)
+
     # Initialise LoRa in LORAWAN mode.
     # Please pick the region that matches where you are using the device:
     # Asia = LoRa.AS923
@@ -20,7 +39,7 @@ def loraWAN():
     app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
     #uncomment to use LoRaWAN application provided dev_eui
     dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
-    
+    lora.callback(LoRa.RX_PACKET_EVENT,rx_callback)
     # join a network using OTAA (Over the Air Activation)
     #uncomment below to use LoRaWAN application provided dev_eui
     #lora.join(activation=LoRa.OTAA, auth=(app_eui, app_key), timeout=0)
@@ -53,30 +72,70 @@ def loraWAN():
         
         s.send(bytes("1","utf-8"))
 
-        # make the socket non-blocking
-        # (because if there's no data received it will block forever...)
-        s.setblocking(False)
 
-        # get any data received (if any...)
-        data = s.recv(64)
-        if data :
-            print(data)
-        time.sleep(1)
+        time.sleep(3)
         
 
 def loraP2P():
+    
+    class Stat:
+        labels = ('rx_timestamp', 'rssi', 'snr', 'sftx', 'sfrx', 'tx_trials', 'tx_power', 'tx_time_on_air', 'tx_counter', 'tx_frequency')
+        nb_moyenne = 0
+        stat = [0 for i in labels]
+        
+        
+
+        def addStats(self, stats):
+            self.stat,self.nb_moyenne
+            self.stat = [self.stat[x]+stats[x] for x in range(0,len(stats)-1)]
+            self.nb_moyenne+=1
+
+        def printStats(self):
+            if self.nb_moyenne > 0:
+                
+
+                # Lire l'heure actuelle
+                time = chrono.read()
+                
+                sortie = "[time:"+str(time)
+                for x in range(0,len(self.stat)-1):
+                    sortie += ", " +self.labels[x] +" : "+ str(self.stat[x]/self.nb_moyenne)
+                sortie += "]"
+                print(sortie)
+
+        
+   
+
     def cb_rx(lora):
+        stats = lora.stats()
+        nb=nb+1
+        stat.addStats(stats)
+        if nb == 10:
+            stat.printStats()
+            nb=0
         pycom.rgbled(0x101000)
-        print("recu")
         data = s2.recv(64)
-        print(data)
-        time.sleep(0.5)
-        s2.send("pong")
-        print("envoi")
+        #print(data.decode())
+        time.sleep(0.1)
+        if(data.decode() == "ping"):
+            s2.send("pong")
+        elif(data.decode() == "pong"):
+            s2.send("ping")
+        
         pycom.rgbled(0x001000)
 
+    
+    #parametres LoRa
+    sf = 12
+    coding_rate=LoRa.CODING_4_8
+
+
+
+    stat = Stat()
+    nb = 0
     lorap2p = LoRa(mode=LoRa.LORA, region=LoRa.EU868)
     lorap2p.callback(LoRa.RX_PACKET_EVENT, handler=cb_rx)
+    lorap2p.init(mode=LoRa.LORA, region=LoRa.EU868,sf=sf,coding_rate=coding_rate)
     s2 = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
     s2.setblocking(True)
     i = 0
@@ -86,8 +145,8 @@ def loraP2P():
             lorap2p.callback(LoRa.RX_PACKET_EVENT, handler=cb_rx)
             if i > 5:
                 time.sleep(uos.urandom(1)[0] / 120)
-                s2.send("pong")
-                print("envoi {}".format(i-5))
+                s2.send("ping")
+                print("retry {}".format(i-5))
                 time.sleep(0.5)
             if i>3:    
                 pycom.rgbled(0x100000)
@@ -98,11 +157,10 @@ def loraP2P():
         i=0
 
 
-mode = 1
+mode = 2
 
-match mode :
-    case 1 :
-        loraWAN()
-    case 2 :
-        loraP2P()
-
+if(mode==1) :
+    loraWAN()
+else:
+    loraP2P()
+    

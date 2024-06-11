@@ -26,7 +26,7 @@ def distance():
         pass
     finish = utime.ticks_us()
     
-    duree = start-finish
+    duree = finish-start
     
     # calcul de la distance
     distance = duree * 340 / 2 / 10000 # 340 : vitesse du son en m/s / 2 : aller-retour / 10000 : pour passer de µs en s

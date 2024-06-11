@@ -3,6 +3,60 @@ import socket
 import time
 import ubinascii
 import pycom
+from machine import Pin
+import utime
+import machine 
+
+
+## renvoi la distance en cm (mesure par ultrasons)
+def distance():
+    #initialisation des pins
+    trig = Pin('P23', mode = Pin.OUT)
+    echo = Pin('P22', mode = Pin.IN)
+    
+    # envoie d'une impulsion de 10us
+    trig.value(0)
+    time.sleep(1/1000000)
+    trig.value(1)
+    time.sleep(11/1000000)
+    trig.value(0)
+    
+    # mesure du temps de propagation
+    while echo() == 0:
+        pass
+    start = utime.ticks_us()
+
+    while echo() == 1:
+        pass
+    finish = utime.ticks_us()
+    
+    duree = finish-start
+    
+    # calcul de la distance
+    distance = duree * 340 / 2 / 10000 # 340 : vitesse du son en m/s / 2 : aller-retour / 10000 : pour passer de µs en s
+    
+    return distance
+    
+    
+def niveau_liquide():
+    adc = machine.ADC()
+    apin = adc.channel(pin='P16')
+    niveau = apin.voltage()
+    return niveau
+
+import struct
+
+def float_to_hex(f):
+    return hex(struct.unpack('<I', struct.pack('<f', f))[0])
+
+
+def rx_callback():
+    s.setblocking(False)
+    data = s.recv(64)
+    s.setblocking(True)
+    if data :
+        print(data)
+
 
 pycom.heartbeat(False)
 
@@ -48,16 +102,22 @@ s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
 # send some data
 while 1 :
     s.setblocking(True)
+    data_dist = 0.2   #distance()
+    print(data_dist)
     
-    s.send(bytes("1","utf-8"))
+    byte = struct.pack("f", data_dist)
 
-    # make the socket non-blocking
-    # (because if there's no data received it will block forever...)
-    s.setblocking(False)
+    #print("bytes : {}".format(struct.unpack("f", byte)))
+    s.send(byte)
 
-    # get any data received (if any...)
-    data = s.recv(64)
-    if data :
-        print(data)
-    time.sleep(1)
     
+# def send_float(float):
+#     data= struct.pack("f", float)
+#     send(data)
+
+# def send_str(string):
+#     data =bytes(string,"utf-8")
+    
+#     data = base64.b64encode(data)
+#     data = data.decode()
+#     send(data)

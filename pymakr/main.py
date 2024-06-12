@@ -126,8 +126,8 @@ def loraP2P():
 
     
     #parametres LoRa
-    sf = 12
-    coding_rate=LoRa.CODING_4_8
+    sf = 7
+    coding_rate=LoRa.CODING_4_5
 
 
 

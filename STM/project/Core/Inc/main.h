@@ -59,8 +59,6 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define PA15_RESERVED_Pin GPIO_PIN_15
 #define PA15_RESERVED_GPIO_Port GPIOA
-#define PB3_RESERVED_Pin GPIO_PIN_3
-#define PB3_RESERVED_GPIO_Port GPIOB
 #define PA12_RESERVED_Pin GPIO_PIN_12
 #define PA12_RESERVED_GPIO_Port GPIOA
 #define PB4_RESERVED_Pin GPIO_PIN_4

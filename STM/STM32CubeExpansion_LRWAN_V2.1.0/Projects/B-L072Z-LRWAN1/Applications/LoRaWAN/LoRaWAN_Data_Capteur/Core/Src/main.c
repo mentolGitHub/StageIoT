@@ -180,13 +180,12 @@ int main(void)
 		printf("erreur de mesure\n");
 	}
 
-	HAL_Delay(500);
     /* USER CODE END WHILE */
+
     MX_LoRaWAN_Process();
 
     /* USER CODE BEGIN 3 */
   }
-  SendTxData();
   /* USER CODE END 3 */
 }
 

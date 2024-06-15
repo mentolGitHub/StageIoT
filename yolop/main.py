@@ -159,8 +159,8 @@ with dai.Device(pipeline) as device:
                         # Limit the bounding box to 0..SHAPE
                         bbox[bbox > SHAPE - 1] = SHAPE - 1
                         bbox[bbox < 0] = 0
-                        xy_min = (int(bbox[0]), int(bbox[1]))
-                        xy_max = (int(bbox[2]), int(bbox[3]))
+                        xy_min = (int(bbox[0]* 320 // 416), int(bbox[1]* 320 // 416))  
+                        xy_max = (int(bbox[2]* 320 // 416), int(bbox[3]* 320 // 416))
                         # Display detection's BB, label and confidence on the frame
                         cv2.rectangle(manip_frame, xy_min , xy_max, (255, 0, 0), 2)
                         cv2.putText(manip_frame, class_name, (xy_min[0] + 10, xy_min[1] + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)

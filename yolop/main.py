@@ -9,7 +9,7 @@ import time
 import errno
 import blobconverter
 import os
-from utils.functions import non_max_suppression, show_masks, show_boxes
+from utils.functions import *
 
 '''
 YOLOP demo running on device with video input from host.
@@ -22,6 +22,10 @@ https://github.com/hustvl/YOLOP
 
 DepthAI 2.11.0.0 is required. Blob was compiled using OpenVino 2021.4
 '''
+syncNN = False
+
+SHAPE = 416
+labelMap = [ "person", "bicycle", "car", "motorbike", "aeroplane", "bus", "train", "truck", "boat", "traffic light", "fire hydrant", "stop sign", "parking meter", "teddy bear"]
 
 # --------------- Arguments ---------------
 parser = argparse.ArgumentParser()
@@ -82,11 +86,28 @@ manip.out.link(xout_manip.input)
 manip.out.link(detection_nn.input)
 detection_nn.out.link(xout_nn.input)
 
+nn = pipeline.create(dai.node.NeuralNetwork)
+nn.setBlobPath(str(Path("yolox_tiny.blob").resolve().absolute()))
+nn.setNumInferenceThreads(2)
+nn.input.setBlocking(True)
+
+# Send converted frames from the host to the NN
+nn_xin = pipeline.create(dai.node.XLinkIn)
+nn_xin.setStreamName("nnInput")
+nn_xin.out.link(nn.input)
+
+# Send bounding boxes from the NN to the host via XLink
+nn_xout = pipeline.create(dai.node.XLinkOut)
+nn_xout.setStreamName("nnObj")
+nn.out.link(nn_xout.input)
+
 # --------------- Inference ---------------
 # Pipeline defined, now the device is assigned and pipeline is started
 with dai.Device(pipeline) as device:
     q_manip = device.getOutputQueue(name="manip", maxSize=4, blocking=False)
     q_nn = device.getOutputQueue(name="nn", maxSize=4, blocking=False)
+    qNnInput = device.getInputQueue("nnInput", maxSize=4, blocking=False)
+    qNn = device.getOutputQueue(name="nnObj", maxSize=4, blocking=True)
 
     startTime = time.monotonic()
     counter = 0
@@ -95,7 +116,56 @@ with dai.Device(pipeline) as device:
     while True:
         manip = q_manip.get()
         manip_frame = manip.getCvFrame()
+        
+        # Set these according to your dataset
+        mean = (0.485, 0.456, 0.406)
+        std = (0.229, 0.224, 0.225)
+        
+        image, ratio = preproc(manip_frame, (SHAPE, SHAPE), mean, std)
+        image = list(image.tobytes())
+        
+        dai_frame = dai.ImgFrame()
+        dai_frame.setHeight(SHAPE)
+        dai_frame.setWidth(SHAPE)
+        dai_frame.setData(image)
+        qNnInput.send(dai_frame)
+        in_nn = qNn.tryGet()
+        if in_nn is not None:
+            data = np.array(in_nn.getLayerFp16('output')).reshape(1, 3549, 85)
+            predictions = demo_postprocess(data, (SHAPE, SHAPE), p6=False)[0]
+            
+            boxes = predictions[:, :4]
+            scores = predictions[:, 4, None] * predictions[:, 5:]
 
+            boxes_xyxy = np.ones_like(boxes)
+            boxes_xyxy[:, 0] = boxes[:, 0] - boxes[:, 2] / 2.
+            boxes_xyxy[:, 1] = boxes[:, 1] - boxes[:, 3] / 2.
+            boxes_xyxy[:, 2] = boxes[:, 0] + boxes[:, 2] / 2.
+            boxes_xyxy[:, 3] = boxes[:, 1] + boxes[:, 3] / 2.
+            dets = multiclass_nms(boxes_xyxy, scores, nms_thr=0.45, score_thr=0.3)
+
+            if dets is not None:
+                final_boxes = dets[:, :4]
+                final_scores, final_cls_inds = dets[:, 4], dets[:, 5]
+
+                for i in range(len(final_boxes)):
+                    bbox = final_boxes[i]
+                    score = final_scores[i]
+                    class_index = int(final_cls_inds[i])
+
+                    if score >= 0.1 and class_index < len(labelMap):
+                        class_name = labelMap[class_index]
+                        
+                        # Limit the bounding box to 0..SHAPE
+                        bbox[bbox > SHAPE - 1] = SHAPE - 1
+                        bbox[bbox < 0] = 0
+                        xy_min = (int(bbox[0]), int(bbox[1]))
+                        xy_max = (int(bbox[2]), int(bbox[3]))
+                        # Display detection's BB, label and confidence on the frame
+                        cv2.rectangle(manip_frame, xy_min , xy_max, (255, 0, 0), 2)
+                        cv2.putText(manip_frame, class_name, (xy_min[0] + 10, xy_min[1] + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+                        cv2.putText(manip_frame, f"{int(score * 100)}%", (xy_min[0] + 10, xy_min[1] + 40), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
+            
         in_nn = q_nn.get()
 
         # read output

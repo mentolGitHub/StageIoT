@@ -27,11 +27,11 @@ if args.resolution not in RES_MAP:
 resolution = RES_MAP[args.resolution]
 
 def getMesh(calibData):
-    M1 = np.array(calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_B, resolution['w'], resolution['h']))
-    d1 = np.array(calibData.getDistortionCoefficients(dai.CameraBoardSocket.CAM_B))
+    M1 = np.array(calibData.getCameraIntrinsics(dai.CameraBoardSocket.LEFT, resolution['w'], resolution['h']))
+    d1 = np.array(calibData.getDistortionCoefficients(dai.CameraBoardSocket.LEFT))
     R1 = np.array(calibData.getStereoLeftRectificationRotation())
-    M2 = np.array(calibData.getCameraIntrinsics(dai.CameraBoardSocket.CAM_C, resolution['w'], resolution['h']))
-    d2 = np.array(calibData.getDistortionCoefficients(dai.CameraBoardSocket.CAM_C))
+    M2 = np.array(calibData.getCameraIntrinsics(dai.CameraBoardSocket.RIGHT, resolution['w'], resolution['h']))
+    d2 = np.array(calibData.getDistortionCoefficients(dai.CameraBoardSocket.RIGHT))
     R2 = np.array(calibData.getStereoRightRectificationRotation())
     mapXL, mapYL = cv2.initUndistortRectifyMap(M1, d1, R1, M2, (resolution['w'], resolution['h']), cv2.CV_32FC1)
     mapXR, mapYR = cv2.initUndistortRectifyMap(M2, d2, R2, M2, (resolution['w'], resolution['h']), cv2.CV_32FC1)
@@ -92,10 +92,10 @@ def create_pipeline():
     pipeline = dai.Pipeline()
 
     camLeft = pipeline.create(dai.node.MonoCamera)
-    camLeft.setBoardSocket(dai.CameraBoardSocket.CAM_B)
+    camLeft.setBoardSocket(dai.CameraBoardSocket.LEFT)
 
     camRight = pipeline.create(dai.node.MonoCamera)
-    camRight.setBoardSocket(dai.CameraBoardSocket.CAM_C)
+    camRight.setBoardSocket(dai.CameraBoardSocket.RIGHT)
 
     xoutRight = pipeline.create(dai.node.XLinkOut)
     xoutRight.setStreamName("right")

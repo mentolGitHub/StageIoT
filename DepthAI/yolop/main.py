@@ -55,7 +55,7 @@ NN_HEIGHT = 320
 
 # set initial resize so the input is not too large
 IR_WIDTH = 640
-IR_HEIGHT = 360
+IR_HEIGHT = 640
 
 # --------------- Get Blob ------------------
 NN_PATH = str(blobconverter.from_zoo(name="yolop_320x320", zoo_type="depthai", shaves = 7))

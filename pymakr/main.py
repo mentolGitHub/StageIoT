@@ -8,7 +8,14 @@ import utime
 from machine import Timer
 
 
-
+# create an OTAA authentication parameters, change them to the provided credentials
+app_eui = ubinascii.unhexlify('70B3D57ED0038811')
+app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
+#uncomment to use LoRaWAN application provided dev_eui
+dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
+#parametres LoRa
+sf = 7
+coding_rate=LoRa.CODING_4_5
 
 
 
@@ -34,11 +41,7 @@ def loraWAN():
     # Europe = LoRa.EU868
     # United States = LoRa.US915
     lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
-    # create an OTAA authentication parameters, change them to the provided credentials
-    app_eui = ubinascii.unhexlify('70B3D57ED0038811')
-    app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
-    #uncomment to use LoRaWAN application provided dev_eui
-    dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
+    
     lora.callback(LoRa.RX_PACKET_EVENT,rx_callback)
     # join a network using OTAA (Over the Air Activation)
     #uncomment below to use LoRaWAN application provided dev_eui
@@ -125,10 +128,7 @@ def loraP2P():
         pycom.rgbled(0x001000)
 
     
-    #parametres LoRa
-    sf = 7
-    coding_rate=LoRa.CODING_4_5
-
+    
 
 
     stat = Stat()

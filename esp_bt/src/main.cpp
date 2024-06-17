@@ -6,20 +6,26 @@
 #endif
 
 BluetoothSerial SerialBT;
+HardwareSerial SerialPort(2); // use UART2
+String data = "";
 
 void setup() {
   Serial.begin(115200);
+  SerialPort.begin(9800, SERIAL_8N1, 16, 17); 
   SerialBT.begin("ESP32BT"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
 }
 
 void loop() {
   if (Serial.available()) {
-    SerialBT.write(Serial.read());
+    data = Serial.readString();
+    SerialBT.print(data);
+    SerialPort.write(data.c_str());
   }
   if (SerialBT.available()) {
-    Serial.write(SerialBT.read());
-
+    data = SerialBT.readString();
+    Serial.write(data.c_str());
+    SerialPort.write(data.c_str());
   }
   delay(20);
 }

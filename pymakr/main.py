@@ -17,7 +17,7 @@ dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
 sf = 7
 coding_rate=LoRa.CODING_4_5
 
-
+mode = 2 # 1 = LoRaWAN pour se connecter à la passerelle, 2 = LoRa pour se connecter à une autre carte
 
 pycom.heartbeat(False)
 print("=================== Starting program =======================")
@@ -157,7 +157,7 @@ def loraP2P():
         i=0
 
 
-mode = 2
+
 
 if(mode==1) :
     loraWAN()

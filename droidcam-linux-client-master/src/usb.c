@@ -12,12 +12,16 @@
 #include <string.h>
 #include "usbmuxd.h"
 
+
 #if __FreeBSD__
 #include <sys/wait.h>
 #endif
 
 #include "common.h"
 #include "settings.h"
+
+char * selected_device;
+
 
 void AdbErrorPrint(int rc) {
 	switch (rc) {
@@ -88,8 +92,11 @@ EXIT:
 	
 	if (rc == NO_ERROR) {
 		char * id;
+		
 		id = "A75289FRCN296DV0131";
 		id = "A75289FRCN296DV02B5";
+		id = selected_device;
+		printf("id = %s\n", id);
 		snprintf(buf, sizeof(buf), "adb -s %s forward tcp:%d tcp:%d",id, port, port);
 		printf("buf %s \n",buf);
 		rc = system(buf);

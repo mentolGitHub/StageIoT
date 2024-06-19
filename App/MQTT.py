@@ -4,9 +4,9 @@ import paho.mqtt.publish as publish
 import json
 import time
 
-topics=['v3/dem@ttn/devices/lopy4/up']
-topicsdown=['v3/dem@ttn/devices/lopy4/down/push']
-auth={'username':"dem@ttn",'password':"NNSXS.I2HKSPE36TEGQ7OOR5JCNINKTJTYESZAGJYHANQ.MG6VOHTD66I7JHPIJ5JYHTIQWO5NS47FEVZ3QNNY2TDI6MNPXBTA"}
+topics=['v3/stm32LoRa@ttn/devices/eui-713bd57ed00681e2/up']
+topicsdown=['v3/stm32LoRa@ttn/devices/eui-713bd57ed00681e2/down/push']
+auth={'username':"stm32LoRa@ttn",'password':"NNSXS.F4WRQ3VRWAU7PVPZISAL5AN3Q3KQLNMJDTPQQGA.U3YCIM76SZONPLF62J62FTNMVRWM2QUO3QGHEHZX67XJXVK2L7MQ"}
 hostname="eu1.cloud.thethings.network"
 port = 1883
 
@@ -36,7 +36,7 @@ while 1 :
     print(data)
 
     
-    send(data)
+    #send(data)
     time.sleep(0.5)
 
 

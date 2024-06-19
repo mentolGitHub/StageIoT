@@ -19,8 +19,8 @@
 
 #include "common.h"
 #include "settings.h"
-char * devices[]={"A75289FRCN296DV0131","A75289FRCN296DV02B5"};
-int selected_device;
+char * devices[]={"A75289FRCN296DV0131","A75289FRCN296DV02B5","A75289FRCN298DV0367"};
+int selectedDevice;
 
 
 void AdbErrorPrint(int rc) {
@@ -92,10 +92,10 @@ EXIT:
 	
 	if (rc == NO_ERROR) {
 		char * id;
-		id = devices[selected_device];
-		int port2 = port + selected_device;
-		printf("id = %s, port = %i\n", id, port2);
-		snprintf(buf, sizeof(buf), "adb -s %s forward tcp:%d tcp:%d",id, port, port2);
+		id = devices[selectedDevice];
+		
+		printf("id = %s, port = %i\n", id, port);
+		snprintf(buf, sizeof(buf), "adb -s %s forward tcp:%d tcp:%d",id, port, port);
 		printf("buf %s \n",buf);
 		rc = system(buf);
 		if (WEXITSTATUS(rc) != 0){

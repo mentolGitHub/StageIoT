@@ -1,4 +1,10 @@
-droidcam*
 
+*.cmd
 # vim swap files
 *.swp
+*.o
+*.mod
+*.ko
+*odule*
+droidcam
+droidcam-cli

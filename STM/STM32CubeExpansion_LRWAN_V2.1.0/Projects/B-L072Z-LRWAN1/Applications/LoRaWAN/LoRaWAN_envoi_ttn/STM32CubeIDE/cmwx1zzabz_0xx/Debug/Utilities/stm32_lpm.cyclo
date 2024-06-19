@@ -1,6 +1,0 @@
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:122:6:UTIL_LPM_Init	1
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:129:6:UTIL_LPM_DeInit	1
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:133:6:UTIL_LPM_SetStopMode	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:158:6:UTIL_LPM_SetOffMode	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:183:17:UTIL_LPM_GetMode	2
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Utilities/lpm/tiny_lpm/stm32_lpm.c:216:6:UTIL_LPM_EnterLowPower	3

@@ -462,6 +462,13 @@ static void SendTxData(void)
   if (LORAMAC_HANDLER_SUCCESS == LmHandlerSend(&AppData, LORAWAN_DEFAULT_CONFIRMED_MSG_STATE, &nextTxIn, false))
   {
     APP_LOG(TS_ON, VLEVEL_L, "SEND REQUEST\r\n");
+    //afficher le contenu du buffer
+    APP_LOG(TS_OFF, VLEVEL_L, "Buffer : ");
+    for (int i = 0; i < AppData.BufferSize; i++)
+    {
+      APP_LOG(TS_OFF, VLEVEL_L, "%d ", AppData.Buffer[i]);
+    }
+    APP_LOG(TS_OFF, VLEVEL_L, "\r\n");
   }
   else if (nextTxIn > 0)
   {

@@ -1,9 +1,0 @@
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:101:9:IKS01A2_ENV_SENSOR_Init	33
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:266:9:IKS01A2_ENV_SENSOR_DeInit	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:292:9:IKS01A2_ENV_SENSOR_GetCapabilities	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:318:9:IKS01A2_ENV_SENSOR_ReadID	3
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:346:9:IKS01A2_ENV_SENSOR_Enable	4
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:384:9:IKS01A2_ENV_SENSOR_Disable	4
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:423:9:IKS01A2_ENV_SENSOR_GetOutputDataRate	4
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:462:9:IKS01A2_ENV_SENSOR_SetOutputDataRate	4
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Drivers/BSP/IKS01A2/iks01a2_env_sensors.c:501:9:IKS01A2_ENV_SENSOR_GetValue	4

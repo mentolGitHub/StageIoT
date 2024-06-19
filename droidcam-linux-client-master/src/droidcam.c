@@ -26,6 +26,8 @@ GtkWidget *menu;
 GtkWidget *menuButton;
 GtkWidget *wbMenu;
 GtkWidget *wbButton;
+GtkWidget *devSelectMenu;
+GtkWidget *devSelectButton;
 GtkWidget *elButton;
 GtkWidget *infoText;
 GtkWidget *batteryText;
@@ -46,7 +48,8 @@ volatile int a_running = 0;
 volatile int v_running = 0;
 volatile int thread_cmd = 0;
 struct settings g_settings = {0};
-
+extern char * devices[3];
+extern int selectedDevice;
 extern const char *thread_cmd_val_str;
 extern char snd_device[32];
 extern char v4l2_device[32];
@@ -130,6 +133,7 @@ static void Stop(void) {
 	v_active = 0;
 	gtk_widget_set_sensitive(GTK_WIDGET(elButton), FALSE);
 	gtk_widget_set_sensitive(GTK_WIDGET(wbButton), FALSE);
+    gtk_widget_set_sensitive(GTK_WIDGET(devSelectButton), TRUE);
 	gtk_widget_set_sensitive(GTK_WIDGET(menuButton), FALSE);
 	UpdateBatteryLabel("");
 }
@@ -222,6 +226,7 @@ EARLY_OUT:
 	gtk_widget_set_sensitive(GTK_WIDGET(videoCheckbox), FALSE);
 	gtk_widget_set_sensitive(GTK_WIDGET(elButton), TRUE);
 	gtk_widget_set_sensitive(GTK_WIDGET(wbButton), TRUE);
+    gtk_widget_set_sensitive(GTK_WIDGET(devSelectButton), FALSE);
 	gtk_widget_set_sensitive(GTK_WIDGET(menuButton), TRUE);
 }
 
@@ -296,6 +301,9 @@ _up:
 		case CB_BTN_WB:
 			gtk_menu_popup_at_pointer(GTK_MENU(wbMenu), NULL);
 		break;
+        case CB_BTN_DEV_SELECT:
+			gtk_menu_popup_at_pointer(GTK_MENU(devSelectMenu), NULL);
+		break;
 		case CB_BTN_EL:
 			if (v_running != 1 || thread_cmd != 0) {
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(elButton), FALSE);
@@ -355,6 +363,15 @@ static void wb_callback(GtkWidget* widget, gpointer extra) {
 		thread_cmd = CB_CONTROL_WB;
 	}
 }
+
+// wbMenu callback
+static void devSelect_callback(GtkWidget* widget, gpointer extra) {
+	uintptr_t cb = (uintptr_t) extra;
+	dbgprint("devSelect_callback=%lu\n", cb);
+	selectedDevice = cb;
+}
+
+
 
 // keyboard shortcuts callback
 static gboolean accel_callback(GtkAccelGroup  *group, GObject *obj, guint keyval,
@@ -542,6 +559,15 @@ int main(int argc, char *argv[])
 		g_signal_connect(widget, "activate", G_CALLBACK(wb_callback), (gpointer)i);
 	}
 
+
+    devSelectMenu = gtk_menu_new();
+	for (size_t i = 0; i < ARRAY_LEN(devices); i++) {
+		widget = gtk_menu_item_new_with_label(devices[i]);
+		gtk_menu_shell_append (GTK_MENU_SHELL(devSelectMenu), widget);
+		gtk_widget_show(widget);
+		g_signal_connect(widget, "activate", G_CALLBACK(devSelect_callback), (gpointer)i);
+	}
+
 	// Create main grid to create left and right column of the UI.
 	// +-----------------------------------+
 	// |---------------+    +--------------|
@@ -603,6 +629,8 @@ int main(int argc, char *argv[])
 	g_signal_connect(widget, "clicked", G_CALLBACK(the_callback), (gpointer)CB_BTN_WB);
 	wbButton = widget;
 
+    
+
 	// Put menu button in the grid, so it's not full column width, but smaller.
 	menuGrid = gtk_grid_new();
 	gtk_grid_attach(GTK_GRID(menuGrid), widget, 0, 1, 1, 1);
@@ -626,6 +654,12 @@ int main(int argc, char *argv[])
 
 	// attach the buttons to the column
 	gtk_grid_attach(GTK_GRID(grid), menuGrid, 0, 5, 1, 1);
+
+    widget = gtk_button_new_with_label("Device Select");
+	gtk_widget_set_tooltip_text(widget, "Selection de l'appareil");
+	g_signal_connect(widget, "clicked", G_CALLBACK(the_callback), (gpointer)CB_BTN_DEV_SELECT);
+    gtk_grid_attach(GTK_GRID(menuGrid), widget, 3, 1, 1, 1);
+	devSelectButton = widget;
 
 	// Info text goes as last element of left column.
 	infoText = gtk_label_new(NULL);

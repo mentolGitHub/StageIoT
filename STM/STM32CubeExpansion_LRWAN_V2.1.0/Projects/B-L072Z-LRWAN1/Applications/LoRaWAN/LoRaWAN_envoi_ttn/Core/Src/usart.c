@@ -19,7 +19,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart.h"
-#include "dma.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -45,7 +44,7 @@ void MX_USART2_UART_Init(void)
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits   = UART_STOPBITS_1;
   huart2.Init.Parity     = UART_PARITY_NONE;
-  huart2.Init.Mode       = UART_MODE_TX;
+  huart2.Init.Mode       = UART_MODE_TX_RX;
   huart2.Init.HwFlowCtl  = UART_HWCONTROL_NONE;
 
   if (HAL_UART_Init(&huart2) != HAL_OK)
@@ -63,10 +62,10 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
 
   GPIO_InitTypeDef GPIO_InitStruct = {0};
   RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
-
+  
   if (uartHandle->Instance == USART2)
   {
-    /* USER CODE BEGIN USART2_MspInit 0 */
+        /* USER CODE BEGIN USART2_MspInit 0 */
 
     /* USER CODE END USART2_MspInit 0 */
 
@@ -92,6 +91,8 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
       Error_Handler();
     }
 
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
     /**USART2 GPIO Configuration
     PA3     ------> USART2_RX
     PA2     ------> USART2_TX
@@ -112,7 +113,7 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
 
     /* USART2 DMA Init */
     /* USART2_TX Init */
-    /* Configure the DMA handler for Transmission process */
+/* Configure the DMA handler for Transmission process */
     hdma_usart2_tx.Instance                 = USARTx_TX_DMA_CHANNEL;
     hdma_usart2_tx.Init.Request             = USARTx_TX_DMA_REQUEST;
     hdma_usart2_tx.Init.Direction           = DMA_MEMORY_TO_PERIPH;
@@ -128,18 +129,11 @@ void HAL_UART_MspInit(UART_HandleTypeDef *uartHandle)
       Error_Handler();
     }
 
-    /* Associate the initialized DMA handle to the UART handle */
     __HAL_LINKDMA(uartHandle, hdmatx, hdma_usart2_tx);
 
-    /* Configure the NVIC for DMA */
-    /* NVIC configuration for DMA transfer complete interrupt (USART1_TX) */
-    HAL_NVIC_SetPriority(USARTx_DMA_TX_IRQn, USARTx_Priority, 1);
-    HAL_NVIC_EnableIRQ(USARTx_DMA_TX_IRQn);
-
-    /* NVIC for USART, to catch the TX complete */
+    /* USART2 interrupt Init */
     HAL_NVIC_SetPriority(USARTx_IRQn, USARTx_DMA_Priority, 1);
     HAL_NVIC_EnableIRQ(USARTx_IRQn);
-
     /* USER CODE BEGIN USART2_MspInit 1 */
 
     /* USER CODE END USART2_MspInit 1 */

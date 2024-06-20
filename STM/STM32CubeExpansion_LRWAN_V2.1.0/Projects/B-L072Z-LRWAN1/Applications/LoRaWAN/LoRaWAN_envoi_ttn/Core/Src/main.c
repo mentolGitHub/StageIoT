@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "app_lorawan.h"
+#include "sys_app.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -43,12 +44,17 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+extern UART_HandleTypeDef huart2;
+char rxBuffer[10];
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
+static void MX_GPIO_Init(void);
+static void MX_USART1_UART_Init(void);
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart);
+void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart);
 
 /* USER CODE END PFP */
 
@@ -86,14 +92,16 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_LoRaWAN_Init();
   /* USER CODE BEGIN 2 */
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)rxBuffer, sizeof(rxBuffer));
+  /* USER CODE END 2 */ 
 
-  /* USER CODE END 2 */
+  uint8_t rxBuffer[10];
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    /* USER CODE END WHILE */
+    //HAL_UART_Transmit(&huart2, (uint8_t *)"Hello World\n", 12, 1000); example of sending data
     MX_LoRaWAN_Process();
 
     /* USER CODE BEGIN 3 */

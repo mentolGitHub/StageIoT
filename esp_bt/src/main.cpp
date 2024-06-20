@@ -11,7 +11,7 @@ String data = "";
 
 void setup() {
   Serial.begin(115200);
-  SerialPort.begin(9800, SERIAL_8N1, 16, 17); 
+  SerialPort.begin(115200, SERIAL_8N1, 16, 17); 
   SerialBT.begin("ESP32BT"); //Bluetooth device name
   Serial.println("The device started, now you can pair it with bluetooth!");
 }
@@ -27,5 +27,11 @@ void loop() {
     Serial.write(data.c_str());
     SerialPort.write(data.c_str());
   }
+  if (SerialPort.available()) {
+    data = SerialPort.readString();
+    Serial.write(data.c_str());
+    SerialBT.print(data);
+  }
+  
   delay(20);
 }

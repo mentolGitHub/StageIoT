@@ -21,6 +21,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart_if.h"
+#include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -36,6 +37,8 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
   * @brief UART handle
   */
 extern UART_HandleTypeDef huart2;
+
+extern uint8_t rxBuffer[10];
 
 /**
   * @brief buffer to receive 1 character
@@ -228,16 +231,18 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2)
   /* USER CODE END HAL_UART_TxCpltCallback_2 */
 }
 
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart2)
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
+  APP_LOG(TS_OFF, VLEVEL_M, "==================== Received data ====================\n");
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
 
   /* USER CODE END HAL_UART_RxCpltCallback_1 */
-  if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart2->ErrorCode))
+  if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart->ErrorCode))
   {
-    RxCpltCallback(&charRx, 1, 0);
+    
   }
-  HAL_UART_Receive_IT(huart2, &charRx, 1);
+  RxCpltCallback(&charRx, 1, 0);
+  HAL_UART_Receive_IT(&huart2, &charRx, 1);
   /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
 
   /* USER CODE END HAL_UART_RxCpltCallback_2 */

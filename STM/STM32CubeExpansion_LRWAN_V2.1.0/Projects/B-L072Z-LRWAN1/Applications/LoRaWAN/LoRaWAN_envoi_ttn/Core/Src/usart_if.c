@@ -21,7 +21,6 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usart_if.h"
-#include "sys_app.h"
 
 /* USER CODE BEGIN Includes */
 
@@ -37,8 +36,6 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
   * @brief UART handle
   */
 extern UART_HandleTypeDef huart2;
-
-extern uint8_t rxBuffer[10];
 
 /**
   * @brief buffer to receive 1 character
@@ -89,6 +86,8 @@ static void (*TxCpltCallback)(void *);
   * @return none
   */
 static void (*RxCpltCallback)(uint8_t *rxChar, uint16_t size, uint8_t error);
+
+uint8_t rxBuff[10];
 
 /* USER CODE BEGIN PV */
 
@@ -208,7 +207,6 @@ void vcom_Resume(void)
   {
     Error_Handler();
   }
-
   /*to re-enable lost DMA settings*/
   if (HAL_DMA_Init(&hdma_usart2_tx) != HAL_OK)
   {
@@ -233,19 +231,18 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  APP_LOG(TS_OFF, VLEVEL_M, "==================== Received data ====================\n");
-  /* USER CODE BEGIN HAL_UART_RxCpltCallback_1 */
+  // Send the message "Data received: "
+  char message[] = "Data received: ";
+  HAL_UART_Transmit(&huart2, (uint8_t *)message, strlen(message), 100);
 
-  /* USER CODE END HAL_UART_RxCpltCallback_1 */
-  if ((NULL != RxCpltCallback) && (HAL_UART_ERROR_NONE == huart->ErrorCode))
-  {
-    
-  }
-  RxCpltCallback(&charRx, 1, 0);
-  HAL_UART_Receive_IT(&huart2, &charRx, 1);
-  /* USER CODE BEGIN HAL_UART_RxCpltCallback_2 */
+  // Send the received data back to the USART2 for confirmation
+  HAL_UART_Transmit(&huart2, (uint8_t *)rxBuff, strlen(rxBuff), 100);
 
-  /* USER CODE END HAL_UART_RxCpltCallback_2 */
+  // Clear the rxBuffer for the next data
+  memset(rxBuff, 0, sizeof(rxBuff));
+
+  // Re-enable UART receive IT for the next data
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)rxBuff, sizeof(rxBuff));
 }
 
 /* USER CODE BEGIN EF */

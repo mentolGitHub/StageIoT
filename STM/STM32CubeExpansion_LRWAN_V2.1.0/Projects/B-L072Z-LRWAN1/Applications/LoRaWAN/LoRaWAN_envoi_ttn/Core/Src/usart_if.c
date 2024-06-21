@@ -36,6 +36,8 @@ extern DMA_HandleTypeDef hdma_usart2_tx;
   * @brief UART handle
   */
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
+extern uint8_t rx_buffer[100];
 
 /**
   * @brief buffer to receive 1 character
@@ -231,18 +233,34 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart2)
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-  // Send the message "Data received: "
-  char message[] = "Data received: ";
-  HAL_UART_Transmit(&huart2, (uint8_t *)message, strlen(message), 100);
+  if(huart->Instance == USART2)
+  {
+    // Send the message "Data received: "
+    char message[] = "Data received: ";
+    HAL_UART_Transmit(&huart2, (uint8_t *)message, strlen(message), 100);
 
-  // Send the received data back to the USART2 for confirmation
-  HAL_UART_Transmit(&huart2, (uint8_t *)rxBuff, strlen(rxBuff), 100);
+    // Send the received data back to the USART2 for confirmation
+    HAL_UART_Transmit(&huart2, (uint8_t *)rxBuff, strlen(rxBuff), 100);
 
-  // Clear the rxBuffer for the next data
-  memset(rxBuff, 0, sizeof(rxBuff));
+    // Clear the rxBuffer for the next data
+    memset(rxBuff, 0, sizeof(rxBuff));
 
-  // Re-enable UART receive IT for the next data
-  HAL_UART_Receive_IT(&huart2, (uint8_t *)rxBuff, sizeof(rxBuff));
+    // Re-enable UART receive IT for the next data
+    HAL_UART_Receive_IT(&huart2, (uint8_t *)rxBuff, sizeof(rxBuff));
+  }
+  else if (huart->Instance == USART1)
+  {
+    HAL_UART_Transmit(&huart1, (uint8_t *)rx_buffer, strlen(rx_buffer), 100);
+    HAL_UART_Transmit(&huart2, (uint8_t *)rx_buffer, strlen(rx_buffer), 100);
+    memset(rx_buffer, 0, sizeof(rx_buffer));
+    HAL_UART_Receive_IT(&huart1, (uint8_t *)rx_buffer, sizeof(rx_buffer));
+  }
+  else {
+    //envoyer "pb detection instance"
+    uint8_t message[] = "pb detection instance";
+    HAL_UART_Transmit(&huart2, message, strlen(message), 100);
+  }
+
 }
 
 /* USER CODE BEGIN EF */

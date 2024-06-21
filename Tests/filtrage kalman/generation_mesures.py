@@ -1,6 +1,8 @@
 import random
 import numpy as np
 import numpy.linalg as alg
+from matplotlib import pyplot as plt, quiver
+from torch import scatter
 
 def generation_mesures():
     Path="./Tests/filtrage kalman/"
@@ -39,7 +41,7 @@ def parse(filename):
     return result
 
 
-def kalman(z, F, H, Q, R, x0, P0, delta_x, Pdx):
+def kalman(z, F, H, Q, R, x0, P0, delta_x=0, Pdx=0):
 
     ## filtrage de Kalman
     # z observations
@@ -55,53 +57,51 @@ def kalman(z, F, H, Q, R, x0, P0, delta_x, Pdx):
 
     ## implémentation du filtre de Kalman à fins pédagogiques uniquement
     # les questions numériques d'implémentations sont laissées de côté
+    L = np.size(F, 1) # taille du vecteur d'état
+    [M, N]=z.shape # taille des observations et longueur de la séquence
+    
+    
+    
+    xest = np.zeros((L, N)) # estimation de l'état
+    Pest = np.zeros((L, L, N)) # covariance de l'erreur d'estimation
 
-    L = np.size(F, 1); # taille du vecteur d'état
-    [M, N] = np.size(z); # taille des observations et longueur de la séquence
+    xap = np.zeros((L, N)) # estimation de l'état
 
-    xest = np.zeros(L, N); # estimation de l'état
+    Pap = np.zeros((L, L, N)) # covariance de l'erreur d'estimation
 
-    Pest = np.zeros(L, L, N); # covariance de l'erreur d'estimation
+    K = np.zeros((L, M, N)) # gains de Kalman
 
-    xap = np.zeros(L, N); # estimation de l'état
-
-    Pap = np.zeros(L, L, N); # covariance de l'erreur d'estimation
-
-    K = np.zeros(L, M, N); # gains de Kalman
-
-    if (~exist('delta_x', 'var')):
-        delta_x = np.zeros(L, N)
-        Pdx = np.zeros(L, L)
+    if (delta_x==0 and Pdx==0):
+        delta_x = np.zeros((L, N))
+        Pdx = np.zeros((L, L))
 
 
     # première itération
-    xap[:, 1] = F * x0 + delta_x[:, 1];  # estimation a priori de l'état (utilisation du modèle)
-    Pap[:, :, 1] = F * P0 * F.T + Q + Pdx;  # covariance de l'estimation a priori
+    xap[:, 0] = F * x0 + delta_x[:, 0]  # estimation a priori de l'état (utilisation du modèle)
+    Pap[:, :, 0] = F * P0 * F.T + Q + Pdx  # covariance de l'estimation a priori
 
-    innov = z[:, 1] - H * xap[:, 1];  # innovation
-    S = H * Pap[:, :, 1] * H.T + R
-    K[:, :, 1] = Pap[:, :, 1] * H.T * np.inv(S); # gain de Kalman
+    innov = z[:, 0] - H * xap[:, 0]  # innovation
+    S = H * Pap[:, :, 0] * H.T + R
+    K[:, :, 0] = Pap[:, :, 0] * H.T * np.linalg.inv(S) # gain de Kalman
 
-    xest[:, 1] = xap[:, 1] + K[:, :, 1] * innov;  # correction de l'estimation a posteriori
-    Pest[:, :, 1] = (np.eye(L) - K[:, :, 1]*H) * Pap[:, :, 1];  # mise à jour de la covariance de l'estimation
+    xest[:, 0] = xap[:, 0] + K[:, :, 0] * innov  # correction de l'estimation a posteriori
+    Pest[:, :, 0] = (np.eye(L) - K[:, :, 0]*H) * Pap[:, :, 0]  # mise à jour de la covariance de l'estimation
 
 
-    for u in range(2,N+1):
+    for u in range(1,N):
 
-        xap[:, u] = F * xest[:, u-1] + delta_x[:, u];  # estimation a priori de l'état (utilisation du modèle)
-        Pap[:, :, u] = F * Pest[:, :, u-1] * F.T + Q;  # covariance de l'estimation a priori
+        xap[:, u] = F * xest[:, u-1] + delta_x[:, u]  # estimation a priori de l'état (utilisation du modèle)
+        Pap[:, :, u] = F * Pest[:, :, u-1] * F.T + Q  # covariance de l'estimation a priori
 
-        innov = z[:, u] - H * xap[:, u];  # innovation
+        innov = z[:, u] - H * xap[:, u]  # innovation
         S = H * Pap[:, :, u] * H.T + R
-        K[:, :, u] = Pap[:, :, u] * H.T * np.inv(S); # gain de Kalman
+        K[:, :, u] = Pap[:, :, u] * H.T * np.linalg.inv(S) # gain de Kalman
 
-        xest[:, u] = xap[:, u] + K[:, :, u] * innov;  # correction de l'estimation a posteriori
-        Pest[:, :, u] = (np.eye(L) - K[:, :, u]*H) * Pap[:, :, u];  # mise à jour de la covariance de l'estimation
+        xest[:, u] = xap[:, u] + K[:, :, u] * innov  # correction de l'estimation a posteriori
+        Pest[:, :, u] = (np.eye(L) - K[:, :, u]*H) * Pap[:, :, u]  # mise à jour de la covariance de l'estimation
+    return [xest, Pest, K]
 
 
-    end
-
-    end
 
 
 def filtre_kalman():
@@ -117,17 +117,19 @@ def filtre_kalman():
 
     dF = np.array([[0, 0, 1, 0],[ 0, 0, 0, 1],[0, 0, 0, 0],[0, 0, 0, 0]]) # matrice du système linéaire d'eq. diffs
 
-    F = np.expm(dF*dt) # matrice du modèle discret
-
+    F = np.exp(dF*dt) # matrice du modèle discret
+    
     sigma_q = 0.05
-    Q = sigma_q^2 * np.array([[0 ,0, 0, 0],[0 ,0, 0, 0],[0, 0 ,1, 0],[0, 0, 0 ,1]])
+    
+    Q = sigma_q**2 * np.array([[0 ,0, 0, 0],[0 ,0, 0, 0],[0, 0 ,1, 0],[0, 0, 0 ,1]])
 
     # On mesure uniquement la position.
 
     H = np.array([[1 ,0, 0, 0],[ 0, 1, 0, 0]])
 
     sigma_r = 1
-    R = np.eye(2) * sigma_r^2
+    sigma_r2 = 0.3
+    R = np.eye(2) * sigma_r**2
 
     ## Génération des données
 
@@ -135,9 +137,9 @@ def filtre_kalman():
 
 
     V = np.array([[2],[ 1]]) # vitesse, supposée uniforme
-    x = V * range(1,L) # position au cours du temps 
+    x = V * range(1,L+1) # position au cours du temps 
 
-    z = x + randn(2, L) * sigma_r # position mesurée
+    z = x + np.array([[random.gauss(0, sigma_r),random.gauss(0, sigma_r2)] for i in range(1,L+1)]).T # position mesurée
 
     ## Initialisation
     # On initialise l'estimation de l'état en utilisant la première mesure pour
@@ -145,17 +147,54 @@ def filtre_kalman():
     # La covariance de l'estimation est prise égale à celle des mesures pour la
     # position, et arbitrairement grande pour la vitesse.
 
-    X0 = np.array([[z[:, 1]],[ 0 ],[ 0]]) # première estimation de l'état
+    X0 = np.array([[z[:, 0]],[ 0 ],[ 0]]) # première estimation de l'état
     P0 = np.diag(np.array([sigma_r, sigma_r, 100, 100])) # covariance de l'estimation 
 
     ## Filtre de Kalman
 
     [xest, Pest, K, xap] = kalman(z, F, H, Q, R, X0, P0) # Kalman
+    
+    quiver(xest[1, 1:10], xest[2, 1:10], xest[3, 1:10], xest[4, 1:10], 'r', 'linewidth', 2, 'AutoScale', 'off')
+    quiver(xap[1, 2:11], xap[2, 2:11], xap[3, 2:11], xap[4, 2:11], 'g', 'linewidth', 2, 'AutoScale', 'off')
+    scatter(z[1, 2:11], z[2, 2:11], 30, 'k', 'filled')
+    scatter(x[1, 2:11], x[2, 2:11], 30, 'b', 'filled')
+
+    plt.xlabel('iterations')
+    plt.show()
 
 
 
 
+def filtre_kalman_test():
+    speed_mesured=parse("speed_mesurement.csv")
+    gps=parse("gps.csv")
+    dt = 1
+    dF = np.array([[0, 0, 1, 0],[ 0, 0, 0, 1],[0, 0, 0, 0],[0, 0, 0, 0]]) # matrice du système linéaire d'eq. diffs
+    F = np.exp(dF*dt) # matrice d'évolution, constante, pas d'évolution
+    H = np.array([[1 ,0, 0, 0],[ 0, 1, 0, 0]]) # mesure directe de l'état
+    L = len(gps)
 
+    Q = sigmaq**2 # covariance du bruit de modèle
+    R = sigmar**2 # covariance du bruit de mesure
+    a= [gps,speed_mesured]
+    print(a)
+    [xest, Pest, K] = kalman(a, F, H, Q, R, a[0,0], R)
+    Xe = [gps[0][0], *xest[0,:]]  # unpack both iterables in a list literal
+    print(Xe[0:10])
+
+    b =2*np.sqrt(np.squeeze(Pest))
+    T= [2 * np.sqrt(R) ,*b[:]]
+    print(len(Xe))
+    print(len(T))
+    plt.errorbar(range(1,L+1),Xe, T)
+
+
+
+    plt.plot(np.ones((L,1)))
+    plt.scatter(range(1,L+1),z)
+
+    plt.xlabel('iterations')
+    plt.show()
 
 
 filtre_kalman()

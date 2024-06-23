@@ -1,0 +1,18 @@
+# Blacklist
+*
+
+# Whitelist
+!/*
+!/src/*
+
+# Files
+!.gitignore
+!*.h
+!*.md
+!*.c
+!*.s
+!*.ld
+!*.pdf
+!*.PrjPcb
+!*.PcbDoc
+!*.SchDoc

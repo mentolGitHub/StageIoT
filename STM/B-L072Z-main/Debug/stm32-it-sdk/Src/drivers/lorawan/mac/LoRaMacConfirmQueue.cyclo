@@ -1,0 +1,17 @@
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:86:28:IncreaseBufferPointer	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:101:28:DecreaseBufferPointer	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:115:28:GetElement	3
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:134:6:LoRaMacConfirmQueueInit	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:157:6:LoRaMacConfirmQueueRestoreNvmCtx	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:171:7:LoRaMacConfirmQueueGetNvmCtx	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:177:6:LoRaMacConfirmQueueAdd	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:198:6:LoRaMacConfirmQueueRemoveLast	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:213:6:LoRaMacConfirmQueueRemoveFirst	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:228:6:LoRaMacConfirmQueueSetStatus	3
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:243:26:LoRaMacConfirmQueueGetStatus	3
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:258:6:LoRaMacConfirmQueueSetStatusCmn	4
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:280:26:LoRaMacConfirmQueueGetStatusCmn	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:285:6:LoRaMacConfirmQueueIsCmdActive	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:294:6:LoRaMacConfirmQueueHandleCb	4
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:329:9:LoRaMacConfirmQueueGetCnt	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacConfirmQueue.c:334:6:LoRaMacConfirmQueueIsFull	2

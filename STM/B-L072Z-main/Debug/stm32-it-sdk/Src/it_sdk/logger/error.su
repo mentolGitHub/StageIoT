@@ -1,0 +1,10 @@
+../stm32-it-sdk/Src/it_sdk/logger/error.c:59:26:_itsdk_error_readHeader	24	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:72:26:_itsdk_error_writeHeader	24	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:87:26:_itsdk_error_write	24	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:103:26:_itsdk_error_read	24	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:125:19:itsdk_error_setup	16	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:151:19:itsdk_error_report	48	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:196:19:itsdk_error_get	32	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:225:19:itsdk_error_clear	16	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:236:19:itsdk_error_getSize	16	static
+../stm32-it-sdk/Src/it_sdk/logger/error.c:246:31:_itsdk_error_consolePriv	64	static

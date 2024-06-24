@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright(c) 2016 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -1177,9 +1176,9 @@ extern "C" {
 /*------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
-/*------------------------- STM32L051xx/STM32L061xx---------------------------*/
+/*------------------------------- STM32L051xx---------------------------------*/
 /*----------------------------------------------------------------------------*/
-#if defined (STM32L051xx)|| defined (STM32L061xx)
+#if defined (STM32L051xx)
 /* The table below gives an overview of the different alternate functions per port.
  * For more details refer yourself to the product data sheet.
  *
@@ -1365,7 +1364,7 @@ extern "C" {
 /**
   * @}
   */
-#endif /* STM32L051xx/STM32L061xx*/
+#endif /* STM32L051xx */
 /*------------------------------------------------------------------------------------------*/
 
 /*----------------------------------------------------------------------------*/
@@ -2445,9 +2444,8 @@ extern "C" {
   * @}
   */
 
-#elif defined (STM32L063xx) || defined (STM32L062xx) || defined (STM32L061xx) || \
-      defined (STM32L053xx) || defined (STM32L052xx) || defined (STM32L051xx) || \
-      defined (STM32L010x8)
+#elif defined (STM32L063xx) || defined (STM32L062xx) || defined (STM32L053xx) || \
+      defined (STM32L052xx) || defined (STM32L051xx) || defined (STM32L010x8)
 
 /** @addtogroup GPIOEx_Exported_Constants
   * @{
@@ -2502,5 +2500,4 @@ extern "C" {
 
 #endif /* __STM32L0xx_HAL_GPIO_EX_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

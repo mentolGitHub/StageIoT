@@ -1,0 +1,10 @@
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:78:11:SysTimeAdd	2
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:92:11:SysTimeSub	2
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:107:6:SysTimeSet	1
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:130:11:SysTimeGet	1
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:170:10:SysTimeMkTime	1
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:201:6:SysTimeLocalTime	2
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:253:17:CalendarGetMonth	6
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:290:13:CalendarDiv86400	3
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:316:17:CalendarDiv61	3
+../stm32-it-sdk/Src/drivers/lorawan/systime.c:338:13:CalendarDiv60	3

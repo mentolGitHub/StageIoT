@@ -7,13 +7,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2016 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2016 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -61,9 +60,9 @@ typedef enum
 /** @defgroup SYSCFG_BootMode Boot Mode
   * @{
   */
-#define SYSCFG_BOOT_MAINFLASH          ((uint32_t)0x00000000U)
-#define SYSCFG_BOOT_SYSTEMFLASH        ((uint32_t)SYSCFG_CFGR1_BOOT_MODE_0)
-#define SYSCFG_BOOT_SRAM               ((uint32_t)SYSCFG_CFGR1_BOOT_MODE)
+#define SYSCFG_BOOT_MAINFLASH          (0x00000000U)
+#define SYSCFG_BOOT_SYSTEMFLASH        SYSCFG_CFGR1_BOOT_MODE_0
+#define SYSCFG_BOOT_SRAM               SYSCFG_CFGR1_BOOT_MODE
 
 /**
   * @}
@@ -105,7 +104,7 @@ typedef enum
 /** @defgroup SYSCFG_VREFINT_OUT_SELECT SYSCFG VREFINT Out Selection
   * @{
   */
-#define SYSCFG_VREFINT_OUT_NONE          ((uint32_t)0x00000000U) /* no pad connected */
+#define SYSCFG_VREFINT_OUT_NONE          (0x00000000U)           /* no pad connected */
 #define SYSCFG_VREFINT_OUT_PB0           SYSCFG_CFGR3_VREF_OUT_0 /* Selects PBO as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB1           SYSCFG_CFGR3_VREF_OUT_1 /* Selects PB1 as output for the Vrefint */
 #define SYSCFG_VREFINT_OUT_PB0_PB1       SYSCFG_CFGR3_VREF_OUT   /* Selects PBO and PB1 as output for the Vrefint */
@@ -283,7 +282,7 @@ typedef enum
 #define __HAL_SYSCFG_REMAPMEMORY_SRAM()             MODIFY_REG(SYSCFG->CFGR1, SYSCFG_CFGR1_MEM_MODE, SYSCFG_CFGR1_MEM_MODE_0 | SYSCFG_CFGR1_MEM_MODE_1)
 
 /** @brief  Configuration of the DBG Low Power mode.
-  * @param  __DBGLPMODE__ bit field to indicate in wich Low Power mode DBG is still active.
+  * @param  __DBGLPMODE__ bit field to indicate in which Low Power mode DBG is still active.
   *         This parameter can be a value of
   *         - DBGMCU_SLEEP
   *         - DBGMCU_STOP
@@ -483,5 +482,5 @@ void HAL_SYSCFG_VREFINT_OutputSelect(uint32_t SYSCFG_Vrefint_OUTPUT);
 
 #endif /* __STM32L0xx_HAL_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+
 

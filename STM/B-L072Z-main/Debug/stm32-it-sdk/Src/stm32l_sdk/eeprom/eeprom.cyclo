@@ -1,0 +1,4 @@
+../stm32-it-sdk/Src/stm32l_sdk/eeprom/eeprom.c:44:6:_eeprom_write	9
+../stm32-it-sdk/Src/stm32l_sdk/eeprom/eeprom.c:77:6:_eeprom_read	7
+../stm32-it-sdk/Src/stm32l_sdk/eeprom/eeprom.c:103:10:__eepromRead	1
+../stm32-it-sdk/Src/stm32l_sdk/eeprom/eeprom.c:111:6:__eepromWrite	7

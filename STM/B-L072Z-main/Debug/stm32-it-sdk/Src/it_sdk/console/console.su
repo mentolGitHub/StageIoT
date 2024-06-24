@@ -1,0 +1,10 @@
+../stm32-it-sdk/Src/it_sdk/console/console.c:59:31:_itsdk_console_private	32	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:155:31:_itsdk_console_public	16	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:200:6:itsdk_console_setup	8	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:215:6:itsdk_console_loop	32	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:269:6:_itsdk_console_printf	96	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:290:13:_itsdk_console_processLine	80	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:398:13:_itsdk_console_processChar	16	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:431:6:itsdk_console_registerCommand	24	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:450:6:itsdk_console_removeCommand	24	static
+../stm32-it-sdk/Src/it_sdk/console/console.c:463:6:itsdk_console_existCommand	24	static

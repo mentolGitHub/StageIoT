@@ -1,0 +1,6 @@
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:74:6:certif_running	1
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:79:6:certif_DownLinkIncrement	1
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:84:6:certif_linkCheck	1
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:91:13:certif_tx	7
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:159:6:certif_rx	19
+../stm32-it-sdk/Src/drivers/lorawan/core/lora-test.c:339:13:OnCertifTxNextPacketTimerEvent	1

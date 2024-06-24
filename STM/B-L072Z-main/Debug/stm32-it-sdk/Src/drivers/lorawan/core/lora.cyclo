@@ -1,0 +1,2 @@
+../stm32-it-sdk/Src/drivers/lorawan/core/lora.c:90:6:TraceUpLinkFrame	3
+../stm32-it-sdk/Src/drivers/lorawan/core/lora.c:135:6:TraceDownLinkFrame	1

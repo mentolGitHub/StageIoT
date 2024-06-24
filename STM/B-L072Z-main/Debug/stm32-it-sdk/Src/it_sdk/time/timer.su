@@ -1,0 +1,11 @@
+../stm32-it-sdk/Src/it_sdk/time/timer.c:55:22:itsdk_hwtimer_sync_run	24	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:74:22:itsdk_hwtimer_background_start	8	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:84:10:itsdk_hwtimer_getRunningDurationUs	8	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:94:22:itsdk_hwtimer_background_stop	8	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:124:22:itsdk_stimer_register	40	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:164:22:itsdk_stimer_stop	24	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:186:6:itsdk_stimer_isRunning	24	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:202:6:itsdk_stimer_isLowPowerSwitchAutorized	16	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:216:23:itsdk_stimer_get	24	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:239:6:itsdk_stimer_run	24	static
+../stm32-it-sdk/Src/it_sdk/time/timer.c:255:10:itsdk_stimer_nextTimeoutMs	32	static

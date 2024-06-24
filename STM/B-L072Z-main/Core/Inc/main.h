@@ -29,7 +29,6 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l0xx_hal.h"
-#include "stm32l0xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -75,6 +74,8 @@ void Error_Handler(void);
 #define RADIO_DIO_3_Pin GPIO_PIN_13
 #define RADIO_DIO_3_GPIO_Port GPIOC
 #define RADIO_DIO_3_EXTI_IRQn EXTI4_15_IRQn
+#define USART1_RX_Pin GPIO_PIN_10
+#define USART1_RX_GPIO_Port GPIOA
 #define LD4_Pin GPIO_PIN_7
 #define LD4_GPIO_Port GPIOB
 #define RADIO_ANT_SWITCH_TX_BOOST_Pin GPIO_PIN_1
@@ -84,6 +85,8 @@ void Error_Handler(void);
 #define RADIO_DIO_1_Pin GPIO_PIN_1
 #define RADIO_DIO_1_GPIO_Port GPIOB
 #define RADIO_DIO_1_EXTI_IRQn EXTI0_1_IRQn
+#define USART1_TX_Pin GPIO_PIN_9
+#define USART1_TX_GPIO_Port GPIOA
 #define B1_Pin GPIO_PIN_2
 #define B1_GPIO_Port GPIOB
 #define RADIO_ANT_SWITCH_RX_Pin GPIO_PIN_1
@@ -103,6 +106,7 @@ void Error_Handler(void);
 #define LD2_GPIO_Port GPIOA
 #define STLINK_TX_Pin GPIO_PIN_3
 #define STLINK_TX_GPIO_Port GPIOA
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -112,5 +116,3 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

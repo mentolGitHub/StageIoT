@@ -1,0 +1,4 @@
+../Core/Src/project_main.c:71:6:HAL_UART_RxCpltCallback	16	static
+../Core/Src/project_main.c:77:6:task	560	static,ignoring_inline_asm
+../Core/Src/project_main.c:170:6:project_setup	72	static
+../Core/Src/project_main.c:226:6:project_loop	8	static

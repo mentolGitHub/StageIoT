@@ -1,0 +1,2 @@
+../Core/Src/gpio.c:45:6:MX_GPIO_Init	56	static
+../Core/Src/gpio.c:135:6:stm32l_lowPowerRestoreGpioConfig	32	static

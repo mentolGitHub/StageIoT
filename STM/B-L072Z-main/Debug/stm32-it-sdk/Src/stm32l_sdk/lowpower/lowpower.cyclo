@@ -1,0 +1,7 @@
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:63:57:stm32l_lowPowerSetup	6
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:198:57:stm32l_lowPowerResume	4
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:284:13:stm32l_lowPowerRestoreGpioConfig	1
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:291:6:__GpioAnalog	3
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:322:6:_stm32l_disableGpios	1
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:383:6:__LP_GPIO_IRQHandler	1
+../stm32-it-sdk/Src/stm32l_sdk/lowpower/lowpower.c:395:6:HAL_UARTEx_WakeupCallback	1

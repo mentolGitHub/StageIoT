@@ -1,0 +1,2 @@
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_state.c:36:6:itsdk_state_init	8	static
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_state.c:74:6:itsdk_print_state	8	static

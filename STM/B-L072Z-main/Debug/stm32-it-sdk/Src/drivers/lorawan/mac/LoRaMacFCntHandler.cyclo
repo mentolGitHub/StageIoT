@@ -1,0 +1,10 @@
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:99:13:NvmCtxChanged	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:108:28:LoRaMacFCntHandlerInit	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:119:28:LoRaMacFCntHandlerRestoreNvmCtx	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:133:7:LoRaMacFCntHandlerGetNvmCtx	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:139:28:LoRaMacGetFCntDown	17
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:232:28:LoRaMacSetFCntDown	9
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:268:28:LoRaMacGetFCntUp	2
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:280:28:LoRaMacSetFCntUp	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:289:28:LoRaMacResetFCnts	1
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacFCntHandler.c:307:28:LoRaMacFCntHandlerSetMulticastReference	2

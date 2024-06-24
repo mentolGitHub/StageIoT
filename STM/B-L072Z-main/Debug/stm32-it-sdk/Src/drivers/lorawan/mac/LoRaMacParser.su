@@ -1,0 +1,2 @@
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacParser.c:25:23:LoRaMacParserJoinAccept	32	static
+../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacParser.c:69:23:LoRaMacParserData	32	static

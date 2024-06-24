@@ -1,0 +1,10 @@
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:67:28:itsdk_config_sdk_resetToFactory	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:120:29:itsdk_config_app_resetToFactory	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:130:21:itsdk_config_resetToFactory	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:145:21:itsdk_config_flushConfig	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:164:20:itsdk_config_loadConfiguration	8
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:227:27:itsdk_config_app_commitConfiguration	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:236:20:itsdk_config_commitConfiguration	5
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:279:15:itsdk_config_app_printConfig	1
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:286:32:_itsdk_config_consolePublic	7
+../stm32-it-sdk/Src/it_sdk/eeprom/sdk_config.c:373:31:_itsdk_config_consolePriv	45

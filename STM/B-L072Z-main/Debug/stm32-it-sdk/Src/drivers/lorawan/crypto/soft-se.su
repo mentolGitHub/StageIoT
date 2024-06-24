@@ -1,0 +1,12 @@
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:88:23:GetKeyByID	32	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:110:23:ComputeCmac	56	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:142:13:DummyCB	8	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:151:23:SecureElementInit	32	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:191:23:SecureElementRestoreNvmCtx	16	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:205:7:SecureElementGetNvmCtx	16	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:211:23:SecureElementSetKey	56	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:246:23:SecureElementComputeAesCmac	32	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:257:23:SecureElementVerifyAesCmac	48	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:281:23:SecureElementAesEncrypt	40	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:315:23:SecureElementDeriveAndStoreKey	56	static
+../stm32-it-sdk/Src/drivers/lorawan/crypto/soft-se.c:360:23:SecureElementRandomNumber	16	static

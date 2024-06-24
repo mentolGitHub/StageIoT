@@ -42,7 +42,7 @@
 #include <drivers/sx1276/sx1276.h>
 
 
-#define COMFREQS	(1*60*1000)
+#define COMFREQS	(1*5*1000)
 #define TASKDELAYMS	(1000)
 
 struct state {
@@ -65,11 +65,32 @@ struct state {
 #define BUTTON_PIN 	__LP_GPIO_2
 
 
+uint8_t tx_buff[10] = "clement !\n";
+uint8_t rx_buff[10];
+
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	log_info("======recu======");
+	HAL_UART_Receive_IT(&huart1, rx_buff, 10); //You need to toggle a breakpoint on this line!
+}
 
 void task() {
 
 	// Just to get something provinf the activity
 	uint8_t t[4] = { '/','|','\\','-'};
+
+
+	  if(HAL_UART_Receive(&huart1, rx_buff, 10, 1000)==HAL_OK) //if transfer is successful
+	  {
+	    HAL_UART_Transmit(&huart1, rx_buff, 10, 1000); //send back the received data
+		log_info("======recu2======");
+	  } else {
+	    __NOP();
+	  }
+
+	//test d'envoi sur l'uart1
+	HAL_UART_Transmit(&huart1, tx_buff, 10, 1000);
+
 	log_info("\r%c ",t[s_state.loops & 3]);
 	s_state.led = (s_state.led==__GPIO_VAL_SET)?__GPIO_VAL_RESET:__GPIO_VAL_SET;
 	gpio_change(LED1_PORT, LED1_PIN,s_state.led);
@@ -100,7 +121,8 @@ void task() {
 		}
 		if ( s_state.setup == BOOL_TRUE && s_state.lastComMS > COMFREQS) {
 			// Send a LoRaWan Frame
-			uint8_t t[20] = {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19};
+			uint8_t * data[100];
+			*data = "{\"timestamp\": \"2023-04-01T12:00:00Z\",\"luminosite\": 750,\"pression\": 1013.25,\"temperature\": 22.5}";
 			if ( !itsdk_lorawan_hasjoined() ) {
 				log_info("Connecting LoRaWAN ");
 				if ( itsdk_lorawan_join_sync() == LORAWAN_JOIN_SUCCESS ) {
@@ -114,11 +136,11 @@ void task() {
 			} else {
 				log_info("Fire a LoRaWAN message ");
 				uint8_t port;
-				uint8_t size=16;
-				uint8_t rx[16];
+				uint8_t size=100;
+				uint8_t rx[100];
 				itsdk_lorawan_send_t r = itsdk_lorawan_send_sync(
-						t,						// Payload
-						16,						// Payload size
+						data,						// Payload
+						100,						// Payload size
 						1,						// Port
 						__LORAWAN_DR_5,			// Speed
 						LORAWAN_SEND_CONFIRMED,	// With a ack
@@ -159,6 +181,7 @@ void project_setup() {
 	gpio_change(LED1_PORT, LED1_PIN,s_state.led);
 	gpio_reset(LED4_PORT,LED4_PIN);
 
+	HAL_UART_Receive_IT(&huart1, rx_buff, 10);
 	itdt_sched_registerSched(TASKDELAYMS,ITSDK_SCHED_CONF_IMMEDIATE, &task);
 
 	static itsdk_lorawan_channelInit_t channels= ITSDK_LORAWAN_CHANNEL;

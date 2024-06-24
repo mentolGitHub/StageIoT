@@ -1,0 +1,6 @@
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:49:6:eeprom_write	48	static
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:77:6:eeprom_read	56	static
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:117:6:eeprom_getConfigOffset	32	static
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:136:6:eeprom_getConfigSize	48	static
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:155:6:eeprom_getPostConfigOffset	24	static
+../stm32-it-sdk/Src/it_sdk/eeprom/eeprom.c:170:6:eeprom_clearAllEprom	16	static

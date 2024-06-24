@@ -1,15 +1,16 @@
-import base64
-import paho.mqtt.subscribe as subscribe
-import paho.mqtt.publish as publish
-import json
 import time
 import threading
 import mysql.connector
+import mysql.connector.abstracts
+import mysql.opentelemetry
 import Interface
 import MQTT
 import utils
+from queue import Queue
 
 Config={"db_name":"plateformeIot"}
+db_Cursor : mysql.connector.abstracts.MySQLCursorAbstract
+
 
 def receive_callback(msg):
     print(msg)
@@ -20,13 +21,14 @@ def api_callback(cmd):
 
 
 def init_db():
+    global db_Cursor
     mydb = mysql.connector.connect(
     host="localhost",
     user="root"
     )
     cursor = mydb.cursor()
     
-    # Recherche de la DB
+    # Seaching for DB
     liste_db=[]
     cursor.execute("SHOW DATABASES LIKE %s;", (Config["db_name"],))
     for i in cursor:
@@ -40,11 +42,12 @@ def init_db():
         print("Aucune base de données de ce nom n'a été trouvé. Voulez vous la créer ? [y/n] :")
         print("Pas encore implémenté")
     
-    # Import des tables (si elles n'existent pas)
+    # Import tables (if they dont exist yet)
     path_setup_DB = "stageiot.sql"
     sql=open(path_setup_DB).read()
     cursor.execute(sql)
     utils.print_SQL_response(cursor)
+    db_Cursor=cursor
 
 
 
@@ -53,14 +56,14 @@ def init_db():
 def init_config():
     conf = open("config.conf")
     
-    # parse chaque ligne
-    for ligne in conf:
-        # '=' est le centre du message avec key '=' value
-        if "=" in ligne:
-            k,v=ligne.split("=")
+    # parsing each line
+    for line in conf:
+        # '=' is the center of the msg with the syntax : "<key>=<value>"
+        if '=' in line:
+            k,v=line.split('=')
             v= v.strip() # on retire les espaces
             for key in Config.keys():
-                # si la clé est dans les clé de la Config on associe la valeur
+                # if the key is in the Config keys we take it's value
                 if k==key and v!="":
                     Config[key]=v
                 
@@ -71,9 +74,19 @@ def init_server():
     init_db()
     
 def run_server():
-    threadMQTT = threading.Thread(target=MQTT.MQTTnode)
-    threadIf = threading.Thread(target=Interface.Ifnode)
+    #Queues and nodes parameters
+    Q_Lora = Queue()
+    Q_4G = Queue()
+    coordsTTN = ""
+    # création des threads
+    threadMQTT = threading.Thread(target=MQTT.MQTTnode,args=[coordsTTN,Q_Lora])
+    threadIf = threading.Thread(target=Interface.Ifnode,args=[Q_Lora,Q_4G,db_Cursor])
+
+    # start les threads
     threadMQTT.start()
+    threadIf.start()
+
+
     while threading.active_count()>1:
         time.sleep(1)
 

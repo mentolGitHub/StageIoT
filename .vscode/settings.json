@@ -9,5 +9,8 @@
         "string_view": "cpp",
         "initializer_list": "cpp",
         "sys_app.h": "c"
-    }
+    },
+    "python.analysis.extraPaths": [
+        "./PlateformeCollecteDonnees/src/serveur"
+    ]
 }

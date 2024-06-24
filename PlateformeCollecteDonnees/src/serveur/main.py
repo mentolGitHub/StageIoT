@@ -5,7 +5,8 @@ import json
 import time
 import threading
 import mysql.connector
-
+import Interface
+import MQTT
 import utils
 
 Config={"db_name":"plateformeIot"}
@@ -70,8 +71,11 @@ def init_server():
     init_db()
     
 def run_server():
-    treadMQTT = threading.Thread(target=)
-    threadIf = threading.Thread(target=)
+    threadMQTT = threading.Thread(target=MQTT.MQTTnode)
+    threadIf = threading.Thread(target=Interface.Ifnode)
+    threadMQTT.start()
+    while threading.active_count()>1:
+        time.sleep(1)
 
 def main():
     init_server()

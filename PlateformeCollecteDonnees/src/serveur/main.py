@@ -22,40 +22,43 @@ def api_callback(cmd):
 
 def init_db():
     global db_Cursor
-    mydb = mysql.connector.connect(
-    host="localhost",
-    user="root"
-    )
-    cursor = mydb.cursor()
-    
-    # Seaching for DB
-    liste_db=[]
-    cursor.execute("SHOW DATABASES LIKE %s;", (Config["db_name"],))
-    for i in cursor:
-        liste_db+=i
+    try : 
+        mydb = mysql.connector.connect(
+        host="localhost",
+        user="root"
+        )
+        
+        cursor = mydb.cursor()
+        
+        # Seaching for DB
+        liste_db=[]
+        cursor.execute("SHOW DATABASES LIKE %s;", (Config["db_name"],))
+        for i in cursor:
+            liste_db+=i
 
-    print(liste_db)
-    if len(liste_db)== 1:
-        db_query = "USE "+ Config["db_name"]
-        cursor.execute(db_query)
-    elif len(liste_db)==0:
-        print("Aucune base de données de ce nom n'a été trouvé. Voulez vous la créer ? [y/n] :")
-        print("Pas encore implémenté")
-    
-    # Import tables (if they dont exist yet)
-    path_setup_DB = __file__.rstrip("main.py")+"stageiot.sql"
-    sql=open(path_setup_DB).read()
-    cursor.execute(sql)
-    utils.print_SQL_response(cursor)
-    db_Cursor=cursor
-
-
+        print(liste_db)
+        if len(liste_db)== 1:
+            db_query = "USE "+ Config["db_name"]
+            cursor.execute(db_query)
+        elif len(liste_db)==0:
+            print("Aucune base de données de ce nom n'a été trouvé. Voulez vous la créer ? [y/n] :")
+            print("Pas encore implémenté")
+        
+        # Import tables (if they dont exist yet)
+        path_setup_DB = __file__.rsplit("/",1)[0]+"/stageiot.sql"
+        sql=open(path_setup_DB).read()
+        cursor.execute(sql)
+        utils.print_SQL_response(cursor)
+        db_Cursor=cursor
+    except mysql.connector.errors.ProgrammingError as e :
+        print(e)
+        exit(1)
 
 
 
 def init_config():
-    path = __file__.rstrip("main.py")+"config.conf"
-
+    path = __file__.rsplit("/",1)[0]+"/config.conf"
+    print(path)
     conf = open(path)
     
     # parsing each line

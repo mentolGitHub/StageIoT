@@ -23,12 +23,12 @@ void loop() {
   //   SerialPort.write(data.c_str());
   // }
   if (SerialBT.available()) {
-    data = "[esp]"+SerialBT.readString();
+    data = SerialBT.readString();
     Serial.write(data.c_str());
     SerialPort.write(data.c_str());
   }
   if (SerialPort.available()) {
-    data = "[STM]"+SerialPort.readString();
+    data = SerialPort.readString();
     Serial.write(data.c_str());
     SerialBT.print(data);
   }

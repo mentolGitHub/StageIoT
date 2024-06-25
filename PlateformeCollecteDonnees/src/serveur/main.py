@@ -2,7 +2,7 @@ import time
 import threading
 import mysql.connector
 import mysql.connector.abstracts
-import mysql.opentelemetry
+
 import Interface
 import MQTT
 import utils
@@ -43,7 +43,7 @@ def init_db():
         print("Pas encore implémenté")
     
     # Import tables (if they dont exist yet)
-    path_setup_DB = "stageiot.sql"
+    path_setup_DB = __file__.rstrip("main.py")+"stageiot.sql"
     sql=open(path_setup_DB).read()
     cursor.execute(sql)
     utils.print_SQL_response(cursor)
@@ -54,7 +54,9 @@ def init_db():
 
 
 def init_config():
-    conf = open("config.conf")
+    path = __file__.rstrip("main.py")+"config.conf"
+
+    conf = open(path)
     
     # parsing each line
     for line in conf:
@@ -90,7 +92,9 @@ def run_server():
     while threading.active_count()>1:
         time.sleep(1)
 
+
 def main():
+    
     init_server()
 
     run_server()

@@ -1,12 +1,11 @@
 import time
 import threading
+from queue import Queue
 import mysql.connector
 import mysql.connector.abstracts
-
 import Interface
 import MQTT
 import utils
-from queue import Queue
 
 Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot"}
 db_Cursor : mysql.connector.abstracts.MySQLCursorAbstract
@@ -19,15 +18,11 @@ def init_db():
     Beware that this might not be secure with respect to the config file (cant do secure "USE db" or some other query but there is still a minimal check)
     """
 
-
-
     global db_Cursor
     try : 
-        mydb = mysql.connector.connect(
-        host="localhost",
-        user=Config["SQL_username"]
+        #connect to mySQL
 
-        )
+        mydb = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
         
         cursor = mydb.cursor()
         
@@ -41,6 +36,7 @@ def init_db():
         if len(liste_db)== 1:
             db_query = "USE "+ utils.sql_var(Config["db_name"])
             cursor.execute(db_query)
+
         elif len(liste_db)==0:
             print("Aucune base de données de ce nom n'a été trouvé. Voulez vous la créer ? ", end="")
             valid = False
@@ -64,13 +60,13 @@ def init_db():
                     else :
                         print("Veulliez respecter la syntaxe ", end="")
                         
-        
         # Import tables (if they dont exist yet)
         path_setup_DB = __file__.rsplit("/",1)[0]+"/"+Config['db_init_file']+".sql"
         sql=open(path_setup_DB).read()
         cursor.execute(sql)
         utils.print_SQL_response(cursor)
         db_Cursor=cursor
+
     except mysql.connector.errors.ProgrammingError as e :
         print(e)
         exit(1)
@@ -78,6 +74,7 @@ def init_db():
 
 
 def init_config():
+    
     """
     Initialise the program Config
     The config file must be in the same folder/directory as the program
@@ -104,17 +101,21 @@ def init_config():
     print(Config)
 
 def init_server():
+
     """
     Initialise the server config and database.
     """
+
     init_config()
     init_db()
     
 def run_server():
+
     """
     Run the server nodes. A node is a thread with a functionality (it may create other threads that fulfill the same goal.).
     We link the diferents threads with Queues. Thoses represent the channels and we can determine the form of the data with it.
     """
+
     #Queues and nodes parameters
     Q_Lora = Queue()
     Q_4G = Queue()
@@ -133,13 +134,15 @@ def run_server():
 
 
 def main():
+
     """
     This is the main function of the Data Collecting plateform server.
     This program uses a MySQL database.
     You can modify some configuration settings in the config.conf file that is in the same folder/directory as this program.
+    DB auth not implemented yet, use a user with no password.
     """
-    init_server()
 
+    init_server()
     run_server()
 
 

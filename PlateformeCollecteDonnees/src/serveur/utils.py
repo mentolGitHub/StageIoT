@@ -15,5 +15,6 @@ def sql_var(str : str):
 
     var = str.strip("--")
     var = var.strip(" ")
+    var = var.strip(";")
 
     return var

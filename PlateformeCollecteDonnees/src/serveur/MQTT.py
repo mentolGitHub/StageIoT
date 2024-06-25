@@ -7,6 +7,10 @@ Q_output : Queue
 mqtt_username = "stm32lora1@ttn"
 password = "NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA"
 device_name = "eui-70b3d57ed006898c"
+
+
+
+
 topics=['v3/'+mqtt_username+'/devices/'+device_name+'/up']
 topicsdown=['v3/'+mqtt_username+'/devices/'+device_name+'/down/push']
 auth={'username':mqtt_username,'password':password}

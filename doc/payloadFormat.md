@@ -1,4 +1,4 @@
-# Format des trammes d'envoi de donnnées
+# Format des trammes d'envoi de donnnées LoRa
 
 ## Table des id de trammes
 
@@ -32,3 +32,8 @@ ce format permet à l'utilisateur de définir sa propre tramme
 | 3  | time      | Vitesse Angulaire X  | Vitesse Angulaire Y   | Vitesse Angulaire Z   | Pression       |               |               |
 | 4  | time      | Accelération X       | Accelération Y        | Accelération Z        | Température    |               |               |
 | 5  | time      | Azimut               | Distance              | Présence              | Luminosité     | Humidité      |               |
+
+
+# Format des trammes d'envoi de donnnées Bluetooth
+
+s, timestamp, latitude, longitude, altitude, luminosité, vitesse angulaire X, vitesse angulaire Y, vitesse angulaire Z, pression, accélérationX, accélérationY, accélérationZ, angle, azimut

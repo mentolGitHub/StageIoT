@@ -1,4 +1,0 @@
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:26:27:LoRaMacSerializerJoinRequest	32	static
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:62:27:LoRaMacSerializerReJoinType1	32	static
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:93:27:LoRaMacSerializerReJoinType0or2	32	static
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:124:27:LoRaMacSerializerData	32	static

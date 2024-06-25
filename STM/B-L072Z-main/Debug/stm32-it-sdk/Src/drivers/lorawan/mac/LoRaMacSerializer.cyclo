@@ -1,4 +1,0 @@
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:26:27:LoRaMacSerializerJoinRequest	4
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:62:27:LoRaMacSerializerReJoinType1	4
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:93:27:LoRaMacSerializerReJoinType0or2	4
-../stm32-it-sdk/Src/drivers/lorawan/mac/LoRaMacSerializer.c:124:27:LoRaMacSerializerData	7

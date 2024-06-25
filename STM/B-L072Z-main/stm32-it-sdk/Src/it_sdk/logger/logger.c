@@ -134,7 +134,7 @@ void log_error(char *format, ...) {
     va_end(args);
 
     if ( __log.onSerial1 ) {
-      serial1_print(fmtBuffer);
+      //serial1_print(fmtBuffer);
     }
 
     if ( __log.onSerial2 ) {
@@ -168,7 +168,7 @@ void log_warn(char *format, ...) {
     va_end(args);
 
     if ( __log.onSerial1 ) {
-    	serial1_print(fmtBuffer);
+    	//serial1_print(fmtBuffer);
     }
 
     if ( __log.onSerial2 ) {
@@ -202,7 +202,7 @@ void log_info(char *format, ...) {
     va_end(args);
 
     if ( __log.onSerial1 ) {
-    	serial1_print(fmtBuffer);
+    	//serial1_print(fmtBuffer);
     }
 
     if ( __log.onSerial2 ) {

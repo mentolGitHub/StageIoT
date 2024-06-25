@@ -1,4 +1,0 @@
-../stm32-it-sdk/Src/it_sdk/lowpower/lowpower.c:48:38:lowPower_switch	8	static
-../stm32-it-sdk/Src/it_sdk/lowpower/lowpower.c:88:6:lowPower_enable	8	static
-../stm32-it-sdk/Src/it_sdk/lowpower/lowpower.c:95:6:lowPower_disable	8	static
-../stm32-it-sdk/Src/it_sdk/lowpower/lowpower.c:104:10:lowPower_delayMs	24	static

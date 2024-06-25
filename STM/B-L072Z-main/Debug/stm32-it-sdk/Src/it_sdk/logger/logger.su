@@ -1,9 +1,0 @@
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:59:6:log_init	16	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:85:10:logger_close	8	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:110:6:log_cat	8	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:119:6:log_clean	8	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:127:6:log_error	96	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:161:6:log_warn	96	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:195:6:log_info	96	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:228:6:log_debug	96	static
-../stm32-it-sdk/Src/it_sdk/logger/logger.c:261:6:log_any	96	static

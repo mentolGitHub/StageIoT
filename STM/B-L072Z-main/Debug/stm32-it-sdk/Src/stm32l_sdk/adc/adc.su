@@ -1,5 +1,0 @@
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:72:10:__getAdcValue	24	static,ignoring_inline_asm
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:233:9:adc_getTemperature	32	static
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:256:10:adc_getVdd	16	static
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:270:10:adc_getVBat	8	static
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:285:10:adc_getValue	56	static

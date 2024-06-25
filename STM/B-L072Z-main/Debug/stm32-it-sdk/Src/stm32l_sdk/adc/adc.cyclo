@@ -1,5 +1,0 @@
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:72:10:__getAdcValue	8
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:233:9:adc_getTemperature	1
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:256:10:adc_getVdd	4
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:270:10:adc_getVBat	1
-../stm32-it-sdk/Src/stm32l_sdk/adc/adc.c:285:10:adc_getValue	19

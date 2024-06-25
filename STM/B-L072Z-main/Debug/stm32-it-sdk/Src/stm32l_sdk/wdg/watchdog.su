@@ -1,2 +1,0 @@
-../stm32-it-sdk/Src/stm32l_sdk/wdg/watchdog.c:49:6:wdg_setupWithMaxMs	24	static
-../stm32-it-sdk/Src/stm32l_sdk/wdg/watchdog.c:79:6:wdg_refresh	8	static

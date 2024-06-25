@@ -1,4 +1,0 @@
-../Core/Src/project_main.c:71:6:HAL_UART_RxCpltCallback	1
-../Core/Src/project_main.c:77:6:task	13
-../Core/Src/project_main.c:170:6:project_setup	2
-../Core/Src/project_main.c:226:6:project_loop	1

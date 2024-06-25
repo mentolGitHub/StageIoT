@@ -1,7 +1,0 @@
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:30:9:rand1	8	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:35:6:srand1	16	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:41:9:randr	16	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:46:6:memcpy1	24	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:54:6:memcpyr	24	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:63:6:memset1	16	static
-../stm32-it-sdk/Src/drivers/lorawan/utilities.c:71:8:Nibble2HexChar	16	static

@@ -39,207 +39,207 @@
 #include <drivers/SeggerRTT/SEGGER_RTT.h>
 #endif
 
-// ---------------------------------------------------------------------------
-// serial 1 - is mapped to LPUART1
-// ---------------------------------------------------------------------------
-
-#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
-uint8_t __serial1_buffer[ITSDK_WITH_UART_RXIRQ_BUFSZ];
-volatile uint8_t __serial1_bufferRd;
-volatile uint8_t __serial1_bufferWr;
-#endif
+//// ---------------------------------------------------------------------------
+//// serial 1 - is mapped to LPUART1
+//// ---------------------------------------------------------------------------
+//
+//#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
+//uint8_t __serial1_buffer[ITSDK_WITH_UART_RXIRQ_BUFSZ];
+//volatile uint8_t __serial1_bufferRd;
+//volatile uint8_t __serial1_bufferWr;
+//#endif
 #if ( ITSDK_WITH_UART_RXIRQ & __UART_USART2 ) > 0
 uint8_t __serial2_buffer[ITSDK_WITH_UART_RXIRQ_BUFSZ];
 volatile uint8_t __serial2_bufferRd;
 volatile uint8_t __serial2_bufferWr;
 #endif
-
-
-/**
- * Init the Serial 1 extra configurations
- */
-void serial1_init() {
-#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
-	#if ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
-		UART_HandleTypeDef * _uart = &hlpuart1;
-	#elif  ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0
-		UART_HandleTypeDef * _uart = &huart1;
-	#endif
-    __HAL_UART_ENABLE_IT(_uart,UART_IT_ERR);
-    __HAL_UART_ENABLE_IT(_uart,UART_IT_RXNE);
-    __HAL_UART_DISABLE_IT(_uart,UART_IT_TC);
-    __HAL_UART_DISABLE_IT(_uart,UART_IT_TXE);
-    // Clear pending interrupt & co
-    HAL_UART_Receive_IT(_uart, __serial1_buffer, 1);
-    _uart->Instance->RDR;
-    _uart->Instance->ISR;
-    _uart->Instance->ICR;
-    // Reset circular buffer
-    __serial1_bufferRd = 0;
-    __serial1_bufferWr = 0;
-#endif
-}
-
-/**
- * Connect & configure the serial1
- */
-void serial1_connect() {
-#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0 || ( ITSDK_WITH_UART & __UART_USART1) > 0
-	#if (ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-		UART_HandleTypeDef * _uart = &hlpuart1;
-	#elif  ( ITSDK_WITH_UART & __UART_USART1) > 0
-		UART_HandleTypeDef * _uart = &huart1;
-	#endif
-		HAL_UART_MspInit(_uart);
-#endif
-}
-
-/**
- * Disconnect the serail1 from the pads
- */
-void serial1_disconnect() {
-#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0 || ( ITSDK_WITH_UART & __UART_USART1) > 0
-	#if (ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-		UART_HandleTypeDef * _uart = &hlpuart1;
-	#elif  ( ITSDK_WITH_UART & __UART_USART1) > 0
-		UART_HandleTypeDef * _uart = &huart1;
-	#endif
-		HAL_UART_MspDeInit(_uart);
-#endif
-}
-
-/**
- * flushing pending transmission
- */
-void serial1_flush() {
-  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-     while(__HAL_UART_GET_FLAG(&hlpuart1, USART_ISR_BUSY) == SET);
-     while(__HAL_UART_GET_FLAG(&hlpuart1, USART_ISR_TC) == RESET);
-  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-	   while(__HAL_UART_GET_FLAG(&huart1, USART_ISR_BUSY) == SET);
-	   while(__HAL_UART_GET_FLAG(&huart1, USART_ISR_TC) == RESET);
-  #endif
-}
-
-void serial1_print(char * msg) {
-  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-	HAL_UART_Transmit(&hlpuart1, (uint8_t*)msg, strlen(msg),0xFFFF);
-  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-	HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg),0xFFFF);
-  #endif
-}
-
-void serial1_write(uint8_t * bytes,uint16_t len) {
-  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-	HAL_UART_Transmit(&hlpuart1, bytes, len,0xFFFF);
-  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-	HAL_UART_Transmit(&huart1, bytes, len,0xFFFF);
-  #endif
-}
-
-void serial1_println(char * msg) {
-  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-	serial1_print(msg);
-	char * eol = "\r\n";
-	HAL_UART_Transmit(&hlpuart1, (uint8_t*)eol, strlen(eol),0xFFFF);
-  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-	serial1_print(msg);
-	char * eol = "\r\n";
-	HAL_UART_Transmit(&huart1, (uint8_t*)eol, strlen(eol),0xFFFF);
-  #endif
-}
-
-serial_read_response_e serial1_read(char * ch) {
-
-#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
-
-	if ( __serial1_bufferRd != __serial1_bufferWr ) {
-		// char available
-		*ch = __serial1_buffer[__serial1_bufferRd];
-		itsdk_enterCriticalSection();
-		__serial1_bufferRd = (__serial1_bufferRd + 1) & (ITSDK_WITH_UART_RXIRQ_BUFSZ-1);
-		itsdk_leaveCriticalSection();
-		if ( __serial1_bufferRd != __serial1_bufferWr ) {
-			return SERIAL_READ_PENDING_CHAR;
-		} else {
-			return SERIAL_READ_SUCCESS;
-		}
-	} else {
-		return SERIAL_READ_NOCHAR;
-	}
-
-
-#else
-
-  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-
-	// buffer overflow
-	if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_ORE)) {
-		__HAL_UART_CLEAR_FLAG(&hlpuart1, UART_FLAG_ORE);
-	}
-
-	// get one of the pending char if some.
-	if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_RXNE)){
-		*ch = hlpuart1.Instance->RDR & 0x1FF;
-		if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_RXNE)) {
-			return SERIAL_READ_PENDING_CHAR;
-		} else {
-			return SERIAL_READ_SUCCESS;
-		}
-	}
-	return SERIAL_READ_NOCHAR;
-  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-
-	// buffer overflow
-	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE)) {
-		__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_ORE);
-	}
-
-	// get one of the pending char if some.
-	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)){
-		*ch = huart1.Instance->RDR & 0x1FF;
-		if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)) {
-			return SERIAL_READ_PENDING_CHAR;
-		} else {
-			return SERIAL_READ_SUCCESS;
-		}
-	}
-	return SERIAL_READ_NOCHAR;
-  #else
-	return SERIAL_READ_FAILED;
-  #endif
-#endif
-}
-
-/**
- * Change the Uart setting baudrate
- * Return BOOL_TRUE on success
- */
-itsdk_bool_e serial1_changeBaudRate(serial_baudrate_e bd) {
-	UART_HandleTypeDef * lhuart;
-	#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
-		lhuart = &hlpuart1;
-	#elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
-		lhuart = &huart1;
-	#else
-		return BOOL_FALSE;
-	#endif
-	switch( bd ) {
-		case SERIAL_SPEED_4800 : lhuart->Init.BaudRate = 4800; break;
-		default:
-		case SERIAL_SPEED_9600 : lhuart->Init.BaudRate = 9600; break;
-		case SERIAL_SPEED_19200 : lhuart->Init.BaudRate = 19200; break;
-		case SERIAL_SPEED_38400 : lhuart->Init.BaudRate = 38400; break;
-		case SERIAL_SPEED_57600 : lhuart->Init.BaudRate = 57600; break;
-		case SERIAL_SPEED_115200 : lhuart->Init.BaudRate = 115200; break;
-	}
-	serial1_flush();
-	if (HAL_UART_Init(lhuart) != HAL_OK) {
-	  return BOOL_FALSE;
-	}
-	serial1_init();
-	return BOOL_TRUE;
-}
+//
+//
+///**
+// * Init the Serial 1 extra configurations
+// */
+//void serial1_init() {
+//#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
+//	#if ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
+//		UART_HandleTypeDef * _uart = &hlpuart1;
+//	#elif  ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0
+//		UART_HandleTypeDef * _uart = &huart1;
+//	#endif
+//    __HAL_UART_ENABLE_IT(_uart,UART_IT_ERR);
+//    __HAL_UART_ENABLE_IT(_uart,UART_IT_RXNE);
+//    __HAL_UART_DISABLE_IT(_uart,UART_IT_TC);
+//    __HAL_UART_DISABLE_IT(_uart,UART_IT_TXE);
+//    // Clear pending interrupt & co
+//    HAL_UART_Receive_IT(_uart, __serial1_buffer, 1);
+//    _uart->Instance->RDR;
+//    _uart->Instance->ISR;
+//    _uart->Instance->ICR;
+//    // Reset circular buffer
+//    __serial1_bufferRd = 0;
+//    __serial1_bufferWr = 0;
+//#endif
+//}
+//
+///**
+// * Connect & configure the serial1
+// */
+//void serial1_connect() {
+//#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0 || ( ITSDK_WITH_UART & __UART_USART1) > 0
+//	#if (ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//		UART_HandleTypeDef * _uart = &hlpuart1;
+//	#elif  ( ITSDK_WITH_UART & __UART_USART1) > 0
+//		UART_HandleTypeDef * _uart = &huart1;
+//	#endif
+//		HAL_UART_MspInit(_uart);
+//#endif
+//}
+//
+///**
+// * Disconnect the serail1 from the pads
+// */
+//void serial1_disconnect() {
+//#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0 || ( ITSDK_WITH_UART & __UART_USART1) > 0
+//	#if (ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//		UART_HandleTypeDef * _uart = &hlpuart1;
+//	#elif  ( ITSDK_WITH_UART & __UART_USART1) > 0
+//		UART_HandleTypeDef * _uart = &huart1;
+//	#endif
+//		HAL_UART_MspDeInit(_uart);
+//#endif
+//}
+//
+///**
+// * flushing pending transmission
+// */
+//void serial1_flush() {
+//  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//     while(__HAL_UART_GET_FLAG(&hlpuart1, USART_ISR_BUSY) == SET);
+//     while(__HAL_UART_GET_FLAG(&hlpuart1, USART_ISR_TC) == RESET);
+//  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//	   while(__HAL_UART_GET_FLAG(&huart1, USART_ISR_BUSY) == SET);
+//	   while(__HAL_UART_GET_FLAG(&huart1, USART_ISR_TC) == RESET);
+//  #endif
+//}
+//
+//void serial1_print(char * msg) {
+//  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//	HAL_UART_Transmit(&hlpuart1, (uint8_t*)msg, strlen(msg),0xFFFF);
+//  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//	HAL_UART_Transmit(&huart1, (uint8_t*)msg, strlen(msg),0xFFFF);
+//  #endif
+//}
+//
+//void serial1_write(uint8_t * bytes,uint16_t len) {
+//  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//	HAL_UART_Transmit(&hlpuart1, bytes, len,0xFFFF);
+//  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//	HAL_UART_Transmit(&huart1, bytes, len,0xFFFF);
+//  #endif
+//}
+//
+//void serial1_println(char * msg) {
+//  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//	serial1_print(msg);
+//	char * eol = "\r\n";
+//	HAL_UART_Transmit(&hlpuart1, (uint8_t*)eol, strlen(eol),0xFFFF);
+//  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//	serial1_print(msg);
+//	char * eol = "\r\n";
+//	HAL_UART_Transmit(&huart1, (uint8_t*)eol, strlen(eol),0xFFFF);
+//  #endif
+//}
+//
+//serial_read_response_e serial1_read(char * ch) {
+//
+//#if ( ITSDK_WITH_UART_RXIRQ & __UART_USART1 ) > 0 || ( ITSDK_WITH_UART_RXIRQ & __UART_LPUART1 ) > 0
+//
+//	if ( __serial1_bufferRd != __serial1_bufferWr ) {
+//		// char available
+//		*ch = __serial1_buffer[__serial1_bufferRd];
+//		itsdk_enterCriticalSection();
+//		__serial1_bufferRd = (__serial1_bufferRd + 1) & (ITSDK_WITH_UART_RXIRQ_BUFSZ-1);
+//		itsdk_leaveCriticalSection();
+//		if ( __serial1_bufferRd != __serial1_bufferWr ) {
+//			return SERIAL_READ_PENDING_CHAR;
+//		} else {
+//			return SERIAL_READ_SUCCESS;
+//		}
+//	} else {
+//		return SERIAL_READ_NOCHAR;
+//	}
+//
+//
+//#else
+//
+//  #if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//
+//	// buffer overflow
+//	if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_ORE)) {
+//		__HAL_UART_CLEAR_FLAG(&hlpuart1, UART_FLAG_ORE);
+//	}
+//
+//	// get one of the pending char if some.
+//	if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_RXNE)){
+//		*ch = hlpuart1.Instance->RDR & 0x1FF;
+//		if (__HAL_UART_GET_FLAG(&hlpuart1, UART_FLAG_RXNE)) {
+//			return SERIAL_READ_PENDING_CHAR;
+//		} else {
+//			return SERIAL_READ_SUCCESS;
+//		}
+//	}
+//	return SERIAL_READ_NOCHAR;
+//  #elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//
+//	// buffer overflow
+//	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_ORE)) {
+//		__HAL_UART_CLEAR_FLAG(&huart1, UART_FLAG_ORE);
+//	}
+//
+//	// get one of the pending char if some.
+//	if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)){
+//		*ch = huart1.Instance->RDR & 0x1FF;
+//		if (__HAL_UART_GET_FLAG(&huart1, UART_FLAG_RXNE)) {
+//			return SERIAL_READ_PENDING_CHAR;
+//		} else {
+//			return SERIAL_READ_SUCCESS;
+//		}
+//	}
+//	return SERIAL_READ_NOCHAR;
+//  #else
+//	return SERIAL_READ_FAILED;
+//  #endif
+//#endif
+//}
+//
+///**
+// * Change the Uart setting baudrate
+// * Return BOOL_TRUE on success
+// */
+//itsdk_bool_e serial1_changeBaudRate(serial_baudrate_e bd) {
+//	UART_HandleTypeDef * lhuart;
+//	#if ( ITSDK_WITH_UART & __UART_LPUART1 ) > 0
+//		lhuart = &hlpuart1;
+//	#elif ( ITSDK_WITH_UART & __UART_USART1 ) > 0
+//		lhuart = &huart1;
+//	#else
+//		return BOOL_FALSE;
+//	#endif
+//	switch( bd ) {
+//		case SERIAL_SPEED_4800 : lhuart->Init.BaudRate = 4800; break;
+//		default:
+//		case SERIAL_SPEED_9600 : lhuart->Init.BaudRate = 9600; break;
+//		case SERIAL_SPEED_19200 : lhuart->Init.BaudRate = 19200; break;
+//		case SERIAL_SPEED_38400 : lhuart->Init.BaudRate = 38400; break;
+//		case SERIAL_SPEED_57600 : lhuart->Init.BaudRate = 57600; break;
+//		case SERIAL_SPEED_115200 : lhuart->Init.BaudRate = 115200; break;
+//	}
+//	serial1_flush();
+//	if (HAL_UART_Init(lhuart) != HAL_OK) {
+//	  return BOOL_FALSE;
+//	}
+//	serial1_init();
+//	return BOOL_TRUE;
+//}
 
 // ---------------------------------------------------------------------------
 // serial 2 - is mapped to USART2

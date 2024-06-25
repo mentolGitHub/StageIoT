@@ -1,6 +1,0 @@
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:37:6:__timer_enable_clk	1
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:57:6:__timer_disable_clk	1
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:103:22:stm32l_hwtimer_sync_run	8
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:155:22:stm32l_hwtimer_background_start	1
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:172:10:stm32l_hwtimer_getDurationUs	2
-../stm32-it-sdk/Src/stm32l_sdk/timer/timer.c:186:6:HAL_TIM_PeriodElapsedCallback	2

@@ -1,7 +1,0 @@
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:41:6:itsdk_encrypt_cifferKey	3
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:57:6:itsdk_encrypt_unCifferKey	1
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:106:24:itsdk_encrypt_resetFactoryDefaults	1
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:119:32:itsdk_encrypt_aes_getNonce	1
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:137:31:itsdk_encrypt_aes_getSharedKey	1
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:159:31:itsdk_encrypt_aes_getMasterKey	5
-../stm32-it-sdk/Src/it_sdk/encrypt/tools.c:183:31:itsdk_encrypt_speck_getMasterKey	1

@@ -70,23 +70,21 @@ uint8_t rx_buff[10];
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
-	log_info("======recu======");
-	HAL_UART_Receive_IT(&huart1, rx_buff, 10); //You need to toggle a breakpoint on this line!
+	log_info("message recu : %s\n", rx_buff);
+	HAL_UART_Receive_IT(&huart1, rx_buff, 10);
 }
 
 void task() {
-
+	while (1)
+	{
+		HAL_UART_Transmit(&huart1, "clement !\n", 10, 1000);
+		log_info(".");
+		HAL_Delay(2000);
+	}
+/*
 	// Just to get something provinf the activity
 	uint8_t t[4] = { '/','|','\\','-'};
-
-
-	  if(HAL_UART_Receive(&huart1, rx_buff, 10, 1000)==HAL_OK) //if transfer is successful
-	  {
-	    HAL_UART_Transmit(&huart1, rx_buff, 10, 1000); //send back the received data
-		log_info("======recu2======");
-	  } else {
-	    __NOP();
-	  }
+	HAL_UART_Receive_IT(&huart1, rx_buff, 10);
 
 	//test d'envoi sur l'uart1
 	HAL_UART_Transmit(&huart1, tx_buff, 10, 1000);
@@ -161,7 +159,7 @@ void task() {
 			s_state.lastComMS += TASKDELAYMS;
 		}
 	}
-
+*/
 }
 
 
@@ -182,6 +180,7 @@ void project_setup() {
 	gpio_reset(LED4_PORT,LED4_PIN);
 
 	HAL_UART_Receive_IT(&huart1, rx_buff, 10);
+	//HAL_UART_Receive_IT(&huart2, rx_buff, 10);
 	itdt_sched_registerSched(TASKDELAYMS,ITSDK_SCHED_CONF_IMMEDIATE, &task);
 
 	static itsdk_lorawan_channelInit_t channels= ITSDK_LORAWAN_CHANNEL;

@@ -1,3 +1,0 @@
-../stm32-it-sdk/Src/stm32l_sdk/rtc/systick.c:63:6:HAL_IncTick	8	static
-../stm32-it-sdk/Src/stm32l_sdk/rtc/systick.c:69:6:HAL_SYSTICK_Callback	8	static
-../stm32-it-sdk/Src/stm32l_sdk/rtc/systick.c:79:6:systick_adjustTime	40	static

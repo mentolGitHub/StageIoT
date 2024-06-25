@@ -89,8 +89,6 @@ void Error_Handler(void);
 #define USART1_TX_GPIO_Port GPIOA
 #define B1_Pin GPIO_PIN_2
 #define B1_GPIO_Port GPIOB
-#define RADIO_ANT_SWITCH_RX_Pin GPIO_PIN_1
-#define RADIO_ANT_SWITCH_RX_GPIO_Port GPIOA
 #define RADIO_ANT_SWITCH_TX_RFO_Pin GPIO_PIN_2
 #define RADIO_ANT_SWITCH_TX_RFO_GPIO_Port GPIOC
 #define RADIO_MOSI_Pin GPIO_PIN_7

@@ -1,37 +1,35 @@
-DROP TABLE IF EXISTS 'Users';
+DROP TABLE IF EXISTS `Users`;
 
-CREATE TABLE 'Users' (
-    'id' int NOT NULL AUTO_INCREMENT,
-    'username' varchar(255) NOT NULL,
-    'password' varchar(255) NOT NULL,
-    'email' varchar(255) NOT NULL,
-    'role' varchar(255) NOT NULL,
-    PRIMARY KEY ('id')
+CREATE TABLE `Users` (
+    `id` int NOT NULL AUTO_INCREMENT,
+    `username` varchar(255) NOT NULL,
+    `password` varchar(255) NOT NULL,
+    `email` varchar(255) NOT NULL,
+    `role` varchar(255) NOT NULL,
+    PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS 'Data';
+DROP TABLE IF EXISTS `Data`;
 
-CREATE TABLE 'Data' (
-    'timestamp' datetime2 NOT NULL,
-    'temperature' float,
-    'humidity' float,
-    'luminosity' float,
-    'presence' tinyint(1),
-    'pression' float,
-    'longitude' ,
-    'latitude' ,
-    'altitude' ,
-    'angle' ,
-    'vitesse angulaire X' ,
-    'vitesse angulaire Y' ,
-    'vitesse angulaire Z' ,
-    'azimut' ,
-    'distance recul' float,
-    'humidite'
-
-    
-    PRIMARY KEY ('timestamp')
+CREATE TABLE `Data` (
+    `timestamp` datetime PRIMARY KEY NOT NULL,
+    `temperature` float DEFAULT NULL,
+    `humidity` float DEFAULT NULL,
+    `luminosity` float DEFAULT NULL,
+    `presence` tinyint(1) DEFAULT NULL,
+    `pression` float DEFAULT NULL,
+    `gps` POINT DEFAULT NULL,
+    `altitude` float DEFAULT NULL,
+    `angle` float DEFAULT NULL,
+    `vitesse_angulaire_X` float DEFAULT NULL,
+    `vitesse_angulaire_Y` float DEFAULT NULL,
+    `vitesse_angulaire_Z` float DEFAULT NULL,
+    `acceleration X` float DEFAULT NULL,
+    `acceleration Y` float DEFAULT NULL,
+    `acceleration Z` float DEFAULT NULL,
+    `azimut` float DEFAULT NULL,
+    `distance_recul` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO 'Users' ('id', 'username', 'password', 'email', 'role') VALUES (1, 'admin', 'admin', '', 'admin');
+INSERT INTO `Users` (`id`, `username`, `password`, `email`, `role`) VALUES (1, `admin`, `admin`, ``, `admin`);

@@ -32,6 +32,7 @@ ce format permet à l'utilisateur de définir sa propre tramme
 | 3  | time      | Vitesse Angulaire X  | Vitesse Angulaire Y   | Vitesse Angulaire Z   | Pression       |               |               |
 | 4  | time      | Accelération X       | Accelération Y        | Accelération Z        | Température    |               |               |
 | 5  | time      | Azimut               | Distance              | Présence              | Luminosité     | Humidité      |               |
+| 6  | time      | Charge moteur        |                       |                       |                |               |               |
 
 
 # Format des trammes d'envoi de donnnées Bluetooth

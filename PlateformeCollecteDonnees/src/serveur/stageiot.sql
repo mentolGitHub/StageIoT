@@ -1,6 +1,7 @@
-DROP TABLE IF EXISTS `Users`;
+#DROP TABLE IF EXISTS `Users`;
 
-CREATE TABLE `Users` (
+
+CREATE TABLE IF NOT EXISTS `Users` (
     `id` int NOT NULL AUTO_INCREMENT,
     `username` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
@@ -10,10 +11,10 @@ CREATE TABLE `Users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 
-DROP TABLE IF EXISTS `Data`;
+#DROP TABLE IF EXISTS `Data`;
 
-CREATE TABLE `Data` (
-    `timestamp` datetime PRIMARY KEY NOT NULL,
+CREATE TABLE IF NOT EXISTS `Data` (
+    `timestamp` DATETIME(3) PRIMARY KEY NOT NULL,
     `temperature` float DEFAULT NULL,
     `humidity` float DEFAULT NULL,
     `luminosity` float DEFAULT NULL,

@@ -7,7 +7,7 @@
 |------|-------------|--------------------------------------------------------------|
 | 0    | Système     | Permet au système de remonter des informations sur son état  |
 | 1    | Utilisateur | Permet à l'utilisateur d'ajouter ses propres données         |
-| 2-15 | Données     | Permet au systeme de collecte d'envoyer ses données       |
+| 2-15 | Données     | Permet au systeme de collecte d'envoyer ses données          |
 
 
 ## Trammes systèmes

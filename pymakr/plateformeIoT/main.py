@@ -42,9 +42,8 @@ s.setblocking(False) # rendre le socket non bloquant
 ####### Programme principal #######
 while 1 :
     #uart.write('test')
-    dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
+    #dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
     if uart.any() > 0:
         dataFromUart = uart.read(uart.any())    # Lecture des données UART
         s.send(dataFromUart)                    # Envoi des données UART par LoRa
-        print(dataFromUart)
     time.sleep(2)

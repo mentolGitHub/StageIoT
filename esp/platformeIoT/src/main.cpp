@@ -29,7 +29,7 @@ void traitementReceptionUart();
 void setup() 
 {
   Serial.begin(9600); //initialisation du port série
-  SerialPort.begin(9600, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
+  SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
   Serial.println("The device started, now you can pair it with bluetooth!");
 }
@@ -104,7 +104,7 @@ void traitementReceptionBluetooth()
       token = strtok(NULL, ",");
       i++;
     }
-    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut;
+    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "\n";
     SerialPort.print(loraPayload);
     Serial.println(loraPayload);
   }

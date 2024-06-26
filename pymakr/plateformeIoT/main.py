@@ -12,7 +12,7 @@ pycom.heartbeat(False) # Desactivation du mode led clignotante
 pycom.rgbled(0x000001) # Couleur led bleue pour signaler le démarrage
 
 ####### Initialisation UART #######
-uart = UART(1, baudrate=9600) # Tx : P3, Rx : P4
+uart = UART(1, baudrate=115200) # Tx : P3, Rx : P4
 
 ####### Initialisation LoRa #######
 lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868) # Initialise LoRa en mode LORAWAN.
@@ -37,13 +37,13 @@ s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
 s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5) # fixer le débit de données LoRaWAN
 
-s.setblocking(False) # rendre le socket non bloquant
+s.setblocking(True) # rendre le socket non bloquant
 
 ####### Programme principal #######
 while 1 :
     #uart.write('test')
     #dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
-    if uart.any() > 0:
-        dataFromUart = uart.read(uart.any())    # Lecture des données UART
-        s.send(dataFromUart)                    # Envoi des données UART par LoRa
-    time.sleep(2)
+    while uart.any() != 0:
+        dataFromUart = uart.readline()              # Lecture des données UART
+    print(dataFromUart)
+    s.send(dataFromUart)                    # Envoi des données UART par LoRa

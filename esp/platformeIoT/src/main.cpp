@@ -1,4 +1,4 @@
-acceleratio#include "BluetoothSerial.h"
+#include "BluetoothSerial.h"
 #include <HardwareSerial.h>
 #include <stdio.h>
 #include <string.h>
@@ -15,14 +15,13 @@ BluetoothSerial SerialBT;
 HardwareSerial SerialPort(2); 
 
 //variables de réception
-char dataFromBluetooth[] = "";
-char dataFromUart[] = "";
+String dataFromBluetooth;
+String dataFromUart;
 
 
 /* Déclaration des fonctions */
 
 void traitementReceptionBluetooth();
-void traitementDataFromBluetooth();
 void traitementReceptionUart();
 
 
@@ -48,78 +47,73 @@ void loop()
 
 void traitementReceptionBluetooth()
 {
-  char timestamp[], latitude[], longitude[], altitude[], luminosite[], vitesseAngulaireX[], vitesseAngulaireY[], vitesseAngulaireZ[], pression[], accelerationX[], accelerationY[], accelerationZ[], angle[], azimut[];
+  String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
   if (SerialBT.available()) {
     dataFromBluetooth = SerialBT.readString();
-    Serial.write(dataFromBluetooth.c_str());
-    SerialPort.write(dataFromBluetooth.c_str());
-  }
-}
-
-void traitementDataFromBluetooth()
-{
-  char *token = strtok(dataFromBluetooth, ",");
-  int i = 0;
-  while (token != NULL) {
-    while (token != 's' && token != NULL) {
+    char buffer[dataFromBluetooth.length() + 1];
+    dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
+    char *token = strtok(buffer, ",");
+    int i = 0;
+    while (token != NULL) {
+      switch (i) {
+        case 0:
+          break;
+        case 1:
+          timestamp = token;
+          break;
+        case 2:
+          latitude = token;
+          break;
+        case 3:
+          longitude = token;
+          break;
+        case 4:
+          altitude = token;
+          break;
+        case 5:
+          luminosite = token;
+          break;
+        case 6:
+          vitesseAngulaireX = token;
+          break;
+        case 7:
+          vitesseAngulaireY = token;
+          break;
+        case 8:
+          vitesseAngulaireZ = token;
+          break;
+        case 9:
+          pression = token;
+          break;
+        case 10:
+          accelerationX = token;
+          break;
+        case 11:
+          accelerationY = token;
+          break;
+        case 12:
+          accelerationZ = token;
+          break;
+        case 13:
+          angle = token;
+          break;
+        case 14:
+          azimut = token;
+          break;
+      }
       token = strtok(NULL, ",");
+      i++;
     }
-    switch (i) {
-      case 0:
-        timestamp = token;
-        break;
-      case 1:
-        latitude = token;
-        break;
-      case 2:
-        longitude = token;
-        break;
-      case 3:
-        altitude = token;
-        break;
-      case 4:
-        luminosite = token;
-        break;
-      case 5:
-        vitesseAngulaireX = token;
-        break;
-      case 6:
-        vitesseAngulaireY = token;
-        break;
-      case 7:
-        vitesseAngulaireZ = token;
-        break;
-      case 8:
-        pression = token;
-        break;
-      case 9:
-        accelerationX = token;
-        break;
-      case 10:
-        accelerationY = token;
-        break;
-      case 11:
-        accelerationZ = token;
-        break;
-      case 12:
-        angle = token;
-        break;
-      case 13:
-        azimut = token;
-        break;
-    }
-    token = strtok(NULL, ",");
-    i++;
+    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut;
+    SerialPort.print(loraPayload);
+    Serial.println(loraPayload);
   }
-  
 }
 
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
-    dataFromUart = SerialPort.readString();
     Serial.write(dataFromUart.c_str());
     SerialBT.print(dataFromUart);
   }
 }
-

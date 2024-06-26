@@ -17,9 +17,9 @@ uart = UART(1, baudrate=9600) # Tx : P3, Rx : P4
 ####### Initialisation LoRa #######
 lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868) # Initialise LoRa en mode LORAWAN.
 
-app_eui = ubinascii.unhexlify('70B3D57ED003A31C')
-app_key = ubinascii.unhexlify('76F43018D4D2BAD4EB6B433B0C7107D2')
-dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
+app_eui = ubinascii.unhexlify('7532159875321598')
+app_key = ubinascii.unhexlify('11CBA1678ECF54273F5834C41D82E57F')
+dev_eui = ubinascii.unhexlify('70B3D57ED0068A6F')
 
 ####### Connexion LoRa #######
 lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0) # Connexion au réseau LoRaWAN

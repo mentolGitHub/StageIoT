@@ -26,12 +26,12 @@ ce format permet à l'utilisateur de définir sa propre tramme
 
 ## Trammes de données
 
-| ID | timestamp | Donnée1              | Donnée2               | Donnée3               | Donnée4        | Donnée5       | taille totale |
-|----|-----------|----------------------|-----------------------|-----------------------|----------------|---------------|---------------|
-| 2  | time      | Longitude            | Latitude              | Altitude              | Angle          |               |               |
-| 3  | time      | Vitesse Angulaire X  | Vitesse Angulaire Y   | Vitesse Angulaire Z   | Pression       |               |               |
-| 4  | time      | Accelération X       | Accelération Y        | Accelération Z        | Température    |               |               |
-| 5  | time      | Azimut               | Distance              | Présence              | Luminosité     | Humidité      |               |
+| ID  | timestamp | Donnée               | Donnée                | Donnée                | Donnée         | Donnée        |  Donnée              |
+|-----|-----------|----------------------|-----------------------|-----------------------|----------------|---------------|----------------------|
+| 2   | time      | Latitude             | Longitude             | Altitude              | Angle          | luminosite    | Vitesse Angulaire X  |
+|     |           | Vitesse Angulaire Y  | Vitesse Angulaire Z   | Pression              | Accelération X | Accelération Y| Accelération Z       | 
+|     |           | Angle                | Azimut                |                       |                |               |                      |
+
 
 
 # Format des trammes d'envoi de donnnées Bluetooth

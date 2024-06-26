@@ -57,7 +57,7 @@ def save_DB(data,id=0):
     # print(query,data)
     
     db_cursor.execute(query,data)
-    print(db_cursor)
+    #print(db_cursor)
     db.commit()
     
 
@@ -75,7 +75,7 @@ def data_LoRa_handler(message):
         data = data_format
         t=datetime.datetime.fromtimestamp(int(values[0])/1000)
         
-        print(t)
+        #print(t)
         match id : 
             case 0 :
                 data['timestamp']=t
@@ -135,20 +135,23 @@ def data_LoRa_handler(message):
         print(e)
 
 def LoRa_msg_handler(msg):
-    message = json.loads(msg.payload)
-    
-    print(msg.payload)
-    type = msg.topic.split("/")[-1]
-    match type : 
-        case "join":
-            device = message['end_device_ids']['device_id']
-            print(device)
-        case "up":
-            data = message['uplink_message']['frm_payload']
-            data = base64.b64decode(data.encode())
-            data = data.decode()
-            #print(data)
-            data_LoRa_handler(data)
+    try :
+        message = json.loads(msg.payload)
+        
+        #print(msg.payload)
+        type = msg.topic.split("/")[-1]
+        match type : 
+            case "join":
+                device = message['end_device_ids']['device_id']
+                print(device)
+            case "up":
+                data = message['uplink_message']['frm_payload']
+                data = base64.b64decode(data.encode())
+                data = data.decode()
+                #print(data)
+                data_LoRa_handler(data)
+    except RuntimeError as e :
+        print(e)
 
 def LTE_msg_handler(msg):
     print(msg)

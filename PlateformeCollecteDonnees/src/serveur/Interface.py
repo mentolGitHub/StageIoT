@@ -132,6 +132,7 @@ def data_LoRa_handler(message):
             #print(data)
             save_DB(data,id)
     except ValueError as e :
+        print(message)
         print(e)
 
 def LoRa_msg_handler(msg):
@@ -150,7 +151,8 @@ def LoRa_msg_handler(msg):
                 data = data.decode()
                 #print(data)
                 data_LoRa_handler(data)
-    except RuntimeError as e :
+    except (RuntimeError,KeyError) as e :
+        print(msg.payload)
         print(e)
 
 def LTE_msg_handler(msg):

@@ -1,15 +1,14 @@
+import sys
 import time
 import threading
 from queue import Queue
 import mysql.connector
-import mysql.connector.abstracts
 import Interface
 import MQTT
 import utils
 
 Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot"}
-db_Cursor : mysql.connector.abstracts.MySQLCursorAbstract
-
+db : mysql.connector.MySQLConnection
 def init_db():
 
     """
@@ -18,12 +17,12 @@ def init_db():
     Beware that this might not be secure with respect to the config file (cant do secure "USE db" or some other query but there is still a minimal check)
     """
 
-    global db_Cursor
+    global db
     try : 
         #connect to mySQL
 
         mydb = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
-        
+        db=mydb
         cursor = mydb.cursor()
         
         # Seaching for DB
@@ -65,7 +64,7 @@ def init_db():
         sql=open(path_setup_DB).read()
         cursor.execute(sql)
         utils.print_SQL_response(cursor)
-        db_Cursor=cursor
+        
 
     except mysql.connector.errors.ProgrammingError as e :
         print(e)
@@ -122,15 +121,20 @@ def run_server():
     coordsTTN = ""
     # création des threads
     threadMQTT = threading.Thread(target=MQTT.MQTTnode,args=[coordsTTN,Q_Lora])
-    threadIf = threading.Thread(target=Interface.Ifnode,args=[Q_Lora,Q_4G,db_Cursor])
+    threadIf = threading.Thread(target=Interface.Ifnode,args=[Q_Lora,Q_4G,Config])
 
     # start les threads
-    threadMQTT.start()
-    threadIf.start()
+    try:
+        threadMQTT.start()
+        threadIf.start()
 
 
-    while threading.active_count()>1:
-        time.sleep(1)
+        while threading.active_count()>1:
+            time.sleep(1)
+    except (KeyboardInterrupt, SystemExit):
+        
+        sys.exit()
+    
 
 
 def main():

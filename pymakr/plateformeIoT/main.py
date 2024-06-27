@@ -4,6 +4,19 @@ import pycom
 import time
 import socket
 import ubinascii
+import struct
+
+def isfloat(num):
+    try:
+        float(num)
+        return True
+    except ValueError:
+        return False
+
+
+dataFromUart = ""
+idTramme = [2]
+sendBuffer = struct.pack('%si' %len(idTramme) , *idTramme)
 
 print("initialisation ...")
 
@@ -44,6 +57,22 @@ while 1 :
     #uart.write('test')
     #dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
     while uart.any() != 0:
-        dataFromUart = uart.readline()              # Lecture des données UART
-    print(dataFromUart)
-    s.send(dataFromUart)                    # Envoi des données UART par LoRa
+        dataFromUart = uart.readline().decode('utf-8')          # Lecture des données UART
+
+    if dataFromUart != "":
+        dataFromUart = dataFromUart.strip().split(',')
+        for i in range(len(dataFromUart)):
+            if dataFromUart[i].isdigit():
+                dataFromUart[i] = [int(dataFromUart[i])]
+                sendBuffer += struct.pack('%si' % len(dataFromUart[i]), *dataFromUart[i])
+            elif isfloat(dataFromUart[i]):
+                dataFromUart[i] = [float(dataFromUart[i])]
+                sendBuffer += struct.pack('%sf' % len(dataFromUart[i]), *dataFromUart[i])
+            else :
+                sendBuffer += dataFromUart[i].encode('utf-8')
+
+        
+#struct.pack('%sf' % len(floatlist), *floatlist)
+        print(sendBuffer)
+        s.send(sendBuffer)                  # Envoi des données UART par LoRa
+        sendBuffer = struct.pack('%si' %len(idTramme) , *idTramme)

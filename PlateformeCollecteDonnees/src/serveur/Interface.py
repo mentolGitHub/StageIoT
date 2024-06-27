@@ -102,27 +102,27 @@ def data_LoRa_handler(message):
                 data['angle']=float(values[12])
                 data['azimut']=float(values[13])
 
-            case 3 :
-                data['timestamp']=t
-                data['vitesse angulaire X']=values[1]
-                data['vitesse angulaire Y']=values[2]
-                data['vitesse angulaire Z']=values[3]
-                data['pression']=values[4]
+            # case 3 :
+            #     data['timestamp']=t
+            #     data['vitesse angulaire X']=values[1]
+            #     data['vitesse angulaire Y']=values[2]
+            #     data['vitesse angulaire Z']=values[3]
+            #     data['pression']=values[4]
 
-            case 4 :
-                data['timestamp']=t
-                data['acceleration X']=values[1]
-                data['acceleration Y']=values[2]
-                data['acceleration Z']=values[3]
-                data['temperature']=values[4]
+            # case 4 :
+            #     data['timestamp']=t
+            #     data['acceleration X']=values[1]
+            #     data['acceleration Y']=values[2]
+            #     data['acceleration Z']=values[3]
+            #     data['temperature']=values[4]
 
-            case 5 :
-                data['timestamp']=t
-                data['azimut']=values[1]
-                data['distance recul']=values[2]
-                data['presence']=values[3]
-                data['luminosite']=values[4]
-                data['humidite']=values[5]
+            # case 5 :
+            #     data['timestamp']=t
+            #     data['azimut']=values[1]
+            #     data['distance recul']=values[2]
+            #     data['presence']=values[3]
+            #     data['luminosite']=values[4]
+            #     data['humidite']=values[5]
 
             case _ :
                 #TODO : raise an error
@@ -148,7 +148,10 @@ def LoRa_msg_handler(msg):
             case "up":
                 data = message['uplink_message']['frm_payload']
                 data = base64.b64decode(data.encode())
-                data = data.decode()
+                try :
+                    data = data.decode()
+                except UnicodeDecodeError :
+                    data = data.hex()
                 #print(data)
                 data_LoRa_handler(data)
     except (RuntimeError,KeyError) as e :
@@ -171,7 +174,7 @@ def Ifnode(Q_Lora : Queue, Q_4G : Queue, Config):
     
     while True:
         while Q_Lora.empty() and Q_4G.empty():
-            time.sleep(0.1)
+            time.sleep(0.002)
         if not Q_Lora.empty():
             message = Q_Lora.get()
             LoRa_msg_handler(message)

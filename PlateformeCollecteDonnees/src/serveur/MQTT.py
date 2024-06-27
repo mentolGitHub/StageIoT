@@ -4,18 +4,18 @@ import paho.mqtt.client as mqtt
 Q_output : Queue
 
 
-mqtt_username = "stm32lora1@ttn"
-password = "NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA"
-device_name = "eui-70b3d57ed006898c"
+# mqtt_username = "stm32lora1@ttn"
+# password = "NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA"
+# device_name = "eui-70b3d57ed006898c"
+# hostname="eu1.cloud.thethings.network"
+# port =8883
 
 
 
 
-topics=['v3/'+mqtt_username+'/devices/'+device_name+'/up']
-topicsdown=['v3/'+mqtt_username+'/devices/'+device_name+'/down/push']
-auth={'username':mqtt_username,'password':password}
-hostname="eu1.cloud.thethings.network"
-port =8883
+# topics=['v3/'+mqtt_username+'/devices/'+device_name+'/up']
+# topicsdown=['v3/'+mqtt_username+'/devices/'+device_name+'/down/push']
+# auth={'username':mqtt_username,'password':password}
 
 # def send(data ,f_port=1 ):
 #     data = base64.b64encode(data)
@@ -63,10 +63,10 @@ def MQTTnode(input,Q_LoRa : Queue):
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
     mqttc.on_subscribe = on_subscribe
-    mqttc.username_pw_set(username=mqtt_username, password=password)
+    mqttc.username_pw_set(username=input['mqtt_username'], password=input['password'])
     # secure connection between TTN server and this server (MQTT client)
     mqttc.tls_set()	# default certification authority of the system
-    mqttc.connect(hostname,port,60)
+    mqttc.connect(input['hostname'],input['port'],60)
     mqttc.subscribe("#", 0)	# all device uplinks
     
     mqttc.loop_forever()

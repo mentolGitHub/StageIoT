@@ -7,14 +7,18 @@ import Interface
 import MQTT
 import utils
 
-Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot"}
+Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 
+        "APP_username":"stm32lora1@ttn" , "APP_password":"NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA", 
+        "APP_hostname":"eu1.cloud.thethings.network", "APP_port":"8883"}
 db : mysql.connector.MySQLConnection
+
 def init_db():
 
     """
     Initialise the data base. Retreive config info from the dict Config
     Select the db for the data collection plateform.
-    Beware that this might not be secure with respect to the config file (cant do secure "USE db" or some other query but there is still a minimal check)
+    Beware that this might not be secure with respect to the config file 
+    (cant do secure "USE db" or some other query but there is still a minimal check)
     """
 
     global db
@@ -118,7 +122,12 @@ def run_server():
     #Queues and nodes parameters
     Q_Lora = Queue()
     Q_4G = Queue()
-    coordsTTN = ""
+    coordsTTN = {
+        'mqtt_username' :Config["APP_username"],
+        'password' : Config["APP_password"],
+        'hostname':Config["APP_hostname"],
+        'port' : int(Config["APP_port"])
+    }
     # création des threads
     threadMQTT = threading.Thread(target=MQTT.MQTTnode,args=[coordsTTN,Q_Lora])
     threadIf = threading.Thread(target=Interface.Ifnode,args=[Q_Lora,Q_4G,Config])

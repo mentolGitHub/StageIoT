@@ -1,0 +1,91 @@
+from queue import Queue
+from flask import Flask, render_template, request, jsonify, send_file
+import io
+import csv
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+Q_out: Queue
+data_storage = []  # List to store received data
+
+@app.route('/')
+def accueil():
+    return render_template('index.html')
+
+@app.route('/post_data', methods=['POST'])
+def post_data():
+    if request.method == 'POST':
+        raw_data = request.get_data().decode('utf-8')
+        data_list = raw_data.strip().split(',')
+        if len(data_list) == 14:  # Ensure we have all expected fields
+            data = {
+                "timestamp": int(data_list[0]),
+                "latitude": float(data_list[1]),
+                "longitude": float(data_list[2]),
+                "altitude": float(data_list[3]),
+                "luminosity": float(data_list[4]),
+                "angular_velocity_x": float(data_list[5]),
+                "angular_velocity_y": float(data_list[6]),
+                "angular_velocity_z": float(data_list[7]),
+                "pressure": float(data_list[8]),
+                "acceleration_x": float(data_list[9]),
+                "acceleration_y": float(data_list[10]),
+                "acceleration_z": float(data_list[11]),
+                "angle": float(data_list[12]),
+                "azimuth": float(data_list[13])
+            }
+            print(data)
+            Q_out.put(data)
+            data_storage.append(data)
+            return jsonify({"status": "success"}), 200
+        else:
+            return jsonify({"status": "error", "message": "Invalid data format"}), 400
+
+@app.route('/get_data', methods=['GET'])
+def get_data():
+    return jsonify(data_storage[-50:])  # Return only the last 50 data points
+
+@app.route('/visualize')
+def visualize():
+    return render_template('visualize.html')
+
+@app.route('/download', methods=['GET', 'POST'])
+def download():
+    if request.method == 'POST':
+        start_time = int(request.form.get('start_time', 0))
+        end_time = int(request.form.get('end_time', 9999999999999))
+        selected_fields = request.form.getlist('fields')
+
+        filtered_data = [d for d in data_storage if start_time <= d['timestamp'] <= end_time]
+
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        writer.writerow(selected_fields)
+        
+        for data in filtered_data:
+            writer.writerow([data.get(field, '') for field in selected_fields])
+        
+        output.seek(0)
+        
+        return send_file(
+            io.BytesIO(output.getvalue().encode()),
+            mimetype='text/csv',
+            as_attachment=True,
+            download_name=f'iot_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+        )
+    else:
+        all_fields = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
+                      "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
+                      "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+                      "angle", "azimuth"]
+        return render_template('download.html', fields=all_fields)
+
+def IPnode(Q_output: Queue, config):
+    global Q_out
+    Q_out = Q_output
+    app.run(host='0.0.0.0', port=5000, debug=True)
+    
+if __name__ == '__main__':
+    q = Queue()
+    IPnode(q, None)

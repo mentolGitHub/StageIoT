@@ -5,7 +5,7 @@ from queue import Queue
 import mysql.connector
 import Interface
 import MQTT
-import IP
+import web.IP as IP
 import utils
 
 Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Data</title>
+</head>
+<body>
+    <h1>Download Data</h1>
+    <form action="/download" method="post">
+        <label for="start_time">Start Time:</label>
+        <input type="datetime-local" id="start_time" name="start_time" required><br><br>
+        
+        <label for="end_time">End Time:</label>
+        <input type="datetime-local" id="end_time" name="end_time" required><br><br>
+        
+        <h3>Select Fields:</h3>
+        {% for field in fields %}
+        <input type="checkbox" id="{{ field }}" name="fields" value="{{ field }}">
+        <label for="{{ field }}">{{ field }}</label><br>
+        {% endfor %}
+        
+        <br>
+        <input type="submit" value="Download CSV">
+    </form>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function(event) {
+            const startTime = new Date(document.getElementById('start_time').value).getTime() / 1000;
+            const endTime = new Date(document.getElementById('end_time').value).getTime() / 1000;
+            const startTimeInput = document.createElement('input');
+            startTimeInput.type = 'hidden';
+            startTimeInput.name = 'start_time_unix';
+            startTimeInput.value = startTime;
+            const endTimeInput = document.createElement('input');
+            endTimeInput.type = 'hidden';
+            endTimeInput.name = 'end_time_unix';
+            endTimeInput.value = endTime;
+            this.appendChild(startTimeInput);
+            this.appendChild(endTimeInput);
+            document.getElementById('start_time').disabled = true;
+            document.getElementById('end_time').disabled = true;
+        });
+    </script>
+</body>
+</html>

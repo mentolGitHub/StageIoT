@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luminosity Data Visualization</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Luminosity Data Visualization</h1>
+    <canvas id="luminosityChart" width="400" height="200"></canvas>
+    <div id="dataDisplay"></div>
+
+    <script>
+        const ctx = document.getElementById('luminosityChart').getContext('2d');
+
+        // Initialize chart with no data
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Luminosity',
+                    data: [],
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1000, // Animation duration in milliseconds
+                    easing: 'easeInOutQuad' // Easing function for animation
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Time (s)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Luminosity'
+                        }
+                    }
+                }
+            }
+        });
+
+        function updateChart(data) {
+            // Update chart data
+            const labels = data.map((_, index) => index);
+            const luminosityData = data.map(item => item.luminosity);
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = luminosityData;
+            chart.update();
+        }
+
+        function fetchData() {
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    updateChart(data);
+
+                    // Display raw data
+                    document.getElementById('dataDisplay').innerHTML = 
+                        '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        // Fetch data initially and then every 0.5 seconds
+        fetchData();
+        setInterval(fetchData, 50); // Fetch data every 5 seconds (5000 milliseconds)
+    </script>
+</body>
+</html>

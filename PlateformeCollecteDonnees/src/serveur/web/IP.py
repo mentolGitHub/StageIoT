@@ -49,6 +49,32 @@ def get_data():
 def visualize():
     return render_template('visualize.html')
 
+
+@app.route('/downloadall')
+def downloadall():
+    output = io.StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    header = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
+              "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
+              "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+              "angle", "azimuth"]
+    writer.writerow(header)
+    
+    # Write data
+    for data in data_storage:
+        writer.writerow([data[field] for field in header])
+    
+    output.seek(0)
+    
+    return send_file(
+        io.BytesIO(output.getvalue().encode()),
+        mimetype='text/csv',
+        as_attachment=True,
+        download_name=f'iot_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+    )
+
 @app.route('/download', methods=['GET', 'POST'])
 def download():
     if request.method == 'POST':

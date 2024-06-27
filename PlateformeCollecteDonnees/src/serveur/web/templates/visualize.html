@@ -40,6 +40,8 @@
         <div id="dataDisplay" class="mt-4"></div>
         <div id="fieldsToggle" class="mt-4">
             <h3>Select Fields to Display:</h3>
+            <button id="selectAll" class="btn btn-primary mb-2">Select All</button>
+            <button id="deselectAll" class="btn btn-warning mb-2">Deselect All</button>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-check checkbox-container">
@@ -192,7 +194,21 @@
             chart.update();
         }
 
-        // Fetch data initially and then every 5 seconds
+        function selectAllFields() {
+            document.querySelectorAll('input[name="fields"]').forEach(checkbox => {
+                checkbox.checked = true;
+            });
+            updateChartVisibility();
+        }
+
+        function deselectAllFields() {
+            document.querySelectorAll('input[name="fields"]').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            updateChartVisibility();
+        }
+
+        // Fetch data initially and then every 0.5 seconds
         createChart();
         fetchData();
         setInterval(fetchData, 500);
@@ -201,6 +217,10 @@
         document.querySelectorAll('input[name="fields"]').forEach(checkbox => {
             checkbox.addEventListener('change', updateChartVisibility);
         });
+
+        // Add event listeners to select all / deselect all buttons
+        document.getElementById('selectAll').addEventListener('click', selectAllFields);
+        document.getElementById('deselectAll').addEventListener('click', deselectAllFields);
 
         // Theme toggle functionality
         const themeToggleButton = document.getElementById('themeToggle');

@@ -158,7 +158,7 @@ def LoRa_msg_handler(msg):
         print(msg.payload)
         print(e)
 
-def LTE_msg_handler(msg):
+def IP_msg_handler(msg):
     print(msg)
     
 
@@ -180,4 +180,4 @@ def Ifnode(Q_Lora : Queue, Q_4G : Queue, Config):
             LoRa_msg_handler(message)
         if not Q_4G.empty():
             message = Q_4G.get()
-            LTE_msg_handler(message)
+            IP_msg_handler(message)

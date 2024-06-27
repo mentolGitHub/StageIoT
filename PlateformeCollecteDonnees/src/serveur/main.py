@@ -5,6 +5,7 @@ from queue import Queue
 import mysql.connector
 import Interface
 import MQTT
+import IP
 import utils
 
 Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 
@@ -131,12 +132,13 @@ def run_server():
     # création des threads
     threadMQTT = threading.Thread(target=MQTT.MQTTnode,args=[coordsTTN,Q_Lora])
     threadIf = threading.Thread(target=Interface.Ifnode,args=[Q_Lora,Q_4G,Config])
+    threadIP = threading.Thread(target=IP.IPnode,args=[Q_4G,Config])
 
     # start les threads
     try:
         threadMQTT.start()
+        threadIP.start()
         threadIf.start()
-
 
         while threading.active_count()>1:
             time.sleep(1)

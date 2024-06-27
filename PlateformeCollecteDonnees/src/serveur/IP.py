@@ -23,17 +23,11 @@ def post_data():
 def get_data():
     pass
 
-def IPnode(Q_output : Queue):
+def IPnode(Q_output : Queue, config):
     global Q_out
     Q_out = Q_output
     socketio.run(app, host='0.0.0.0', port=5000)
 
-    while True:
-        print("IPnode")
-        # get_data()
 
     
 
-if __name__ == '__main__':
-    q = Queue()
-    IPnode(q)

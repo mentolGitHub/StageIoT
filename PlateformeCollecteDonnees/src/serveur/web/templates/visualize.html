@@ -3,41 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data Visualization</title>
+    <title>Luminosity Data Visualization</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            margin-top: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .checkbox-container {
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Data Visualization</h1>
-    <canvas id="dataChart" width="400" height="200"></canvas>
-    <div id="dataDisplay"></div>
-    <div id="fieldsToggle">
-        <h3>Select Fields to Display:</h3>
-        <input type="checkbox" id="acceleration_x" name="fields" value="acceleration_x" checked>
-        <label for="acceleration_x">Acceleration X</label><br>
-        <input type="checkbox" id="acceleration_y" name="fields" value="acceleration_y" checked>
-        <label for="acceleration_y">Acceleration Y</label><br>
-        <input type="checkbox" id="acceleration_z" name="fields" value="acceleration_z" checked>
-        <label for="acceleration_z">Acceleration Z</label><br>
-        <input type="checkbox" id="altitude" name="fields" value="altitude" checked>
-        <label for="altitude">Altitude</label><br>
-        <input type="checkbox" id="angle" name="fields" value="angle" checked>
-        <label for="angle">Angle</label><br>
-        <input type="checkbox" id="angular_velocity_x" name="fields" value="angular_velocity_x" checked>
-        <label for="angular_velocity_x">Angular Velocity X</label><br>
-        <input type="checkbox" id="angular_velocity_y" name="fields" value="angular_velocity_y" checked>
-        <label for="angular_velocity_y">Angular Velocity Y</label><br>
-        <input type="checkbox" id="angular_velocity_z" name="fields" value="angular_velocity_z" checked>
-        <label for="angular_velocity_z">Angular Velocity Z</label><br>
-        <input type="checkbox" id="azimuth" name="fields" value="azimuth" checked>
-        <label for="azimuth">Azimuth</label><br>
-        <input type="checkbox" id="latitude" name="fields" value="latitude" checked>
-        <label for="latitude">Latitude</label><br>
-        <input type="checkbox" id="longitude" name="fields" value="longitude" checked>
-        <label for="longitude">Longitude</label><br>
-        <input type="checkbox" id="luminosity" name="fields" value="luminosity" checked>
-        <label for="luminosity">Luminosity</label><br>
-        <input type="checkbox" id="pressure" name="fields" value="pressure" checked>
-        <label for="pressure">Pressure</label><br>
+    <div class="container">
+        <h1 class="text-center">Luminosity Data Visualization</h1>
+        <canvas id="dataChart" width="400" height="200"></canvas>
+        <div id="dataDisplay" class="mt-4"></div>
+        <div id="fieldsToggle" class="mt-4">
+            <h3>Select Fields to Display:</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="acceleration_x" name="fields" value="acceleration_x" checked>
+                        <label class="form-check-label" for="acceleration_x">Acceleration X</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="acceleration_y" name="fields" value="acceleration_y" checked>
+                        <label class="form-check-label" for="acceleration_y">Acceleration Y</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="acceleration_z" name="fields" value="acceleration_z" checked>
+                        <label class="form-check-label" for="acceleration_z">Acceleration Z</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="altitude" name="fields" value="altitude" checked>
+                        <label class="form-check-label" for="altitude">Altitude</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="angle" name="fields" value="angle" checked>
+                        <label class="form-check-label" for="angle">Angle</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="angular_velocity_x" name="fields" value="angular_velocity_x" checked>
+                        <label class="form-check-label" for="angular_velocity_x">Angular Velocity X</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="angular_velocity_y" name="fields" value="angular_velocity_y" checked>
+                        <label class="form-check-label" for="angular_velocity_y">Angular Velocity Y</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="angular_velocity_z" name="fields" value="angular_velocity_z" checked>
+                        <label class="form-check-label" for="angular_velocity_z">Angular Velocity Z</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="azimuth" name="fields" value="azimuth" checked>
+                        <label class="form-check-label" for="azimuth">Azimuth</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="latitude" name="fields" value="latitude" checked>
+                        <label class="form-check-label" for="latitude">Latitude</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="longitude" name="fields" value="longitude" checked>
+                        <label class="form-check-label" for="longitude">Longitude</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="luminosity" name="fields" value="luminosity" checked>
+                        <label class="form-check-label" for="luminosity">Luminosity</label>
+                    </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="pressure" name="fields" value="pressure" checked>
+                        <label class="form-check-label" for="pressure">Pressure</label>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -131,7 +182,7 @@
             chart.update();
         }
 
-        // Fetch data initially and then every 5 seconds
+        // Fetch data initially and then every 0.5 seconds
         createChart();
         fetchData();
         setInterval(fetchData, 500);

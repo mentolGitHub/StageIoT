@@ -12,10 +12,10 @@ import ubinascii
 lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868)
 
 # create an OTAA authentication parameters, change them to the provided credentials
-app_eui = ubinascii.unhexlify('70B3D57ED003A31C')
-app_key = ubinascii.unhexlify('76F43018D4D2BAD4EB6B433B0C7107D2')
+app_eui = ubinascii.unhexlify('70B3D57ED0038811')
+app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
 #uncomment to use LoRaWAN application provided dev_eui
-dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
+dev_eui = ubinascii.unhexlify('70B3D5499E370B3D')
 
 # join a network using OTAA (Over the Air Activation)
 #uncomment below to use LoRaWAN application provided dev_eui
@@ -39,7 +39,9 @@ s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5)
 s.setblocking(True)
 
 # send some data
+timer = time.time()
 s.send(bytes([0x01, 0x02, 0x03]))
+print("time : " + str(time.time()-timer))
 
 # make the socket non-blocking
 # (because if there's no data received it will block forever...)

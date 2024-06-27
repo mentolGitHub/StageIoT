@@ -15,8 +15,8 @@ def isfloat(num):
 
 
 dataFromUart = ""
-idTramme = [2]
-sendBuffer = struct.pack('%si' %len(idTramme) , *idTramme)
+idTramme = 2
+sendBuffer = struct.pack('i', idTramme)
 
 print("initialisation ...")
 
@@ -36,6 +36,8 @@ dev_eui = ubinascii.unhexlify('70B3D57ED0068A6F')
 
 ####### Connexion LoRa #######
 lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0) # Connexion au réseau LoRaWAN
+
+
 
 while not lora.has_joined():        # Attente de connexion au réseau LoRaWAN
     time.sleep(2.5)
@@ -60,19 +62,20 @@ while 1 :
         dataFromUart = uart.readline().decode('utf-8')          # Lecture des données UART
 
     if dataFromUart != "":
-        dataFromUart = dataFromUart.strip().split(',')
-        for i in range(len(dataFromUart)):
-            if dataFromUart[i].isdigit():
-                dataFromUart[i] = [int(dataFromUart[i])]
-                sendBuffer += struct.pack('%si' % len(dataFromUart[i]), *dataFromUart[i])
-            elif isfloat(dataFromUart[i]):
-                dataFromUart[i] = [float(dataFromUart[i])]
-                sendBuffer += struct.pack('%sf' % len(dataFromUart[i]), *dataFromUart[i])
+        data = dataFromUart.strip().split(',')
+        for i in range(len(data)):
+            if data[i].isdigit():
+                sendBuffer += struct.pack('i', int(data[i]))
+            elif isfloat(data[i]):
+                sendBuffer += struct.pack('f', float(data[i]))
             else :
-                sendBuffer += dataFromUart[i].encode('utf-8')
+                sendBuffer += data[i].encode('utf-8')
 
         
 #struct.pack('%sf' % len(floatlist), *floatlist)
-        print(sendBuffer)
-        s.send(sendBuffer)                  # Envoi des données UART par LoRa
-        sendBuffer = struct.pack('%si' %len(idTramme) , *idTramme)
+        print(dataFromUart)
+        timer =  time.time()
+        s.send(dataFromUart)                  # Envoi des données UART par LoRa (max 256 caractères)
+        print("Temps d'envoi : ", time.time()-timer)
+        sendBuffer = struct.pack('i', idTramme)
+        dataFromUart = ""

@@ -15,6 +15,7 @@ def accueil():
 @app.route('/post_data', methods=['POST'])
 def post_data():
     if request.method == 'POST':
+        global data_storage
         raw_data = request.get_data().decode('utf-8')
         data_list = raw_data.strip().split(',')
         if len(data_list) == 14:  # Ensure we have all expected fields
@@ -37,6 +38,8 @@ def post_data():
             print(data)
             Q_out.put(data)
             data_storage.append(data)
+            #supprimmer des data de plus d'une heure
+            data_storage = [d for d in data_storage if d['timestamp'] > datetime.now().timestamp() - 20]
             return jsonify({"status": "success"}), 200
         else:
             return jsonify({"status": "error", "message": "Invalid data format"}), 400

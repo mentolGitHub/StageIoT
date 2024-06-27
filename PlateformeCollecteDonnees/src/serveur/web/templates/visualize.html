@@ -3,63 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luminosity Data Visualization</title>
+    <title>Data Visualization</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Luminosity Data Visualization</h1>
-    <canvas id="luminosityChart" width="400" height="200"></canvas>
+    <h1>Data Visualization</h1>
+    <canvas id="dataChart" width="400" height="200"></canvas>
     <div id="dataDisplay"></div>
+    <div id="fieldsToggle">
+        <h3>Select Fields to Display:</h3>
+        <input type="checkbox" id="acceleration_x" name="fields" value="acceleration_x" checked>
+        <label for="acceleration_x">Acceleration X</label><br>
+        <input type="checkbox" id="acceleration_y" name="fields" value="acceleration_y" checked>
+        <label for="acceleration_y">Acceleration Y</label><br>
+        <input type="checkbox" id="acceleration_z" name="fields" value="acceleration_z" checked>
+        <label for="acceleration_z">Acceleration Z</label><br>
+        <input type="checkbox" id="altitude" name="fields" value="altitude" checked>
+        <label for="altitude">Altitude</label><br>
+        <input type="checkbox" id="angle" name="fields" value="angle" checked>
+        <label for="angle">Angle</label><br>
+        <input type="checkbox" id="angular_velocity_x" name="fields" value="angular_velocity_x" checked>
+        <label for="angular_velocity_x">Angular Velocity X</label><br>
+        <input type="checkbox" id="angular_velocity_y" name="fields" value="angular_velocity_y" checked>
+        <label for="angular_velocity_y">Angular Velocity Y</label><br>
+        <input type="checkbox" id="angular_velocity_z" name="fields" value="angular_velocity_z" checked>
+        <label for="angular_velocity_z">Angular Velocity Z</label><br>
+        <input type="checkbox" id="azimuth" name="fields" value="azimuth" checked>
+        <label for="azimuth">Azimuth</label><br>
+        <input type="checkbox" id="latitude" name="fields" value="latitude" checked>
+        <label for="latitude">Latitude</label><br>
+        <input type="checkbox" id="longitude" name="fields" value="longitude" checked>
+        <label for="longitude">Longitude</label><br>
+        <input type="checkbox" id="luminosity" name="fields" value="luminosity" checked>
+        <label for="luminosity">Luminosity</label><br>
+        <input type="checkbox" id="pressure" name="fields" value="pressure" checked>
+        <label for="pressure">Pressure</label><br>
+    </div>
 
     <script>
-        const ctx = document.getElementById('luminosityChart').getContext('2d');
+        const ctx = document.getElementById('dataChart').getContext('2d');
+        let chart;
 
-        // Initialize chart with no data
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Luminosity',
-                    data: [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                    fill: false
-                }]
-            },
-            options: {
-                responsive: true,
-                animation: {
-                    duration: 1000, // Animation duration in milliseconds
-                    easing: 'easeInOutQuad' // Easing function for animation
+        const fields = [
+            "acceleration_x", "acceleration_y", "acceleration_z",
+            "altitude", "angle", "angular_velocity_x",
+            "angular_velocity_y", "angular_velocity_z",
+            "azimuth", "latitude", "longitude",
+            "luminosity", "pressure"
+        ];
+
+        function createChart() {
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: fields.map(field => ({
+                        label: field,
+                        data: [],
+                        borderColor: getRandomColor(),
+                        hidden: !document.getElementById(field).checked,
+                        fill: false
+                    }))
                 },
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        title: {
-                            display: true,
-                            text: 'Time (s)'
-                        }
-                    },
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Luminosity'
+                options: {
+                    responsive: true,
+                    animation: false, // Disable animations
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'Time (s)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Value'
+                            }
                         }
                     }
                 }
-            }
-        });
-
-        function updateChart(data) {
-            // Update chart data
-            const labels = data.map((_, index) => index);
-            const luminosityData = data.map(item => item.luminosity);
-            chart.data.labels = labels;
-            chart.data.datasets[0].data = luminosityData;
-            chart.update();
+            });
         }
 
         function fetchData() {
@@ -69,15 +96,50 @@
                     updateChart(data);
 
                     // Display raw data
+                    /*
                     document.getElementById('dataDisplay').innerHTML = 
                         '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                    */
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-        // Fetch data initially and then every 0.5 seconds
+        function updateChart(data) {
+            const labels = data.map((_, index) => index);
+            
+            chart.data.labels = labels;
+            fields.forEach((field, index) => {
+                chart.data.datasets[index].data = data.map(item => item[field]);
+                chart.data.datasets[index].hidden = !document.getElementById(field).checked;
+            });
+            chart.update();
+        }
+
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function updateChartVisibility() {
+            fields.forEach((field, index) => {
+                chart.data.datasets[index].hidden = !document.getElementById(field).checked;
+            });
+            chart.update();
+        }
+
+        // Fetch data initially and then every 5 seconds
+        createChart();
         fetchData();
-        setInterval(fetchData, 500); // Fetch data every 5 seconds (500 milliseconds)
+        setInterval(fetchData, 500);
+
+        // Add event listeners to checkboxes
+        document.querySelectorAll('input[name="fields"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateChartVisibility);
+        });
     </script>
 </body>
 </html>

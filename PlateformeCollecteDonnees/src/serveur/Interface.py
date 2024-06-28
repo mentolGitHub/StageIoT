@@ -5,10 +5,11 @@ from queue import Queue
 import time
 import utils
 import datetime
+import requests
 
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
-
+Config = {}
 data_format = { 'timestamp':"", 'luminosite':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
@@ -21,7 +22,7 @@ def save_DB(data,id=0):
         # db_cursor.execute("show tables")
         # print(db_cursor)
         # utils.print_SQL_response(db_cursor)
-
+        data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
         table = "Data"
         db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s;",data)
         
@@ -64,78 +65,15 @@ def save_DB(data,id=0):
         print(e)
 
 def data_LoRa_handler(message):
-    # try :
-    #     data = json.loads(message)
-    #     save_DB(data)
-    # except json.decoder.JSONDecodeError as e :
-        
+   
+    id = int(message[0],base=16)
+    
 
-    try :
-        id = int(message[0],base=16)
-        data = message[1:]
-        values = data.split(",")
-        data = data_format
-        t=datetime.datetime.fromtimestamp(int(values[0])/1000)
-        
-        #print(t)
-        match id : 
-            case 0 :
-                data['timestamp']=t
-                #TODO: créer des messages systemes, etc
+    if id in range(0,16):
+        #print(data)
+        requests.post("http://"+Config['server_host']+":"+Config['server_port']+"/post_data",data=message)
+        # save_DB(data,id)
 
-            case 1 :
-                data={'timestamp':t, 'data':values[1]}
-                #TODO: recuperer les messages personalisés
-
-            case 2 :
-                data['timestamp']=t
-                data['latitude']=float(values[1])
-                data['longitude']=float(values[2])
-                data['altitude']=float(values[3])
-                data['luminosite']=float(values[4])
-                data['vitesse_angulaire_X']=float(values[5])
-                data['vitesse_angulaire_Y']=float(values[6])
-                data['vitesse_angulaire_Z']=float(values[7])
-                if values[8]!='0':
-                    data['pression']=float(values[8])
-                data['acceleration_X']=float(values[9])
-                data['acceleration_Y']=float(values[10])
-                data['acceleration_Z']=float(values[11])
-                data['angle']=float(values[12])
-                data['azimut']=float(values[13])
-
-            # case 3 :
-            #     data['timestamp']=t
-            #     data['vitesse_angulaire_X']=values[1]
-            #     data['vitesse_angulaire_Y']=values[2]
-            #     data['vitesse_angulaire_Z']=values[3]
-            #     data['pression']=values[4]
-
-            # case 4 :
-            #     data['timestamp']=t
-            #     data['acceleration_X']=values[1]
-            #     data['acceleration_Y']=values[2]
-            #     data['acceleration_Z']=values[3]
-            #     data['temperature']=values[4]
-
-            # case 5 :
-            #     data['timestamp']=t
-            #     data['azimut']=values[1]
-            #     data['distance recul']=values[2]
-            #     data['presence']=values[3]
-            #     data['luminosite']=values[4]
-            #     data['humidite']=values[5]
-
-            case _ :
-                #TODO : raise an error
-                print("Wrong format")
-
-        if id in range(0,16):
-            #print(data)
-            save_DB(data,id)
-    except ValueError as e :
-        print(message)
-        print(e)
 
 def LoRa_msg_handler(msg):
     try :
@@ -166,17 +104,17 @@ def IP_msg_handler(msg):
     data = data_format
     for key in msg.keys():
         data[key]=msg[key]
-    data['timestamp']= datetime.datetime.fromtimestamp(int(data['timestamp'])/1000)
+    data['timestamp']= int(data['timestamp'])/1000
     # print(data)
     save_DB(data)
     
     
 
 
-def Ifnode(Q_Lora : Queue, Q_4G : Queue, Config):
-    global db, db_cursor
+def Ifnode(Q_Lora : Queue, Q_4G : Queue, Config_):
+    global db, db_cursor, Config
     print("Starting If node")
-    
+    Config=Config_
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
     db_cursor = db.cursor(buffered=True)
     db_query = "USE "+ utils.sql_var(Config["db_name"])

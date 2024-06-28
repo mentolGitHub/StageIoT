@@ -29,6 +29,21 @@ void loop() {
   }
   if (SerialPort.available()) {
     data = SerialPort.readString();
+    //verifier le premier caractere
+    switch (data[0])
+    {
+      case '0':
+        switch (data[1])
+        {
+          case '1': //envoi du dev eui
+            SerialBT.print(data.substring(2));
+            break;
+        }
+        break;
+      
+      default:
+        break;
+    }
     Serial.write(data.c_str());
     SerialBT.print(data);
   }

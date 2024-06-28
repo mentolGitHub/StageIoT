@@ -76,6 +76,7 @@ while 1 :
         print(dataFromUart)
         timer =  time.time()
         s.send(dataFromUart)                  # Envoi des données UART par LoRa (max 256 caractères)
+        uart.write("01"+ubinascii.hexlify(lora.mac()).decode('utf-8')) 
         print("Temps d'envoi : ", time.time()-timer)
         sendBuffer = struct.pack('i', idTramme)
         dataFromUart = ""

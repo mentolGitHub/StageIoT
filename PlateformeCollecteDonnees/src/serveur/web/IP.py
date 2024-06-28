@@ -17,7 +17,7 @@ def post_data():
     if request.method == 'POST':
         global data_storage
         raw_data = request.get_data().decode('utf-8')
-        data_list = raw_data.strip().split(',')
+        data_list = raw_data[1:].split(',')
         if len(data_list) == 14:  # Ensure we have all expected fields
             data = {
                 "timestamp": int(data_list[0]),
@@ -25,13 +25,13 @@ def post_data():
                 "longitude": float(data_list[2]),
                 "altitude": float(data_list[3]),
                 "luminosity": float(data_list[4]),
-                "angular_velocity_x": float(data_list[5]),
-                "angular_velocity_y": float(data_list[6]),
-                "angular_velocity_z": float(data_list[7]),
+                "vitesse_angulaire_X": float(data_list[5]),
+                "vitesse_angulaire_Y": float(data_list[6]),
+                "vitesse_angulaire_Z": float(data_list[7]),
                 "pressure": float(data_list[8]),
-                "acceleration_x": float(data_list[9]),
-                "acceleration_y": float(data_list[10]),
-                "acceleration_z": float(data_list[11]),
+                "acceleration_X": float(data_list[9]),
+                "acceleration_Y": float(data_list[10]),
+                "acceleration_Z": float(data_list[11]),
                 "angle": float(data_list[12]),
                 "azimuth": float(data_list[13])
             }
@@ -39,14 +39,15 @@ def post_data():
             Q_out.put(data)
             data_storage.append(data)
             #supprimmer des data de plus d'une heure
-            data_storage = [d for d in data_storage if d['timestamp'] > datetime.now().timestamp() - 20]
+            data_storage = [d for d in data_storage if d['timestamp']/1000 >= datetime.now().timestamp() - 62]
+            print (data_storage)
             return jsonify({"status": "success"}), 200
         else:
             return jsonify({"status": "error", "message": "Invalid data format"}), 400
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    return jsonify(data_storage[-50:])  # Return only the last 50 data points
+    return jsonify(data_storage)  
 
 @app.route('/visualize')
 def visualize():
@@ -60,8 +61,8 @@ def downloadall():
     
     # Write header
     header = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
-              "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
-              "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+              "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
+              "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
               "angle", "azimuth"]
     writer.writerow(header)
     
@@ -105,8 +106,8 @@ def download():
         )
     else:
         all_fields = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
-                      "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
-                      "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+                      "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
+                      "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
                       "angle", "azimuth"]
         return render_template('download.html', fields=all_fields)
 

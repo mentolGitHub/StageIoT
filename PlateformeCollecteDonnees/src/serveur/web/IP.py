@@ -17,7 +17,7 @@ def post_data():
     if request.method == 'POST':
         global data_storage
         raw_data = request.get_data().decode('utf-8')
-        data_list = raw_data.strip().split(',')
+        data_list = raw_data[1:].split(',')
         if len(data_list) == 14:  # Ensure we have all expected fields
             data = {
                 "timestamp": int(data_list[0]),
@@ -39,14 +39,15 @@ def post_data():
             Q_out.put(data)
             data_storage.append(data)
             #supprimmer des data de plus d'une heure
-            data_storage = [d for d in data_storage if d['timestamp'] > datetime.now().timestamp() - 20]
+            data_storage = [d for d in data_storage if d['timestamp']/1000 >= datetime.now().timestamp() - 62]
+            print (data_storage)
             return jsonify({"status": "success"}), 200
         else:
             return jsonify({"status": "error", "message": "Invalid data format"}), 400
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    return jsonify(data_storage[-50:])  # Return only the last 50 data points
+    return jsonify(data_storage)  
 
 @app.route('/visualize')
 def visualize():

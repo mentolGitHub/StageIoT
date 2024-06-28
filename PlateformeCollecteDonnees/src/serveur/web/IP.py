@@ -25,13 +25,13 @@ def post_data():
                 "longitude": float(data_list[2]),
                 "altitude": float(data_list[3]),
                 "luminosity": float(data_list[4]),
-                "angular_velocity_x": float(data_list[5]),
-                "angular_velocity_y": float(data_list[6]),
-                "angular_velocity_z": float(data_list[7]),
+                "vitesse_angulaire_X": float(data_list[5]),
+                "vitesse_angulaire_Y": float(data_list[6]),
+                "vitesse_angulaire_Z": float(data_list[7]),
                 "pressure": float(data_list[8]),
-                "acceleration_x": float(data_list[9]),
-                "acceleration_y": float(data_list[10]),
-                "acceleration_z": float(data_list[11]),
+                "acceleration_X": float(data_list[9]),
+                "acceleration_Y": float(data_list[10]),
+                "acceleration_Z": float(data_list[11]),
                 "angle": float(data_list[12]),
                 "azimuth": float(data_list[13])
             }
@@ -61,8 +61,8 @@ def downloadall():
     
     # Write header
     header = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
-              "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
-              "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+              "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
+              "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
               "angle", "azimuth"]
     writer.writerow(header)
     
@@ -106,8 +106,8 @@ def download():
         )
     else:
         all_fields = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
-                      "angular_velocity_x", "angular_velocity_y", "angular_velocity_z", 
-                      "pressure", "acceleration_x", "acceleration_y", "acceleration_z", 
+                      "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
+                      "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
                       "angle", "azimuth"]
         return render_template('download.html', fields=all_fields)
 

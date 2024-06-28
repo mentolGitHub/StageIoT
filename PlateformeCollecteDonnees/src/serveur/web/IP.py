@@ -40,7 +40,7 @@ def post_data():
             data_storage.append(data)
             #supprimmer des data de plus d'une heure
             data_storage = [d for d in data_storage if d['timestamp']/1000 >= datetime.now().timestamp() - 62]
-            print (data_storage)
+            # print (data_storage)
             return jsonify({"status": "success"}), 200
         else:
             return jsonify({"status": "error", "message": "Invalid data format"}), 400
@@ -114,7 +114,8 @@ def download():
 def IPnode(Q_output: Queue, config):
     global Q_out
     Q_out = Q_output
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    
+    app.run(host='0.0.0.0', port=5000, debug=False)
     
 if __name__ == '__main__':
     q = Queue()

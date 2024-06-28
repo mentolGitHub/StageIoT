@@ -17,49 +17,51 @@ data_format = { 'timestamp':"", 'luminosite':None, 'pression':None, 'temperature
 
 def save_DB(data,id=0):
     global db, db_cursor
-    # db_cursor.execute("show tables")
-    # print(db_cursor)
-    # utils.print_SQL_response(db_cursor)
+    try :
+        # db_cursor.execute("show tables")
+        # print(db_cursor)
+        # utils.print_SQL_response(db_cursor)
 
-    table = "Data"
-    db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s;",data)
-    
-    if db_cursor.arraysize == 2:
-        utils.print_SQL_response(db_cursor)
-        query=""
-        match id :
-            case 0 :
-                pass
-            case 1 :
-                query = "UPDATE "+ table +" SET data=%(data)s WHERE timestamp=%(timestamp)s"
-            case 2 :
-                query = "UPDATE "+ table +" SET gps=Point(%(longitude)s, %(latitude)s),\
-                      altitude=%(altitude)s, angle=%(angle)s WHERE timestamp=%(timestamp)s"
-            case 3 :
-                query = "UPDATE "+ table +" SET vitesse_angulaire_X=%(vitesse_angulaire_X)s , vitesse_angulaire_Y=%(vitesse_angulaire_Y)s ,\
-                      vitesse_angulaire_Z=%(vitesse_angulaire_Z)s ,  pression=%(pression)s WHERE timestamp=%(timestamp)s"
-            case 4 :
-                query = "UPDATE "+ table +" SET acceleration_X=%(acceleration_X)s, acceleration_Y=%(acceleration_Y)s,\
-                      acceleration_Z=%(acceleration_Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
-            case 5 :
-                query = "UPDATE "+ table +" SET azimut=%(azimut)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
-                      luminosity=%(luminosite)s ,  humidity=%(humidite)s WHERE timestamp=%(timestamp)s"
-            
+        table = "Data"
+        db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s;",data)
         
-    else :
-        query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
-                presence, pression, gps, altitude, angle, \
-                vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
-                azimut, distance_recul) \
-                VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosite)s,\
-                %(presence)s, %(pression)s, Point(%(longitude)s, %(latitude)s), %(altitude)s, %(angle)s,\
-                %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s);"
-    # print(query,data)
-    
-    db_cursor.execute(query,data)
-    #print(db_cursor)
-    db.commit()
-    
+        if db_cursor.arraysize == 2:
+            utils.print_SQL_response(db_cursor)
+            query=""
+            match id :
+                case 0 :
+                    pass
+                case 1 :
+                    query = "UPDATE "+ table +" SET data=%(data)s WHERE timestamp=%(timestamp)s"
+                case 2 :
+                    query = "UPDATE "+ table +" SET gps=Point(%(longitude)s, %(latitude)s),\
+                        altitude=%(altitude)s, angle=%(angle)s WHERE timestamp=%(timestamp)s"
+                case 3 :
+                    query = "UPDATE "+ table +" SET vitesse_angulaire_X=%(vitesse_angulaire_X)s , vitesse_angulaire_Y=%(vitesse_angulaire_Y)s ,\
+                        vitesse_angulaire_Z=%(vitesse_angulaire_Z)s ,  pression=%(pression)s WHERE timestamp=%(timestamp)s"
+                case 4 :
+                    query = "UPDATE "+ table +" SET acceleration_X=%(acceleration_X)s, acceleration_Y=%(acceleration_Y)s,\
+                        acceleration_Z=%(acceleration_Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
+                case 5 :
+                    query = "UPDATE "+ table +" SET azimut=%(azimut)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
+                        luminosity=%(luminosite)s ,  humidity=%(humidite)s WHERE timestamp=%(timestamp)s"
+                
+            
+        else :
+            query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
+                    presence, pression, gps, altitude, angle, \
+                    vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
+                    azimut, distance_recul) \
+                    VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosite)s,\
+                    %(presence)s, %(pression)s, Point(%(longitude)s, %(latitude)s), %(altitude)s, %(angle)s,\
+                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s);"
+        # print(query,data)
+        
+        db_cursor.execute(query,data)
+        #print(db_cursor)
+        db.commit()
+    except ValueError as e :
+        print(e)
 
 def data_LoRa_handler(message):
     # try :
@@ -160,7 +162,13 @@ def LoRa_msg_handler(msg):
 
 def IP_msg_handler(msg):
     # print(msg)
-    save_DB(msg)
+
+    data = data_format
+    for key in msg.keys():
+        data[key]=msg[key]
+    data['timestamp']= datetime.datetime.fromtimestamp(int(data['timestamp'])/1000)
+    # print(data)
+    save_DB(data)
     
     
 

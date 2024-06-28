@@ -11,9 +11,9 @@ db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 
 data_format = { 'timestamp':"", 'luminosite':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
-                'vitesse angulaire X':None, 'vitesse angulaire Y':None, 'vitesse angulaire Z':None,
-                'acceleration X':None, 'acceleration Y':None, 'acceleration Z':None,
-                'azimut':None, 'distance recul':None, 'presence':None , 'humidite':None }
+                'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
+                'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
+                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
 
 def save_DB(data,id=0):
     global db, db_cursor
@@ -36,13 +36,13 @@ def save_DB(data,id=0):
                 query = "UPDATE "+ table +" SET gps=Point(%(longitude)s, %(latitude)s),\
                       altitude=%(altitude)s, angle=%(angle)s WHERE timestamp=%(timestamp)s"
             case 3 :
-                query = "UPDATE "+ table +" SET vitesse angulaire X=%(vitesse angulaire X)s , vitesse angulaire Y=%(vitesse angulaire Y)s ,\
-                      vitesse angulaire Z=%(vitesse angulaire Z)s ,  pression=%(pression)s WHERE timestamp=%(timestamp)s"
+                query = "UPDATE "+ table +" SET vitesse_angulaire_X=%(vitesse_angulaire_X)s , vitesse_angulaire_Y=%(vitesse_angulaire_Y)s ,\
+                      vitesse_angulaire_Z=%(vitesse_angulaire_Z)s ,  pression=%(pression)s WHERE timestamp=%(timestamp)s"
             case 4 :
-                query = "UPDATE "+ table +" SET acceleration X=%(acceleration X)s, acceleration Y=%(acceleration Y)s,\
-                      acceleration Z=%(acceleration Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
+                query = "UPDATE "+ table +" SET acceleration_X=%(acceleration_X)s, acceleration_Y=%(acceleration_Y)s,\
+                      acceleration_Z=%(acceleration_Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
             case 5 :
-                query = "UPDATE "+ table +" SET azimut=%(azimut)s , distance recul=%(distance recul)s, presence=%(presence)s ,\
+                query = "UPDATE "+ table +" SET azimut=%(azimut)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
                       luminosity=%(luminosite)s ,  humidity=%(humidite)s WHERE timestamp=%(timestamp)s"
             
         
@@ -53,7 +53,7 @@ def save_DB(data,id=0):
                 azimut, distance_recul) \
                 VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosite)s,\
                 %(presence)s, %(pression)s, Point(%(longitude)s, %(latitude)s), %(altitude)s, %(angle)s,\
-                %(vitesse angulaire X)s, %(vitesse angulaire Y)s, %(vitesse angulaire Z)s, %(azimut)s, %(distance recul)s);"
+                %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s);"
     # print(query,data)
     
     db_cursor.execute(query,data)
@@ -91,29 +91,29 @@ def data_LoRa_handler(message):
                 data['longitude']=float(values[2])
                 data['altitude']=float(values[3])
                 data['luminosite']=float(values[4])
-                data['vitesse angulaire X']=float(values[5])
-                data['vitesse angulaire Y']=float(values[6])
-                data['vitesse angulaire Z']=float(values[7])
+                data['vitesse_angulaire_X']=float(values[5])
+                data['vitesse_angulaire_Y']=float(values[6])
+                data['vitesse_angulaire_Z']=float(values[7])
                 if values[8]!='0':
                     data['pression']=float(values[8])
-                data['acceleration X']=float(values[9])
-                data['acceleration Y']=float(values[10])
-                data['acceleration Z']=float(values[11])
+                data['acceleration_X']=float(values[9])
+                data['acceleration_Y']=float(values[10])
+                data['acceleration_Z']=float(values[11])
                 data['angle']=float(values[12])
                 data['azimut']=float(values[13])
 
             # case 3 :
             #     data['timestamp']=t
-            #     data['vitesse angulaire X']=values[1]
-            #     data['vitesse angulaire Y']=values[2]
-            #     data['vitesse angulaire Z']=values[3]
+            #     data['vitesse_angulaire_X']=values[1]
+            #     data['vitesse_angulaire_Y']=values[2]
+            #     data['vitesse_angulaire_Z']=values[3]
             #     data['pression']=values[4]
 
             # case 4 :
             #     data['timestamp']=t
-            #     data['acceleration X']=values[1]
-            #     data['acceleration Y']=values[2]
-            #     data['acceleration Z']=values[3]
+            #     data['acceleration_X']=values[1]
+            #     data['acceleration_Y']=values[2]
+            #     data['acceleration_Z']=values[3]
             #     data['temperature']=values[4]
 
             # case 5 :
@@ -159,7 +159,9 @@ def LoRa_msg_handler(msg):
         print(e)
 
 def IP_msg_handler(msg):
-    print(msg)
+    # print(msg)
+    save_DB(msg)
+    
     
 
 
@@ -180,4 +182,5 @@ def Ifnode(Q_Lora : Queue, Q_4G : Queue, Config):
             LoRa_msg_handler(message)
         if not Q_4G.empty():
             message = Q_4G.get()
+            # print(message)
             IP_msg_handler(message)

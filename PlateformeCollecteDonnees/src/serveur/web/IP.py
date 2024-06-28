@@ -35,7 +35,7 @@ def post_data():
                 "angle": float(data_list[12]),
                 "azimuth": float(data_list[13])
             }
-            print(data)
+            # print(data)
             Q_out.put(data)
             data_storage.append(data)
             #supprimmer des data de plus d'une heure

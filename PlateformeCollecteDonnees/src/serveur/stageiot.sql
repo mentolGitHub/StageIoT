@@ -26,9 +26,9 @@ CREATE TABLE IF NOT EXISTS `Data` (
     `vitesse_angulaire_X` float DEFAULT NULL,
     `vitesse_angulaire_Y` float DEFAULT NULL,
     `vitesse_angulaire_Z` float DEFAULT NULL,
-    `acceleration X` float DEFAULT NULL,
-    `acceleration Y` float DEFAULT NULL,
-    `acceleration Z` float DEFAULT NULL,
+    `acceleration_X` float DEFAULT NULL,
+    `acceleration_Y` float DEFAULT NULL,
+    `acceleration_Z` float DEFAULT NULL,
     `azimut` float DEFAULT NULL,
     `distance_recul` float DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

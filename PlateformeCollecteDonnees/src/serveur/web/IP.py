@@ -1,16 +1,27 @@
 from queue import Queue
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
 import io
 import csv
 from datetime import datetime, timedelta
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import DataRequired, Length, EqualTo
+
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
+users = {
+    'user1': 'password1',
+    'user2': 'password2'
+}
 
 @app.route('/')
 def accueil():
-    return render_template('index.html')
+    is_authenticated = 'username' in session
+    username = session.get('username', None)
+    return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
 @app.route('/post_data', methods=['POST'])
 def post_data():
@@ -111,6 +122,67 @@ def download():
                       "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
                       "angle", "azimuth"]
         return render_template('download.html', fields=all_fields)
+
+class LoginForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField('Password', validators=[DataRequired()])
+    submit = SubmitField('Login')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        if username in users and users[username] == password:
+            session['username'] = username
+            flash('Login successful', 'success')
+            return redirect('/')
+        else:
+            flash('Login Unsuccessful. Please check username and password', 'danger')
+    return render_template('login.html', form=form)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        if (username in users):
+            flash('Username already exists', 'danger')
+            return redirect(url_for('register'))
+        else:
+            users[username] = password
+        flash('Account created successfully', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('You have been logged out', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/map')
+def map_view():
+    if 'username' not in session:
+        flash('Please log in to access this page', 'warning')
+        return redirect(url_for('login'))
+    return render_template('map.html')
+
+@app.route('/register_device')
+def register_device():
+    if 'username' not in session:
+        flash('Please log in to access this page', 'warning')
+        return redirect(url_for('login'))
+    return render_template('register_device.html')
+
 
 def IPnode(Q_output: Queue, config):
     global Q_out

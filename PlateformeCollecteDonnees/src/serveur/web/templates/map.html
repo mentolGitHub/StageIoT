@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Positions</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles/styles.css" />
+    <style>
+        #map {
+            height: 98vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="map"></div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const map = L.map('map').setView([48.8566, 2.3522], 13);  // Center on Paris
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const markers = {};
+
+        function updateUserPositions() {
+            fetch('/get_data')
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(user => {
+                        const { eui, latitude, longitude } = user;
+                        if (markers[eui]) {
+                            markers[eui].setLatLng([latitude, longitude]);
+                        } else {
+                            markers[eui] = L.marker([latitude, longitude]).addTo(map);
+                        }
+                    });
+                })
+                .catch(error => console.error('Error fetching user positions:', error));
+        }
+
+        // Update positions every 5 seconds
+        setInterval(updateUserPositions, 5000);
+        updateUserPositions();  // Initial load
+    </script>
+</body>
+</html>

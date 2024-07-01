@@ -22,3 +22,7 @@ h1 {
 .dark-theme canvas {
     background-color: #1e1e1e;
 }
+
+.login_btn {
+    align: right;
+}

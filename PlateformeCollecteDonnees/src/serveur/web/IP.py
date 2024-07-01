@@ -166,6 +166,40 @@ def login():
         flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+
+        query = "SELECT (username) FROM Users WHERE username = %s;"
+        db_cursor.execute(query,(username,))
+        result= db_cursor.fetchall()
+        if len(result) > 0:
+            flash('Username already exists', 'danger')
+            return redirect(url_for('register'))
+        else:
+            query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
+            db_cursor.execute(query,(username,password))
+        flash('Account created successfully', 'success')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('You have been logged out', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/map')
+def map_view():
+    if 'username' not in session:
+        flash('Please log in to access this page', 'warning')
+        return redirect(url_for('login'))
+    return render_template('map.html')
+
+
 @app.route('/register_device', methods=['GET', 'POST'])
 def register_device():
     form = DeviceRegistrationForm()
@@ -188,39 +222,6 @@ def register_device():
             db_cursor.execute(query,(deveui, username))
         flash('Device added successfully', 'success')
         return redirect('/')
-    return render_template('register_device.html', form=form)
-
-@app.route('/logout')
-def logout():
-    session.pop('username', None)
-    flash('You have been logged out', 'info')
-    return redirect(url_for('login'))
-
-@app.route('/map')
-def map_view():
-    if 'username' not in session:
-        flash('Please log in to access this page', 'warning')
-        return redirect(url_for('login'))
-    return render_template('map.html')
-
-@app.route('/register_device')
-@app.route('/register_device')
-def register_device():
-    if 'username' not in session:
-        flash('Please log in to access this page', 'warning')
-        return redirect(url_for('login'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        deveui = form.deveui.data
-        name = form.name.data
-        password = form.password.data
-        if (username in users):
-            flash('Username already exists', 'danger')
-            return redirect(url_for('register'))
-        else:
-            users[username] = password
-        flash('Account created successfully', 'success')
-        return redirect(url_for('login'))
     return render_template('register_device.html', form=form)
 
 

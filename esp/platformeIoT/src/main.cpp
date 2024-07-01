@@ -113,6 +113,22 @@ void traitementReceptionBluetooth()
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
+    dataFromUart = SerialPort.readString();
+    //verifier le premier caractere
+    switch (dataFromUart[0])
+    {
+      case '0':
+        switch (dataFromUart[1])
+        {
+          case '1': //envoi du dev eui
+            SerialBT.print(dataFromUart.substring(2));
+            break;
+        }
+        break;
+      
+      default:
+        break;
+    }
     Serial.write(dataFromUart.c_str());
     SerialBT.print(dataFromUart);
   }

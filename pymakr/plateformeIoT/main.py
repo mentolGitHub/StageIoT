@@ -17,8 +17,9 @@ def isfloat(num):
 dataFromUart = ""
 idTramme = 2
 sendBuffer = struct.pack('i', idTramme)
+oldTimer = 0
 
-print("initialisation ...")
+print("initialisation")
 
 ####### Initialisation LED #######
 pycom.heartbeat(False) # Desactivation du mode led clignotante
@@ -74,9 +75,8 @@ while 1 :
         
 #struct.pack('%sf' % len(floatlist), *floatlist)
         print(dataFromUart)
-        timer =  time.time()
         s.send(dataFromUart)                  # Envoi des données UART par LoRa (max 256 caractères)
-        uart.write("01"+ubinascii.hexlify(lora.mac()).decode('utf-8')) 
-        print("Temps d'envoi : ", time.time()-timer)
+        if (time.time() > oldTimer + 10):
+            uart.write("01"+ubinascii.hexlify(lora.mac()).decode('utf-8')) 
         sendBuffer = struct.pack('i', idTramme)
         dataFromUart = ""

@@ -18,24 +18,25 @@ def post_data():
         global data_storage
         raw_data = request.get_data().decode('utf-8')
         data_list = raw_data[1:].split(',')
-        if len(data_list) == 14:  # Ensure we have all expected fields
+        if len(data_list) == 15:  # Ensure we have all expected fields
             data = {
-                "timestamp": int(data_list[0]),
-                "latitude": float(data_list[1]),
-                "longitude": float(data_list[2]),
-                "altitude": float(data_list[3]),
-                "luminosity": float(data_list[4]),
-                "vitesse_angulaire_X": float(data_list[5]),
-                "vitesse_angulaire_Y": float(data_list[6]),
-                "vitesse_angulaire_Z": float(data_list[7]),
-                "pressure": float(data_list[8]),
-                "acceleration_X": float(data_list[9]),
-                "acceleration_Y": float(data_list[10]),
-                "acceleration_Z": float(data_list[11]),
-                "angle": float(data_list[12]),
-                "azimuth": float(data_list[13])
+                "eui": str(data_list[0]),
+                "timestamp": int(data_list[1]),
+                "latitude": float(data_list[2]),
+                "longitude": float(data_list[3]),
+                "altitude": float(data_list[4]),
+                "luminosity": float(data_list[5]),
+                "vitesse_angulaire_X": float(data_list[6]),
+                "vitesse_angulaire_Y": float(data_list[7]),
+                "vitesse_angulaire_Z": float(data_list[8]),
+                "pressure": float(data_list[9]),
+                "acceleration_X": float(data_list[10]),
+                "acceleration_Y": float(data_list[11]),
+                "acceleration_Z": float(data_list[12]),
+                "angle": float(data_list[13]),
+                "azimuth": float(data_list[14])
             }
-            # print(data)
+            print(data)
             Q_out.put(data)
             data_storage.append(data)
             #supprimmer des data de plus d'une heure
@@ -116,7 +117,13 @@ def IPnode(Q_output: Queue, config):
     Q_out = Q_output
     
     app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
+
+def IPnode_noconfig(Q_output: Queue):
+    global Q_out
+    Q_out = Q_output
+    
+    app.run(host='0.0.0.0', port=5000, debug=True)
     
 if __name__ == '__main__':
     q = Queue()
-    IPnode(q, None)
+    IPnode_noconfig(q)

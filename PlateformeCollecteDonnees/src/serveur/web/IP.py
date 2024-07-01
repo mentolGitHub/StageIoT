@@ -203,26 +203,6 @@ def map_view():
         return redirect(url_for('login'))
     return render_template('map.html')
 
-@app.route('/register_device')
-@app.route('/register_device')
-def register_device():
-    if 'username' not in session:
-        flash('Please log in to access this page', 'warning')
-        return redirect(url_for('login'))
-    form = RegistrationForm()
-    if form.validate_on_submit():
-        deveui = form.deveui.data
-        name = form.name.data
-        password = form.password.data
-        if (username in users):
-            flash('Username already exists', 'danger')
-            return redirect(url_for('register'))
-        else:
-            users[username] = password
-        flash('Account created successfully', 'success')
-        return redirect(url_for('login'))
-    return render_template('register_device.html', form=form)
-
 
 def IPnode(Q_output: Queue, config):
     global Q_out, db, db_cursor

@@ -152,13 +152,13 @@ def login():
         username = form.username.data
         password = form.password.data
 
-
         query = "SELECT (password) FROM Users WHERE username = %s;"
         db_cursor.execute(query,(username,))
         result= db_cursor.fetchall()
+        #print(result)
         if db_cursor.rowcount == 1:
             pwdhash=result[0][0]
-            print(pwdhash)
+            #print(pwdhash)
             if password == pwdhash:
                 session['username'] = username
                 flash('Login successful', 'success')

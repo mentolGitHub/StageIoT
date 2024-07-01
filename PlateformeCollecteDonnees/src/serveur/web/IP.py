@@ -138,6 +138,13 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
+class DeviceRegistrationForm(FlaskForm):
+    deveui = StringField('DevEUI', validators=[DataRequired(), Length(min=16, max=16)])
+    name = StringField('Name', validators=[DataRequired(), Length(min=2, max=20)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Register')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
@@ -159,25 +166,29 @@ def login():
         flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
-@app.route('/register', methods=['GET', 'POST'])
-def register():
-    form = RegistrationForm()
+@app.route('/register_device', methods=['GET', 'POST'])
+def register_device():
+    form = DeviceRegistrationForm()
     if form.validate_on_submit():
-        username = form.username.data
+        deveui = form.deveui.data
+        name = form.name.data
         password = form.password.data
 
-        query = "SELECT (username) FROM Users WHERE username = %s;"
-        db_cursor.execute(query,(username,))
+        query = "SELECT (dev-eui) FROM Device WHERE dev-eui = %s;"
+        db_cursor.execute(query,(name,))
         result= db_cursor.fetchall()
         if len(result) > 0:
-            flash('Username already exists', 'danger')
+            flash('device already exists', 'danger')
             return redirect(url_for('register'))
         else:
-            query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
-            db_cursor.execute(query,(username,password))
-        flash('Account created successfully', 'success')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+            query = "INSERT INTO Device (dev-eui, name, password) VALUES (%s, %s, %s)"
+            db_cursor.execute(query,(deveui, name, password))
+            username = session.get('username', None)
+            query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
+            db_cursor.execute(query,(deveui, username))
+        flash('Device added successfully', 'success')
+        return redirect('/')
+    return render_template('register_device.html', form=form)
 
 @app.route('/logout')
 def logout():
@@ -193,11 +204,24 @@ def map_view():
     return render_template('map.html')
 
 @app.route('/register_device')
+@app.route('/register_device')
 def register_device():
     if 'username' not in session:
         flash('Please log in to access this page', 'warning')
         return redirect(url_for('login'))
-    return render_template('register_device.html')
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        deveui = form.deveui.data
+        name = form.name.data
+        password = form.password.data
+        if (username in users):
+            flash('Username already exists', 'danger')
+            return redirect(url_for('register'))
+        else:
+            users[username] = password
+        flash('Account created successfully', 'success')
+        return redirect(url_for('login'))
+    return render_template('register_device.html', form=form)
 
 
 def IPnode(Q_output: Queue, config):

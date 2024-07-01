@@ -2,26 +2,81 @@ from queue import Queue
 import sys
 import threading
 import time
-
+import mysql.connector
+import mysql.connector.abstracts
 import dataCollector
 import NetworkUnit
 import MiddlewareUnit
 
 
+Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 
+        "APP_username":"stm32lora1@ttn" , "APP_password":"NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA", 
+        "APP_hostname":"eu1.cloud.thethings.network", "APP_port":"8883",
+        "server_host":'0.0.0.0',"server_port":'5000'
+        }
+db : mysql.connector.MySQLConnection
+db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
+
+def init_config():
+    
+    """
+    Initialise the program Config
+    The config file must be in the same folder/directory as the program
+    It is not nessecary to enter evey field of the config file as there are default values
+    """
+
+    path = __file__.rsplit("/",1)[0]+"/config.conf"
+    print(path)
+    conf = open(path)
+    
+    # parsing each line
+    for line in conf:
+        # '=' is the center of the msg with the syntax : "<key>=<value>"
+        if '=' in line:
+            k,v=line.split('=')
+            v= v.strip() # on retire les espaces
+            v.lstrip('"')
+            v.rstrip('"')
+            for key in Config.keys():
+                # if the key is in the Config keys we take it's value
+                if k==key and v!="":
+                    Config[key]=v
+                
+    print(Config)
+
+def init_db():
+    global db, db_cursor
+    mydb = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
+    db = mydb
+    cursor = mydb.cursor()
+    
+    
+    # Seaching for DB
+    cursor.execute("CREATE DATABASE IF NOT EXISTS %s", (Config["db_name"],))
+    
+
+    
+    db_query = "USE "+ Config["db_name"]
+    cursor.execute(db_query)
+    db_cursor=cursor
+  
+
 def init_client():
-    #TODO:
-    pass
+    
+    init_config()
+    init_db()
+    
 
 
 def run_client():
 
-    listeQ_capteur = [Queue(),Queue()]#...
+    listeQ_info = {"position": Queue(), "vitesse":Queue(), "vehicules":Queue(), "pietons":Queue()}#...
     Q_send = Queue()
     Q_output = Queue()
-
-    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[listeQ_capteur])
-    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[listeQ_capteur,Q_output,Q_send])
-    threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,])
+    
+    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[listeQ_info,Config])
+    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[listeQ_info,Q_output,Q_send,Config, db, db_cursor])
+    threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Config])
 
     try:
         threadMiddleware.start()

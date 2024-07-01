@@ -1,6 +1,8 @@
 from queue import Queue
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
 import io
+import mysql.connector
+import mysql.connector.abstracts
 import csv
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
@@ -8,6 +10,8 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
 
 
+db : mysql.connector.MySQLConnection
+db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 Q_out: Queue
@@ -140,12 +144,19 @@ def login():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        if username in users and users[username] == password:
-            session['username'] = username
-            flash('Login successful', 'success')
-            return redirect('/')
-        else:
-            flash('Login Unsuccessful. Please check username and password', 'danger')
+
+
+        query = "SELECT (password) FROM Users WHERE username = %s;"
+        db_cursor.execute(query,(username,))
+        result= db_cursor.fetchall()
+        if db_cursor.rowcount == 1:
+            pwdhash=result[0][0]
+            print(pwdhash)
+            if password == pwdhash:
+                session['username'] = username
+                flash('Login successful', 'success')
+                return redirect('/')
+        flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -154,11 +165,16 @@ def register():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        if (username in users):
+
+        query = "SELECT (username) FROM Users WHERE username = %s;"
+        db_cursor.execute(query,(username,))
+        result= db_cursor.fetchall()
+        if len(result) > 0:
             flash('Username already exists', 'danger')
             return redirect(url_for('register'))
         else:
-            users[username] = password
+            query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
+            db_cursor.execute(query,(username,password))
         flash('Account created successfully', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
@@ -185,9 +201,13 @@ def register_device():
 
 
 def IPnode(Q_output: Queue, config):
-    global Q_out
+    global Q_out, db, db_cursor
     Q_out = Q_output
+    db = db = mysql.connector.connect(host="localhost", user=config["SQL_username"])
     
+    db_cursor = db.cursor()
+    db_query = "USE "+ config["db_name"]
+    db_cursor.execute(db_query)
     app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
 
 def IPnode_noconfig(Q_output: Queue):

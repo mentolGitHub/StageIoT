@@ -1,13 +1,15 @@
 
 
-#DROP TABLE IF EXISTS DeviceOwners;
+DROP TABLE IF EXISTS DeviceOwners;
 #Drop TABLE IF EXISTS Device;
-#DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Users;
 
 #DROP TABLE IF EXISTS Data;
 
 CREATE TABLE IF NOT EXISTS Device (
-    `dev-eui` varchar(255) NOT NULL PRIMARY KEY
+    `dev-eui` varchar(255) NOT NULL PRIMARY KEY,
+    `name` varchar(255) NOT NULL,
+    `password` varchar(255) NOT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -16,7 +18,7 @@ CREATE TABLE IF NOT EXISTS Users (
     `username` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
     `email` varchar(255),
-    `role` varchar(255) NOT NULL
+    `role` varchar(255) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 

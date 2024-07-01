@@ -224,6 +224,19 @@ def register_device():
         return redirect('/')
     return render_template('register_device.html', form=form)
 
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    flash('You have been logged out', 'info')
+    return redirect(url_for('login'))
+
+@app.route('/map')
+def map_view():
+    if 'username' not in session:
+        flash('Please log in to access this page', 'warning')
+        return redirect(url_for('login'))
+    return render_template('map.html')
+
 
 def IPnode(Q_output: Queue, config):
     global Q_out, db, db_cursor

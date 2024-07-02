@@ -9,6 +9,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
 import bcrypt
+from flask_httpauth import HTTPTokenAuth
 
 def hash_password(password):
     # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
@@ -26,10 +27,28 @@ def check_password(hashed_password, user_password):
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 app = Flask(__name__)
+auth = HTTPTokenAuth(scheme='Bearer')
 app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
+
+@app.errorhandler(401)
+def error_401(error):
+    print(error)
+    return redirect('/')
+
+# Verify token
+@auth.verify_token
+def verify_token(t):
+    print(t)
+    token=session.get('token')
+    query = "SELECT * FROM Auth_Token WHERE token = %s AND `date-exp` > %s"
+    db_cursor.execute(query, (token, datetime.now()))
+    result = db_cursor.fetchall()
+    return len(result) > 0
+
+
 
 """
     Index
@@ -98,6 +117,7 @@ def get_data():
     Visualisation des données sous forme de courbes
 """
 @app.route('/visualize')
+@auth.login_required
 def visualize():
     return render_template('visualize.html')
 
@@ -108,6 +128,7 @@ def visualize():
     Returns: Flask.Response: Réponse Flask contenant le fichier CSV en tant que pièce jointe.
 """
 @app.route('/downloadall')
+@auth.login_required
 def downloadall():
     output = io.StringIO()
     writer = csv.writer(output)
@@ -140,6 +161,7 @@ def downloadall():
     TODO : fix la page pour utiliser des requetes a la bdd
 """
 @app.route('/download', methods=['GET', 'POST'])
+@auth.login_required
 def download():
     if request.method == 'POST':
         start_time = int(request.form.get('start_time', 0))
@@ -213,9 +235,11 @@ def login():
             print(pwdhash)
             if check_password(pwdhash,password):
                 session['username'] = username
-                #TODO: token d'authentification
-
-                flash('Login successful', 'success')
+                query = "INSERT INTO Auth_Token (token, user, `date-exp`) VALUES (%s, %s, %s)"
+                token = bcrypt.gensalt()
+                db_cursor.execute(query, (token, username, (datetime.now() + timedelta(hours=2))))
+                db.commit()
+                session['token']=token
                 return redirect('/')
         flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
@@ -235,6 +259,8 @@ def register():
         query = "SELECT (username) FROM Users WHERE username = %s;"
         db_cursor.execute(query,(username,))
         result= db_cursor.fetchall()
+
+
         if len(result) > 0:
             flash('Username already exists', 'danger')
             return redirect(url_for('register'))
@@ -253,6 +279,7 @@ def register():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
+    session.pop('token')
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
 
@@ -262,6 +289,7 @@ def logout():
     TODO : verifier si ca fonctionne avec plusieurs appareils et centrer la map sur l'appareil favori de l'utilisateur
 """
 @app.route('/map')
+@auth.login_required
 def map_view():
     # if 'username' not in session:
     #     flash('Please log in to access this page', 'warning')
@@ -272,6 +300,7 @@ def map_view():
     Page permettant d'enregistrer un appareil
 """
 @app.route('/register_device', methods=['GET', 'POST'])
+@auth.login_required
 def register_device():
     # if 'username' not in session:
     #     flash('Please log in to access this page', 'warning')
@@ -313,6 +342,7 @@ def register_device():
     Liste des Devices enregistrés
 """
 @app.route('/deviceList')
+@auth.login_required
 def deviceList():
     # if 'username' not in session:
     #     flash('Please log in to access this page', 'warning')
@@ -333,6 +363,7 @@ def deviceList():
     Supprimer un appareil
 """
 @app.route('/delete_device/<deveui>', methods=['POST'])
+@auth.login_required
 def delete_device(deveui):
     # Supprimer la liaison entre l'appareil et l'utilisateur
     username = session.get('username')

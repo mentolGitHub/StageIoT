@@ -3,23 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <title>User Positions</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles/styles.css" />
+    <link rel="stylesheet" type="style" href="{{ url_for('static', filename='styles/styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         #map {
-            height: 98vh;
+            height: 100vh;
+            width: 100%;
         }
+        .container {
+            padding: 0 0;
+            margin-top: 0px;
+            margin-right: 0;
+            margin-left: 0;
+            width: 100%;
+            max-width: 1000000000000000px;
+        }
+        .menu{
+            position: absolute;
+            z-index: 10000;
+            padding: auto;
+            left: 4em;
+        }
+        
     </style>
 </head>
 <body>
     <div class="container">
+        <div class="menu">
+            <button id="home" class="btn btn-secondary mt-3 mb-3" onclick="window.location.href='/'">Home</button>
+
+        </div>
         <div id="map"></div>
     </div>
 
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script>
-        const map = L.map('map').setView([48.8566, 2.3522], 13);  // Center on Paris
+        loc = [43.6025, 1.4545]
+        // navigator.geolocation.getCurrentPosition(pos =>{loc = [pos.coords.latitude, pos.coords.longitude];})
+        const map = L.map('map').setView(loc, 13);  // Center on Paris
 
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -46,6 +70,34 @@
         // Update positions every 5 seconds
         setInterval(updateUserPositions, 5000);
         updateUserPositions();  // Initial load
+
+        function centerMapOnUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    const userLat = position.coords.latitude;
+                    const userLng = position.coords.longitude;
+                    console.log('User location:', userLat, userLng);
+                    loc = [userLat, userLng];
+                    if (!map) {
+                        initializeMap(loc);
+                    } else {
+                        map.setView(loc, 13);
+                        L.marker(loc).addTo(map).bindPopup("You are here").openPopup();
+                    }
+                }, error => {
+                    console.error('Error getting location:', error);
+                    // Initialize map with default location if there's an error
+                    initializeMap(loc);
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+                // Initialize map with default location if geolocation is not supported
+                initializeMap(loc);
+            }
+        }
+
+        centerMapOnUserLocation();
+        
     </script>
 </body>
 </html>

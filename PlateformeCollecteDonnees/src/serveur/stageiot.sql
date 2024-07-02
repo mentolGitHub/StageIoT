@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Users (
     `email` varchar(255),
     `role` varchar(255) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-
+INSERT INTO Users (username, password, role) VALUES ('admin', 'admin', 'admin');
 
 CREATE TABLE IF NOT EXISTS DeviceOwners (
     `id` serial,
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS Data (
     FOREIGN KEY (`source`) REFERENCES Device (`dev-eui`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO Users (username, password, role) VALUES ('admin', 'admin', 'admin');
+
 
 # renvoie les données entre 2 dates d'un device / d'une liste de device
 

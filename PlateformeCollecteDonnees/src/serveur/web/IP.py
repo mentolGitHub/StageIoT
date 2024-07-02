@@ -13,6 +13,7 @@ from wtforms.validators import DataRequired, Length, EqualTo
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 app = Flask(__name__)
+app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
@@ -288,7 +289,7 @@ def register_device():
             query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
             db_cursor.execute(query, (deveui, username))
             flash('Device added successfully', 'success')
-            return redirect(url_for('index'))
+            return redirect('/')
         else:
             flash('User not logged in', 'danger')
             return redirect(url_for('login'))
@@ -315,7 +316,7 @@ def IPnode_noconfig(Q_output: Queue):
     global Q_out
     Q_out = Q_output
     
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True, ssl_context='adhoc')
     
 if __name__ == '__main__':
     q = Queue()

@@ -4,7 +4,8 @@ body {
     font-family: Arial, sans-serif;
 }
 .container {
-    margin-top: 20px;
+    padding: 0 0;
+    margin-top: 0px;
 }
 h1 {
     margin-bottom: 20px;
@@ -21,8 +22,4 @@ h1 {
 }
 .dark-theme canvas {
     background-color: #1e1e1e;
-}
-
-.login_btn {
-    align: right;
 }

@@ -8,6 +8,19 @@ from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
+import bcrypt
+
+def hash_password(password):
+    # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password_bytes, salt)
+    return hashed_password
+
+def check_password(hashed_password, user_password):
+    # Vérifier si le mot de passe fourni correspond au hachage
+    password_bytes = user_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_password)
 
 
 db : mysql.connector.MySQLConnection
@@ -17,10 +30,6 @@ app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
-users = {
-    'user1': 'password1',
-    'user2': 'password2'
-}
 
 """
     Index
@@ -202,7 +211,7 @@ def login():
         if db_cursor.rowcount == 1:
             pwdhash=result[0][0]
             #print(pwdhash)
-            if password == pwdhash:
+            if hash_password(password) == check_password(pwdhash):
                 session['username'] = username
                 flash('Login successful', 'success')
                 return redirect('/')
@@ -218,7 +227,7 @@ def register():
     if form.validate_on_submit():
         # Recuperation des données rentrées dans le formulaire
         username = form.username.data
-        password = form.password.data
+        password = hash_password(form.password.data)
 
         # Verification du username pour éviter que 2 personnes aient le même
         query = "SELECT (username) FROM Users WHERE username = %s;"
@@ -269,7 +278,7 @@ def register_device():
         # Recuperation des données du formulaire
         deveui = form.deveui.data
         name = form.name.data
-        password = form.password.data
+        password = hash_password(form.password.data)
 
         # Verifier si l'appareil existe déjà
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
@@ -295,6 +304,47 @@ def register_device():
             return redirect(url_for('login'))
 
     return render_template('register_device.html', form=form)
+
+"""
+    Liste des Devices enregistrés
+"""
+@app.route('/deviceList')
+def deviceList():
+    # if 'username' not in session:
+    #     flash('Please log in to access this page', 'warning')
+    #     return redirect(url_for('login'))
+    username = session.get('username')
+    if username:
+        #selectionner les appareils de l'utilisateur
+        query = "SELECT `dev-eui` FROM DeviceOwners WHERE owner = %s"
+        db_cursor.execute(query, (username,))
+        devices = db_cursor.fetchall()
+        return render_template('deviceList.html', username=username, devices=devices)
+    else:
+        flash('User not logged in', 'danger')
+        return redirect(url_for('login'))
+    
+
+"""
+    Supprimer un appareil
+"""
+@app.route('/delete_device/<deveui>', methods=['POST'])
+def delete_device(deveui):
+    # Supprimer la liaison entre l'appareil et l'utilisateur
+    username = session.get('username')
+    query = "DELETE * FROM DeviceOwners  WHERE (`dev-eui` = %s AND owner = %s)"
+    db_cursor.execute(query, (deveui, username))
+
+    # Supprimer l'appareil si aucun utilisateur n'est associé
+    query = "SELECT * FROM DeviceOwners WHERE `dev-eui` = %s"
+    db_cursor.execute(query, (deveui,))
+    result = db_cursor.fetchall()
+    if len(result) == 0:
+        query = "DELETE * FROM Device WHERE `dev-eui` = %s"
+        db_cursor.execute(query, (deveui,))
+
+    return redirect(url_for('device_list'))
+
 
 """
     Lancement du serveur avec un fichier de configuration

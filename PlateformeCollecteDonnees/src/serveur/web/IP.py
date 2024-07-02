@@ -21,19 +21,31 @@ users = {
     'user2': 'password2'
 }
 
+"""
+    Index
+"""
 @app.route('/')
 def accueil():
     is_authenticated = 'username' in session
     username = session.get('username', None)
     return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
+
+"""
+    Gère la requête POST pour envoyer des données au serveur.
+    
+    Returns:
+        - Si les données sont valides, renvoie un JSON avec le statut "success" et le code de statut 200.
+        - Si les données sont invalides, renvoie un JSON avec le statut "error", le message "Invalid data format" et le code de statut 400.
+"""
 @app.route('/post_data', methods=['POST'])
 def post_data():
+    
     if request.method == 'POST':
         global data_storage
         raw_data = request.get_data().decode('utf-8')
         data_list = raw_data[1:].split(',')
-        if len(data_list) == 15:  # Ensure we have all expected fields
+        if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
             data = {
                 "eui": str(data_list[0]),
                 "timestamp": int(data_list[1]),
@@ -54,22 +66,37 @@ def post_data():
             print(data)
             Q_out.put(data)
             data_storage.append(data)
-            #supprimmer des data de plus d'une heure
+            # Supprimer les données de plus d'une heure
             data_storage = [d for d in data_storage if d['timestamp']/1000 >= datetime.now().timestamp() - 62]
             # print (data_storage)
             return jsonify({"status": "success"}), 200
         else:
             return jsonify({"status": "error", "message": "Invalid data format"}), 400
 
+"""
+    Envoi de données vers un appareil exterieur 
+
+    Returns: Données au format json
+
+    TODO : mettre des paramètes a la requete afin de pouvoir specifier les données demandées 
+"""
 @app.route('/get_data', methods=['GET'])
 def get_data():
     return jsonify(data_storage)  
 
+"""
+    Visualisation des données sous forme de courbes
+"""
 @app.route('/visualize')
 def visualize():
     return render_template('visualize.html')
 
 
+"""
+    Télécharge toutes les données stockées au format CSV.
+
+    Returns: Flask.Response: Réponse Flask contenant le fichier CSV en tant que pièce jointe.
+"""
 @app.route('/downloadall')
 def downloadall():
     output = io.StringIO()
@@ -95,6 +122,13 @@ def downloadall():
         download_name=f'iot_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
     )
 
+"""
+    Permet d'acceder a une page de téléchargement des données ou l'on peut choisir quelles données l'on veut
+    
+    Returns: Les données demandées au format csv
+
+    TODO : fix la page pour utiliser des requetes a la bdd
+"""
 @app.route('/download', methods=['GET', 'POST'])
 def download():
     if request.method == 'POST':
@@ -127,17 +161,20 @@ def download():
                       "angle", "azimuth"]
         return render_template('download.html', fields=all_fields)
 
+# formulaire de login utilisateur
 class LoginForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
+# formulaire d'enregistrement d'un utilisateur
 class RegistrationForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
+# formulaire d'enregistrement d'un appareil
 class DeviceRegistrationForm(FlaskForm):
     deveui = StringField('DevEUI', validators=[DataRequired(), Length(min=16, max=16)])
     name = StringField('Name', validators=[DataRequired(), Length(min=2, max=20)])
@@ -145,13 +182,18 @@ class DeviceRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
 
+"""
+    Page permettant de se connecter
+"""
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
+        # Recuperation des données rentrées dans le formulaire
         username = form.username.data
         password = form.password.data
 
+        # Verification du username/password avec ce qui est enregistré dans la db
         query = "SELECT (password) FROM Users WHERE username = %s;"
         db_cursor.execute(query,(username,))
         result= db_cursor.fetchall()
@@ -166,13 +208,18 @@ def login():
         flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
+"""
+    Page permettant de s'enregistrer'
+"""
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        # Recuperation des données rentrées dans le formulaire
         username = form.username.data
         password = form.password.data
 
+        # Verification du username pour éviter que 2 personnes aient le même
         query = "SELECT (username) FROM Users WHERE username = %s;"
         db_cursor.execute(query,(username,))
         result= db_cursor.fetchall()
@@ -180,18 +227,27 @@ def register():
             flash('Username already exists', 'danger')
             return redirect(url_for('register'))
         else:
+            # Ajout a la base de donnée
             query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
             db_cursor.execute(query,(username,password))
         flash('Account created successfully', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
+"""
+    Page permettant de se deconnecter
+"""
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
 
+"""
+    Visualisation des appareils sur une carte
+
+    TODO : verifier si ca fonctionne avec plusieurs appareils et centrer la map sur l'appareil favori de l'utilisateur
+"""
 @app.route('/map')
 def map_view():
     # if 'username' not in session:
@@ -199,16 +255,22 @@ def map_view():
     #     return redirect(url_for('login'))
     return render_template('map.html')
 
-
+"""
+    Page permettant d'enregistrer un appareil
+"""
 @app.route('/register_device', methods=['GET', 'POST'])
 def register_device():
+    # if 'username' not in session:
+    #     flash('Please log in to access this page', 'warning')
+    #     return redirect(url_for('login'))
     form = DeviceRegistrationForm()
     if form.validate_on_submit():
+        # Recuperation des données du formulaire
         deveui = form.deveui.data
         name = form.name.data
-        password = form.password.data  # Ensure this is hashed before storing
+        password = form.password.data
 
-        # Check if the device already exists
+        # Verifier si l'appareil existe déjà
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
         db_cursor.execute(query, (deveui,))
         result = db_cursor.fetchall()
@@ -216,11 +278,11 @@ def register_device():
             flash('Device already exists', 'danger')
             return redirect(url_for('register_device'))
 
-        # Insert the device into the database
+        # Ajouter l'appareil a la base
         query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
         db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
 
-        # Associate the device with the user
+        # Assicier un utilisateur à l'appareil
         username = session.get('username')
         if username:
             query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
@@ -233,7 +295,9 @@ def register_device():
 
     return render_template('register_device.html', form=form)
 
-
+"""
+    Lancement du serveur avec un fichier de configuration
+"""
 def IPnode(Q_output: Queue, config):
     global Q_out, db, db_cursor
     Q_out = Q_output
@@ -244,6 +308,9 @@ def IPnode(Q_output: Queue, config):
     db_cursor.execute(db_query)
     app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
 
+"""
+    Lancement du serveur sans fichier de configuration
+"""
 def IPnode_noconfig(Q_output: Queue):
     global Q_out
     Q_out = Q_output

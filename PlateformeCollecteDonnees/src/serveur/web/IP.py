@@ -173,13 +173,13 @@ def download():
 
 # formulaire de login utilisateur
 class LoginForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    username = StringField('Username', validators=[DataRequired(), Length(min=1, max=255)])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Login')
 
 # formulaire d'enregistrement d'un utilisateur
 class RegistrationForm(FlaskForm):
-    username = StringField('Username', validators=[DataRequired(), Length(min=2, max=20)])
+    username = StringField('Username', validators=[DataRequired(), Length(min=4, max=255)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Register')
@@ -209,10 +209,12 @@ def login():
         result= db_cursor.fetchall()
         #print(result)
         if db_cursor.rowcount == 1:
-            pwdhash=result[0][0]
-            #print(pwdhash)
-            if hash_password(password) == check_password(pwdhash):
+            pwdhash=result[0][0].encode("utf-8")
+            print(pwdhash)
+            if check_password(pwdhash,password):
                 session['username'] = username
+                #TODO: token d'authentification
+
                 flash('Login successful', 'success')
                 return redirect('/')
         flash('Login Unsuccessful. Please check username and password', 'danger')
@@ -240,6 +242,7 @@ def register():
             # Ajout a la base de donnée
             query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
             db_cursor.execute(query,(username,password))
+            db.commit()
         flash('Account created successfully', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
@@ -291,12 +294,13 @@ def register_device():
         # Ajouter l'appareil a la base
         query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
         db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
-
+        db.commit()
         # Assicier un utilisateur à l'appareil
         username = session.get('username')
         if username:
             query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
             db_cursor.execute(query, (deveui, username))
+            db.commit()
             flash('Device added successfully', 'success')
             return redirect('/')
         else:

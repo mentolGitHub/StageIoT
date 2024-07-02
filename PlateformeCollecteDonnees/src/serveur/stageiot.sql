@@ -14,13 +14,12 @@ CREATE TABLE IF NOT EXISTS Device (
 
 
 CREATE TABLE IF NOT EXISTS Users (
-    `id` int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    `username` varchar(255) NOT NULL,
+    `username` varchar(255) PRIMARY KEY NOT NULL,
     `password` varchar(255) NOT NULL,
     `email` varchar(255),
     `role` varchar(255) NOT NULL DEFAULT 'user'
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
-INSERT INTO Users (username, password, role) VALUES ('admin', 'admin', 'admin');
+INSERT INTO Users (username, password, role) VALUES ('a', '$2b$12$MF83CvvYYxd6QSOb4SPm4.m4PXghwwRncpURAro7sfs2AAkZ6ORuW', 'admin');
 
 CREATE TABLE IF NOT EXISTS DeviceOwners (
     `id` serial,
@@ -54,6 +53,13 @@ CREATE TABLE IF NOT EXISTS Data (
     FOREIGN KEY (`source`) REFERENCES Device (`dev-eui`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS Auth_Token (
+    `token` varchar(255) PRIMARY KEY,
+    `user` varchar(255) NOT NULL,
+    `date-exp` DATETIME(3) NOT NULL,
+    FOREIGN KEY (`user`) REFERENCES Users(`username`)
+
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
 # renvoie les données entre 2 dates d'un device / d'une liste de device

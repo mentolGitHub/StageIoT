@@ -194,9 +194,9 @@ def logout():
 
 @app.route('/map')
 def map_view():
-    if 'username' not in session:
-        flash('Please log in to access this page', 'warning')
-        return redirect(url_for('login'))
+    # if 'username' not in session:
+    #     flash('Please log in to access this page', 'warning')
+    #     return redirect(url_for('login'))
     return render_template('map.html')
 
 
@@ -206,22 +206,31 @@ def register_device():
     if form.validate_on_submit():
         deveui = form.deveui.data
         name = form.name.data
-        password = form.password.data
+        password = form.password.data  # Ensure this is hashed before storing
 
-        query = "SELECT (dev-eui) FROM Device WHERE dev-eui = %s;"
-        db_cursor.execute(query,(name,))
-        result= db_cursor.fetchall()
+        # Check if the device already exists
+        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
+        db_cursor.execute(query, (deveui,))
+        result = db_cursor.fetchall()
         if len(result) > 0:
-            flash('device already exists', 'danger')
-            return redirect(url_for('register'))
-        else:
-            query = "INSERT INTO Device (dev-eui, name, password) VALUES (%s, %s, %s)"
-            db_cursor.execute(query,(deveui, name, password))
-            username = session.get('username', None)
+            flash('Device already exists', 'danger')
+            return redirect(url_for('register_device'))
+
+        # Insert the device into the database
+        query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
+        db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
+
+        # Associate the device with the user
+        username = session.get('username')
+        if username:
             query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-            db_cursor.execute(query,(deveui, username))
-        flash('Device added successfully', 'success')
-        return redirect('/')
+            db_cursor.execute(query, (deveui, username))
+            flash('Device added successfully', 'success')
+            return redirect(url_for('index'))
+        else:
+            flash('User not logged in', 'danger')
+            return redirect(url_for('login'))
+
     return render_template('register_device.html', form=form)
 
 

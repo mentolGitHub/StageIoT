@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
-
+import bcrypt
 
 def hash_password(password):
     # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe

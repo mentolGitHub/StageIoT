@@ -296,6 +296,47 @@ def register_device():
     return render_template('register_device.html', form=form)
 
 """
+    Liste des Devices enregistrés
+"""
+@app.route('/deviceList')
+def deviceList():
+    # if 'username' not in session:
+    #     flash('Please log in to access this page', 'warning')
+    #     return redirect(url_for('login'))
+    username = session.get('username')
+    if username:
+        #selectionner les appareils de l'utilisateur
+        query = "SELECT `dev-eui` FROM DeviceOwners WHERE owner = %s"
+        db_cursor.execute(query, (username,))
+        devices = db_cursor.fetchall()
+        return render_template('deviceList.html', username=username, devices=devices)
+    else:
+        flash('User not logged in', 'danger')
+        return redirect(url_for('login'))
+    
+
+"""
+    Supprimer un appareil
+"""
+@app.route('/delete_device/<deveui>', methods=['POST'])
+def delete_device(deveui):
+    # Supprimer la liaison entre l'appareil et l'utilisateur
+    username = session.get('username')
+    query = "DELETE * FROM DeviceOwners  WHERE (`dev-eui` = %s AND owner = %s)"
+    db_cursor.execute(query, (deveui, username))
+
+    # Supprimer l'appareil si aucun utilisateur n'est associé
+    query = "SELECT * FROM DeviceOwners WHERE `dev-eui` = %s"
+    db_cursor.execute(query, (deveui,))
+    result = db_cursor.fetchall()
+    if len(result) == 0:
+        query = "DELETE * FROM Device WHERE `dev-eui` = %s"
+        db_cursor.execute(query, (deveui,))
+
+    return redirect(url_for('device_list'))
+
+
+"""
     Lancement du serveur avec un fichier de configuration
 """
 def IPnode(Q_output: Queue, config):

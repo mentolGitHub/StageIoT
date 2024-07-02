@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Appareils</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body class="light-theme">
+    <h2>Liste des Appareils</h2>
+    <button id="themeToggle" class="btn btn-secondary">Toggle Dark Mode</button>
+    <button class="btn btn-primary ms-3" onclick="window.location.href='/register_device'">Register device</button>
+    <button class="btn btn-primary ms-3" onclick="window.location.href='/'">Index</button>
+    <table>
+        <tr>
+            <th>DevEUI</th>
+            <th>Nom</th>
+            <th>Action</th>
+        </tr>
+        {% for device in devices %}
+        <tr>
+            <td>{{ device.deveui }}</td>
+            <td>{{ device.name }}</td>
+            <td>
+                <a href="/delete_device/{{ device.deveui }}" onclick="return confirm('Attention, l\'appareil sera supprimé de votre compte');">Supprimer</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

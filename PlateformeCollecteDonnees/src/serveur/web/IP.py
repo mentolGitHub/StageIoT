@@ -130,18 +130,21 @@ def post_data():
 """
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    username = check_user_token()
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor = db.cursor()
+    username = session.get('username')
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
-    db_cursor.execute(query,(username,))
-    result= db_cursor.fetchall()
+    cursor.execute(query,(username,))
+    result= cursor.fetchall()
+    data = []
     for i in result:
-        
+        if i[0] in data_storage:
+            data.append(data_storage[i[0]])
     return jsonify(data_storage)  
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
-@auth.login_required
 def get_euiList():
-    username = check_user_token()
+    username = session.get('username')
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     db_cursor.execute(query,(username,))
     result= db_cursor.fetchall()
@@ -473,7 +476,7 @@ def IPnode(Q_output: Queue, config):
     global Q_out, db, db_cursor, Config
     Config= config
     Q_out = Q_output
-    db = db = mysql.connector.connect(host="localhost", user=config["SQL_username"])
+    db = mysql.connector.connect(host="localhost", user=config["SQL_username"])
     app.app_context().push()
     with app.app_context():
         db_cursor = db.cursor()

@@ -55,9 +55,10 @@
         const markers = {};
 
         function updateUserPositions() {
-            fetch('/get_data')
+                fetch('/get_data')
                 .then(response => response.json())
                 .then(data => {
+                    console.log(i);
                     data.forEach(user => {
                         const { eui, latitude, longitude } = user;
                         if (markers[eui]) {
@@ -100,7 +101,28 @@
         }
 
         centerMapOnUserLocation();
-        
+
+        let euiList = [];
+        fetch('/get_euiList')
+            .then(response => {
+                // Vérifier si la requête a réussi
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json(); // Convertir la réponse en JSON
+            })
+            .then(data => {
+                // Utiliser les données pour remplir la liste déroulante
+                selectElement.innerHTML = ''; // Vider les options existantes
+                // Parcourir chaque EUI dans les données reçues
+                eui = data[0][0];
+                data.forEach(eui => {
+                    euiList.append(eui);
+                });
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     </script>
 </body>
 </html>

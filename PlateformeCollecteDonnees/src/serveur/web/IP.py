@@ -32,12 +32,12 @@ app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = {}
-
+Config = {}
 
 # Verify token
 @auth.verify_token
 def verify_token(t):
-    print(t)
+    # print(t)
     token=session.get('token')
     query = "SELECT * FROM Auth_Token WHERE token = %s AND `date-exp` > %s"
     db_cursor.execute(query, (token, datetime.now()))
@@ -46,9 +46,26 @@ def verify_token(t):
 
 # Gestion des erreurs HTTP
 @auth.error_handler
-def unauthorized():
-    flash('You must be logged in to view this page.', 'danger')
-    return redirect(url_for('login'))
+def err_handler(error):
+    match (error):
+        case 401 :
+            flash('You must be logged in to view this page.', 'danger')
+            return redirect(url_for('login'))
+        case 404 :
+            return redirect(url_for('/'))
+
+
+def check_user_token():
+    token = session.get('token')
+    
+    query = "SELECT user FROM Auth_Token WHERE token=%s"
+    db_cursor.execute(query, (token,))
+    res = db_cursor.fetchall()[0][0]
+    if db_cursor.rowcount==1:
+        username = res
+        return username
+    else:
+        return None
 
 """
     Index
@@ -56,7 +73,7 @@ def unauthorized():
 @app.route('/')
 def accueil():
     is_authenticated = 'username' in session
-    username = session.get('username', None)
+    username = check_user_token()
     return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
 
@@ -77,6 +94,7 @@ def post_data():
         if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
             data = {
                 "eui": str(data_list[0]),
+
                 "timestamp": int(data_list[1]),
                 "latitude": float(data_list[2]),
                 "longitude": float(data_list[3]),
@@ -92,7 +110,7 @@ def post_data():
                 "angle": float(data_list[13]),
                 "azimuth": float(data_list[14])
             }
-            print(data)
+            # print(data)
             Q_out.put(data)
             if data_list[0] not in data_storage:
                 data_storage[data_list[0]] = [data]
@@ -217,12 +235,19 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Register')
 
 # formulaire d'enregistrement d'un appareil
+class DeviceAssociationForm(FlaskForm):
+    deveui = StringField('DevEUI', validators=[DataRequired(), Length(min=16, max=16)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
+    submit = SubmitField('Associate')
+
+
+# formulaire d'enregistrement d'un appareil
 class DeviceRegistrationForm(FlaskForm):
     deveui = StringField('DevEUI', validators=[DataRequired(), Length(min=16, max=16)])
     name = StringField('Name', validators=[DataRequired(), Length(min=2, max=20)])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=6, max=60)])
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
-    submit = SubmitField('Register')
+    submit2 = SubmitField('Register')
 
 """
     Page permettant de se connecter
@@ -234,15 +259,15 @@ def login():
         # Recuperation des données rentrées dans le formulaire
         username = form.username.data
         password = form.password.data
-
+        db_cursor.fetchall()
         # Verification du username/password avec ce qui est enregistré dans la db
         query = "SELECT (password) FROM Users WHERE username = %s;"
         db_cursor.execute(query,(username,))
         result= db_cursor.fetchall()
-        #print(result)
+        # print(result)
         if db_cursor.rowcount == 1:
             pwdhash=result[0][0].encode("utf-8")
-            print(pwdhash)
+            # print(pwdhash)
             if check_password(pwdhash,password):
                 session['username'] = username
                 query = "INSERT INTO Auth_Token (token, user, `date-exp`) VALUES (%s, %s, %s)"
@@ -312,11 +337,35 @@ def map_view():
 @app.route('/register_device', methods=['GET', 'POST'])
 @auth.login_required
 def register_device():
-    # if 'username' not in session:
-    #     flash('Please log in to access this page', 'warning')
-    #     return redirect(url_for('login'))
+    form_associate = DeviceAssociationForm()
+    if form_associate.submit.data and form_associate.validate():
+        deveui = form_associate.deveui.data
+        password = hash_password(form_associate.password.data)
+        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
+        db_cursor.execute(query, (deveui,))
+        # print("nb trouvé :"+str(db_cursor.rowcount))
+        if len(db_cursor.fetchall())==1:
+            username = check_user_token()
+            if username:
+                query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
+                db_cursor.execute(query, (deveui, username))
+                if len(db_cursor.fetchall())>0:
+                    flash('Device already linked to account', 'danger')
+                    return redirect(url_for('register_device'))
+                query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
+                db_cursor.execute(query, (deveui, username))
+                db.commit()
+                flash('Device added successfully', 'success')
+                return redirect(url_for('register_device'))
+            else:
+                flash('User not logged in', 'danger')
+                return redirect(url_for('login'))
+        else :
+            flash('This device is not registered yet', 'danger')
+            return redirect(url_for('register_device'))
+
     form = DeviceRegistrationForm()
-    if form.validate_on_submit():
+    if form.submit2.data and form.validate():
         # Recuperation des données du formulaire
         deveui = form.deveui.data
         name = form.name.data
@@ -334,19 +383,24 @@ def register_device():
         query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
         db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
         db.commit()
+
+        # TODO: Ajout a TTN via http ou via l'api
+        # appid="stm32lora1"
+        # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
+
         # Assicier un utilisateur à l'appareil
-        username = session.get('username')
+        username = check_user_token()
         if username:
             query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
             db_cursor.execute(query, (deveui, username))
             db.commit()
             flash('Device added successfully', 'success')
-            return redirect('/')
+            return redirect(url_for('register_device'))
         else:
             flash('User not logged in', 'danger')
             return redirect(url_for('login'))
 
-    return render_template('register_device.html', form=form)
+    return render_template('register_device.html', form_associate=form_associate, form=form)
 
 """
     Liste des Devices enregistrés
@@ -365,7 +419,7 @@ def deviceList():
         devices = db_cursor.fetchall()
         names = []
         for i in devices:
-            print(i)
+            # print(i)
             query = "SELECT name FROM Device WHERE `dev-eui` = %s"
             db_cursor.execute(query, i)
             names += [j[0] for j in db_cursor.fetchall()]
@@ -406,14 +460,16 @@ def delete_device(deveui):
     Lancement du serveur avec un fichier de configuration
 """
 def IPnode(Q_output: Queue, config):
-    global Q_out, db, db_cursor
+    global Q_out, db, db_cursor, Config
+    Config= config
     Q_out = Q_output
     db = db = mysql.connector.connect(host="localhost", user=config["SQL_username"])
-    
-    db_cursor = db.cursor()
-    db_query = "USE "+ config["db_name"]
-    db_cursor.execute(db_query)
-    app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
+    app.app_context().push()
+    with app.app_context():
+        db_cursor = db.cursor()
+        db_query = "USE "+ config["db_name"]
+        db_cursor.execute(db_query)
+        app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
 
 """
     Lancement du serveur sans fichier de configuration

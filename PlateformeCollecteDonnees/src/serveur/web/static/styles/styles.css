@@ -17,12 +17,12 @@ h1 {
     margin-bottom: 10px;
 }
 .dark-theme {
-    background-color: #121212;
+    background-color: #333;
     color: #ffffff;
 }
 .dark-theme .form-check-label {
     color: #ffffff;
 }
 .dark-theme canvas {
-    background-color: #1e1e1e;
+    background-color: #323232;
 }

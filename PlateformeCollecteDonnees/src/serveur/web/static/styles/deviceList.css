@@ -1,0 +1,99 @@
+/* styles/styles.css */
+
+/* Reset some default styles */
+body, h1, h2, h3, h4, h5, h6, p, ul, ol, li, figure, figcaption, blockquote, dl, dd {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+h1 {
+    font-size: 2em;
+    margin-bottom: 0.5em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+button {
+    margin-top: 10px;
+}
+
+.light-theme {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.light-theme table, .light-theme th, .light-theme td {
+    border-color: #ddd;
+}
+
+.dark-theme {
+    background-color: #333;
+    color: #f5f5f5;
+}
+
+.dark-theme table, .dark-theme th, .dark-theme td {
+    border-color: #555;
+}
+
+.dark-theme th {
+    background-color: #444;
+}
+
+/* Additional styles for buttons */
+.btn {
+    margin: 10px 0;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}
+
+/* Ensure buttons have proper spacing */
+.ms-3 {
+    margin-left: 1rem !important;
+}
+
+a {
+    color: white; /* Set link color to white */
+    text-decoration: none; /* No underline */
+}
+
+a:hover {
+    color: #eee;
+    text-decoration: underline; /* Underline on hover */
+}
+
+a:visited {
+    color: white; /* Keep visited links white */
+}

@@ -41,6 +41,17 @@
             <button class="btn btn-primary ms-3" onclick="window.location.href='/register_device'">Register device</button>
             <button class="btn btn-primary ms-3" onclick="window.location.href='/deviceList'">Device list</button>
         </div>
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} mt-3">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endwith %}
     </div>
 
     <script src="{{ url_for('static', filename='index.js') }}"></script>

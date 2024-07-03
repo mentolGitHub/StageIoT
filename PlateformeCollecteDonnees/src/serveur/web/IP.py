@@ -33,10 +33,6 @@ app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
 
-@app.errorhandler(401)
-def error_401(error):
-    print(error)
-    return redirect('/')
 
 # Verify token
 @auth.verify_token
@@ -48,8 +44,11 @@ def verify_token(t):
     result = db_cursor.fetchall()
     return len(result) > 0
 
-
-
+# Gestion des erreurs HTTP
+@auth.error_handler
+def unauthorized():
+    flash('You must be logged in to view this page.', 'danger')
+    return redirect(url_for('login'))
 """
     Index
 """

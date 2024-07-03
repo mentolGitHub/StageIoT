@@ -24,7 +24,7 @@ def save_DB(data,id=0):
         # utils.print_SQL_response(db_cursor)
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
         table = "Data"
-        db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s;",data)
+        db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s",data)
         
         if db_cursor.arraysize == 2:
             utils.print_SQL_response(db_cursor)
@@ -55,10 +55,10 @@ def save_DB(data,id=0):
                     azimut, distance_recul, source) \
                     VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosite)s,\
                     %(presence)s, %(pression)s, Point(%(longitude)s, %(latitude)s), %(altitude)s, %(angle)s,\
-                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s, %(eui)s);"
+                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s, %(eui)s)"
         # print(query,data)
         
-        #db_cursor.execute(query,data)
+        db_cursor.execute(query,data)
         #print(db_cursor)
         db.commit()
     except ValueError as e :
@@ -68,7 +68,7 @@ def data_LoRa_handler(message,device):
     id = int(message[0],base=16)
     message = message[0]+device+"," + message[1:]
     
-    print(message)
+    # print(message)
     if id in range(0,16):
         #print(data)
         requests.post("http://"+Config['server_host']+":"+Config['server_port']+"/post_data",data=message)
@@ -78,7 +78,7 @@ def data_LoRa_handler(message,device):
 def LoRa_msg_handler(msg):
     try :
         message = json.loads(msg.payload)
-        print(msg.topic)
+        # print(msg.topic)
         #print(msg.payload)
         type = msg.topic.split("/")[-1]
         match type : 
@@ -106,7 +106,17 @@ def IP_msg_handler(msg):
         data[key]=msg[key]
     data['timestamp']= int(data['timestamp'])/1000
     # print(data)
-    save_DB(data)
+
+
+    device = data["eui"]
+    query = "SELECT * FROM Device WHERE `dev-eui`=%s"
+    db_cursor.execute(query,(device,))
+    res = db_cursor.fetchall()
+    # print(res)
+    if len(res)!=0:
+        save_DB(data)
+    else:
+        print("device "+device+" not registered")
     
     
 

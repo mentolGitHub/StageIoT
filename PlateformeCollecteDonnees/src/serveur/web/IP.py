@@ -32,7 +32,7 @@ app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = []  # List to store received data
-
+Config = {}
 
 # Verify token
 @auth.verify_token
@@ -94,6 +94,7 @@ def post_data():
         if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
             data = {
                 "eui": str(data_list[0]),
+
                 "timestamp": int(data_list[1]),
                 "latitude": float(data_list[2]),
                 "longitude": float(data_list[3]),
@@ -359,7 +360,6 @@ def register_device():
         deveui = form.deveui.data
         name = form.name.data
         password = hash_password(form.password.data)
-        print("coucou")
 
         # Verifier si l'appareil existe déjà
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
@@ -373,6 +373,11 @@ def register_device():
         query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
         db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
         db.commit()
+
+        # TODO: Ajout a TTN via http ou via l'api
+        # appid="stm32lora1"
+        # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
+
         # Assicier un utilisateur à l'appareil
         username = check_user_token()
         if username:
@@ -404,7 +409,7 @@ def deviceList():
         devices = db_cursor.fetchall()
         names = []
         for i in devices:
-            print(i)
+            # print(i)
             query = "SELECT name FROM Device WHERE `dev-eui` = %s"
             db_cursor.execute(query, i)
             names += [j[0] for j in db_cursor.fetchall()]
@@ -445,7 +450,8 @@ def delete_device(deveui):
     Lancement du serveur avec un fichier de configuration
 """
 def IPnode(Q_output: Queue, config):
-    global Q_out, db, db_cursor
+    global Q_out, db, db_cursor, Config
+    Config= config
     Q_out = Q_output
     db = db = mysql.connector.connect(host="localhost", user=config["SQL_username"])
     app.app_context().push()

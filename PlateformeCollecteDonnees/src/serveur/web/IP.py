@@ -130,13 +130,23 @@ def post_data():
 """
 @app.route('/get_data', methods=['GET'])
 def get_data():
+    username = check_user_token()
+    query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
+    db_cursor.execute(query,(username,))
+    result= db_cursor.fetchall()
+    for i in result:
+        
     return jsonify(data_storage)  
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
-def get_data():
-    
-    query 
-    return jsonify(data_storage)  
+@auth.login_required
+def get_euiList():
+    username = check_user_token()
+    query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
+    db_cursor.execute(query,(username,))
+    result= db_cursor.fetchall()
+    return jsonify(result[:][:])  
+
 
 """
     Visualisation des données sous forme de courbes

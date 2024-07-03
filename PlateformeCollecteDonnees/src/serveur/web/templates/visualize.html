@@ -21,9 +21,6 @@
         <button id="home" class="btn btn-secondary mb-3" onclick="window.location.href='/'">Home</button>
         <canvas id="dataChart" width="400" height="200"></canvas>
         <select id="euiSelect" onchange="updateEui(this.value)">
-            <option value="70b3d57ed0068a6f">70b3d57ed0068a6f</option>
-            <option value="eui2">EUI 2</option>
-            <option value="eui3">EUI 3</option>
         </select>
         <div id="dataDisplay" class="mt-4"></div>
         <div id="fieldsToggle" class="mt-4">
@@ -221,6 +218,31 @@
     
         // Fetch data initially and then every 0.5 seconds
         fetchData();
+        const selectElement = document.getElementById("euiSelect");
+        
+        let euiList = fetch('/get_euiList')
+        .then(response => {
+            // Vérifier si la requête a réussi
+            if (!response.ok) {
+            throw new Error('Network response was not ok');
+            }
+            return response.json(); // Convertir la réponse en JSON
+        })
+        .then(data => {
+            // Utiliser les données pour remplir la liste déroulante
+            selectElement.innerHTML = ''; // Vider les options existantes
+            // Parcourir chaque EUI dans les données reçues
+            eui = data[0][0];
+            data.forEach(eui => {
+                const option = document.createElement("option");
+                option.value = eui;
+                option.textContent = eui;
+                selectElement.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
         createChart();
         setInterval(fetchData, 500);
     

@@ -10,11 +10,33 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Register Device</h1>
+        
         <button id="themeToggle" class="btn btn-secondary">Toggle Dark Mode</button>
         <button id="home" class="btn btn-secondary mt-3 mb-3" onclick="window.location.href='/'">Home</button>
         <div class="row justify-content-center">
+            <h1 class="text-center">Associate Device</h1>
             <div class="col-md-6">
+                <form method="POST" action="{{ url_for('register_device') }}">
+                    {{ form_associate.hidden_tag() }}
+                    <div class="form-group">
+                        {{ form_associate.deveui.label(class="form-label") }}
+                        {{ form_associate.deveui(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_associate.password.label(class="form-label") }}
+                        {{ form_associate.password(class="form-control") }}
+                    </div>
+                    <div class="form-group">
+                    </div>
+                    <div class="form-group">
+                        {{ form_associate.submit(class="btn btn-primary mt-3") }}
+                    </div>
+                </form>
+            </div>
+        <h1></h1> 
+            <h1 class="text-center">Register Device</h1>
+            <div class="col-md-6">
+
                 <form method="POST" action="{{ url_for('register_device') }}">
                     {{ form.hidden_tag() }}
                     <div class="form-group">
@@ -34,7 +56,7 @@
                         {{ form.confirm_password(class="form-control") }}
                     </div>
                     <div class="form-group">
-                        {{ form.submit(class="btn btn-primary mt-3") }}
+                        {{ form.submit2(class="btn btn-primary mt-3") }}
                     </div>
                 </form>
             </div>
@@ -51,7 +73,12 @@
             {% endif %}
         {% endwith %}
     </div>
-
+    <style>
+        form{
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 
 </body>

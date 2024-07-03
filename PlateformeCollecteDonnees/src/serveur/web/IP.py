@@ -399,10 +399,19 @@ def deviceList():
     username = session.get('username')
     if username:
         #selectionner les appareils de l'utilisateur
-        query = "SELECT `dev-eui` FROM DeviceOwners WHERE owner = %s"
+        query = "SELECT `device` FROM DeviceOwners WHERE owner = %s"
         db_cursor.execute(query, (username,))
         devices = db_cursor.fetchall()
-        return render_template('deviceList.html', username=username, devices=devices)
+        names = []
+        for i in devices:
+            print(i)
+            query = "SELECT name FROM Device WHERE `dev-eui` = %s"
+            db_cursor.execute(query, i)
+            names += [j[0] for j in db_cursor.fetchall()]
+        
+            #clement
+        devices = [i[0] for i in devices]
+        return render_template('deviceList.html', username=username, devices=devices, names = names)
     else:
         flash('User not logged in', 'danger')
         return redirect(url_for('login'))
@@ -411,23 +420,25 @@ def deviceList():
 """
     Supprimer un appareil
 """
-@app.route('/delete_device/<deveui>', methods=['POST'])
+@app.route('/delete_device/<deveui>', methods=['GET', 'POST'])
 @auth.login_required
 def delete_device(deveui):
     # Supprimer la liaison entre l'appareil et l'utilisateur
     username = session.get('username')
-    query = "DELETE * FROM DeviceOwners  WHERE (`dev-eui` = %s AND owner = %s)"
+    query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
     db_cursor.execute(query, (deveui, username))
+    db.commit()
 
     # Supprimer l'appareil si aucun utilisateur n'est associé
-    query = "SELECT * FROM DeviceOwners WHERE `dev-eui` = %s"
+    query = "SELECT * FROM DeviceOwners WHERE `device` = %s"
     db_cursor.execute(query, (deveui,))
     result = db_cursor.fetchall()
     if len(result) == 0:
-        query = "DELETE * FROM Device WHERE `dev-eui` = %s"
+        query = "DELETE FROM Device WHERE `dev-eui` = %s"
         db_cursor.execute(query, (deveui,))
+        db.commit()
 
-    return redirect(url_for('device_list'))
+    return redirect(url_for('deviceList'))
 
 
 """

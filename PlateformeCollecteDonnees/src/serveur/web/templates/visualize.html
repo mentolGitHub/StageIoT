@@ -20,6 +20,11 @@
         <button id="themeToggle" class="btn btn-secondary mb-3">Toggle Dark Theme</button>
         <button id="home" class="btn btn-secondary mb-3" onclick="window.location.href='/'">Home</button>
         <canvas id="dataChart" width="400" height="200"></canvas>
+        <select id="euiSelect" onchange="updateEui(this.value)">
+            <option value="70b3d57ed0068a6f">70b3d57ed0068a6f</option>
+            <option value="eui2">EUI 2</option>
+            <option value="eui3">EUI 3</option>
+        </select>
         <div id="dataDisplay" class="mt-4"></div>
         <div id="fieldsToggle" class="mt-4">
             <h3>Select Fields to Display:</h3>
@@ -89,6 +94,7 @@
     <script>
         const ctx = document.getElementById('dataChart').getContext('2d');
         let chart;
+        let eui ;
     
         const fields = [
             "acceleration_X", "acceleration_Y", "acceleration_Z",
@@ -138,11 +144,22 @@
         }
     
         function fetchData() {
+            let updated = 0;
             fetch('/get_data')
                 .then(response => response.json())
                 .then(data => {
-                    updateChart(data);
-    
+                    for (i in data)
+                    {
+                        if (i == eui)
+                        {   
+                            updateChart(data[i]);
+                            updated = 1;
+                        }
+                    }
+                    if (updated == 0)
+                    {
+                        updateChart([]) 
+                    }
                     // Display raw data
                     /*
                     document.getElementById('dataDisplay').innerHTML = 
@@ -194,6 +211,12 @@
                 checkbox.checked = false;
             });
             updateChartVisibility();
+        }
+
+        function updateEui(selected_eui)
+        {
+            eui = selected_eui;
+            fetchData();
         }
     
         // Fetch data initially and then every 0.5 seconds

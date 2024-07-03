@@ -31,7 +31,7 @@ auth = HTTPTokenAuth(scheme='Bearer')
 app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
-data_storage = []  # List to store received data
+data_storage = {}
 
 
 # Verify token
@@ -94,9 +94,10 @@ def post_data():
             }
             print(data)
             Q_out.put(data)
-            data_storage.append(data)
+            if data_list[0] not in data_storage:
+                data_storage[data_list[0]] = [data]
             # Supprimer les données de plus d'une heure
-            data_storage = [d for d in data_storage if d['timestamp']/1000 >= datetime.now().timestamp() - 62]
+            data_storage[data_list[0]].append(data)
             # print (data_storage)
             return jsonify({"status": "success"}), 200
         else:
@@ -111,6 +112,12 @@ def post_data():
 """
 @app.route('/get_data', methods=['GET'])
 def get_data():
+    return jsonify(data_storage)  
+
+@app.route('/get_euiList', methods=['GET', 'POST'])
+def get_data():
+    
+    query 
     return jsonify(data_storage)  
 
 """
@@ -141,8 +148,9 @@ def downloadall():
     writer.writerow(header)
     
     # Write data
-    for data in data_storage:
-        writer.writerow([data[field] for field in header])
+    for device_id, datas in data_storage.items():
+        for data in datas:
+            writer.writerow([data[field] for field in header])
     
     output.seek(0)
     

@@ -58,7 +58,7 @@ def save_DB(data,id=0):
                     %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s, %(eui)s);"
         # print(query,data)
         
-        #db_cursor.execute(query,data)
+        db_cursor.execute(query,data)
         #print(db_cursor)
         db.commit()
     except ValueError as e :

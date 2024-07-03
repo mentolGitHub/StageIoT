@@ -161,37 +161,39 @@ def downloadall():
     TODO : fix la page pour utiliser des requetes a la bdd
 """
 @app.route('/download', methods=['GET', 'POST'])
-@auth.login_required
 def download():
     if request.method == 'POST':
-        start_time = int(request.form.get('start_time', 0))
-        end_time = int(request.form.get('end_time', 9999999999999))
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
         selected_fields = request.form.getlist('fields')
 
-        filtered_data = [d for d in data_storage if start_time <= d['timestamp'] <= end_time]
+        # Convert datetime-local input to datetime object
+        start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M')
+        end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M')
 
+        # Retrieve data from the database based on the selected criteria
+        query = f"SELECT {', '.join(selected_fields)} FROM Data WHERE timestamp BETWEEN %s AND %s"
+        db_cursor.execute(query, (start_time, end_time))
+        data = db_cursor.fetchall()
+
+        # Generate CSV file
         output = io.StringIO()
         writer = csv.writer(output)
-        
         writer.writerow(selected_fields)
-        
-        for data in filtered_data:
-            writer.writerow([data.get(field, '') for field in selected_fields])
-        
+        print (data)
+        for row in data:
+            print (row)
+            writer.writerow(row)
         output.seek(0)
-        
+
         return send_file(
             io.BytesIO(output.getvalue().encode()),
             mimetype='text/csv',
             as_attachment=True,
-            download_name=f'iot_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+            download_name=f'data_{start_time.strftime("%Y%m%d_%H%M%S")}_to_{end_time.strftime("%Y%m%d_%H%M%S")}.csv'
         )
-    else:
-        all_fields = ["timestamp", "latitude", "longitude", "altitude", "luminosity", 
-                      "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
-                      "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
-                      "angle", "azimuth"]
-        return render_template('download.html', fields=all_fields)
+    
+    return render_template('download.html')
 
 # formulaire de login utilisateur
 class LoginForm(FlaskForm):

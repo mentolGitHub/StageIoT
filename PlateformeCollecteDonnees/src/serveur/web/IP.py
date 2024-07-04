@@ -1,5 +1,5 @@
 from queue import Queue
-from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash, Request
 import io
 import mysql.connector
 import mysql.connector.abstracts
@@ -10,6 +10,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length, EqualTo
 import bcrypt
 from flask_httpauth import HTTPTokenAuth
+from pydoc import locate
 
 def hash_password(password):
     # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
@@ -96,35 +97,46 @@ def post_data():
         global data_storage
         raw_data = request.get_data().decode('utf-8')
         data_list = raw_data[1:].split(',')
-        if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
-            data = {
-                "eui": str(data_list[0]),
+        if int(raw_data[0]) == 2:
+            if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
+                data = {
+                    "eui": str(data_list[0]),
 
-                "timestamp": int(data_list[1]),
-                "latitude": float(data_list[2]),
-                "longitude": float(data_list[3]),
-                "altitude": float(data_list[4]),
-                "luminosity": float(data_list[5]),
-                "vitesse_angulaire_X": float(data_list[6]),
-                "vitesse_angulaire_Y": float(data_list[7]),
-                "vitesse_angulaire_Z": float(data_list[8]),
-                "pressure": float(data_list[9]),
-                "acceleration_X": float(data_list[10]),
-                "acceleration_Y": float(data_list[11]),
-                "acceleration_Z": float(data_list[12]),
-                "angle": float(data_list[13]),
-                "azimuth": float(data_list[14])
-            }
-            # print(data)
-            Q_out.put(data)
-            if data_list[0] not in data_storage:
-                data_storage[data_list[0]] = [data]
-            # Supprimer les données de plus d'une heure
-            data_storage[data_list[0]].append(data)
-            # print (data_storage)
-            return jsonify({"status": "success"}), 200
+                    "timestamp": int(data_list[1]),
+                    "latitude": float(data_list[2]),
+                    "longitude": float(data_list[3]),
+                    "altitude": float(data_list[4]),
+                    "luminosity": float(data_list[5]),
+                    "vitesse_angulaire_X": float(data_list[6]),
+                    "vitesse_angulaire_Y": float(data_list[7]),
+                    "vitesse_angulaire_Z": float(data_list[8]),
+                    "pressure": float(data_list[9]),
+                    "acceleration_X": float(data_list[10]),
+                    "acceleration_Y": float(data_list[11]),
+                    "acceleration_Z": float(data_list[12]),
+                    "angle": float(data_list[13]),
+                    "azimuth": float(data_list[14])
+                }
+                # print(data)
+                Q_out.put(data)
+                if data_list[0] not in data_storage:
+                    data_storage[data_list[0]] = [data]
+                else:
+                    data_storage[data_list[0]].append(data)
+                # Supprimer les données de plus d'une heure
+                for device in data_storage:
+                    seuil=0
+                    while (data_storage[device][-1]['timestamp']-data_storage[device][seuil]['timestamp'])/1000 > 61:
+                        seuil+=1
+
+                    data_storage[device]=data_storage[device][seuil:]                  
+                # print (data_storage)
+                return jsonify({"status": "success"}), 200
+            else:
+                return jsonify({"status": "error", "message": "Invalid data format"}), 400
         else:
-            return jsonify({"status": "error", "message": "Invalid data format"}), 400
+            return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
+
 
 """
     Envoi de données vers un appareil exterieur 
@@ -136,18 +148,66 @@ def post_data():
 @app.route('/get_data', methods=['GET'])
 @auth.login_required
 def get_data():
+    duration = request.args.get('duration')
+    nb_points = request.args.get('nb_points')
+
+    
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
-    username = session.get('username')
+    username = check_user_token()
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     cursor.execute(query,(username,))
     result= cursor.fetchall()
-    data = []
-    for i in result:
-        if i[0] in data_storage:
-            data.append(data_storage[i[0]])
+
+    
+
+    data = {}
+    for device in result[:][0]:
+        if duration != None and float(duration) > 60:
+            duration = float(duration)
+            if device in data_storage:
+                query = "DESC Data"
+                cursor.execute(query)
+                desc = cursor.fetchall()
+                labels = [desc[i][0] for i in range(len(desc))]
+                print(desc[17][1])
+                for i in range(len(desc)):
+                    if desc[i][1] in ['datetime(3)','varchar(255)']:
+                        types += 
+                print(labels)
+                print(types)
+                args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
+                
+                query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
+                cursor.execute(query,args)
+                result = cursor.fetchall()
+                print(result)
+                # data[device]=[]
+                # for d in result:
+                #     label = ["timestamp","temperature","humidity","luminosity","presence","pressure","gps","altitude","angle","vitesse_angulaire_X","vitesse_angulaire_Y","vitesse_angulaire_Z","acceleration_X","acceleration_Y","acceleration_Z","azimuth","distance_recul","eui"]
+                #     mesure={}
+                #     for i in range(len(d)-1):
+                #         mesure[label[i]]=d[i]
+                    
+                #     data[device].append(mesure)
+            else : 
+                result=[]
+            
+        else:
+            data[device]=[]
+            if device in data_storage:
+                if duration != None:
+                    duration = float(duration)
+                    info = data_storage[device]
+                    seuil = 0
+                    # print(info)
+                    while (info[-1]['timestamp']-info[seuil]['timestamp'])/1000 > duration+1:
+                        seuil+=1
+                    data[device]+=info[seuil:]
+                else :
+                    data[device]+=data_storage[device]
     print(data)
-    return jsonify(data_storage)  
+    return jsonify(data) 
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
 @auth.login_required

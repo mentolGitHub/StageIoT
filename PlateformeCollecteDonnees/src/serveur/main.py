@@ -88,7 +88,7 @@ def init_config():
     """
 
     path = __file__.rsplit("/",1)[0]+"/config.conf"
-    print(path)
+    # print(path)
     conf = open(path)
     
     # parsing each line
@@ -104,7 +104,7 @@ def init_config():
                 if k==key and v!="":
                     Config[key]=v
                 
-    print(Config)
+    # print(Config)
 
 def init_server():
 
@@ -141,8 +141,6 @@ def run_server():
         threadMQTT.start()
         threadIP.start()
         threadIf.start()
-        
-        # IP.IPnode(Q_4G,Config)
 
     except (KeyboardInterrupt, SystemExit):
         

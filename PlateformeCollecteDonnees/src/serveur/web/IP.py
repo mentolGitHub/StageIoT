@@ -38,10 +38,12 @@ Config = {}
 @auth.verify_token
 def verify_token(t):
     # print(t)
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor = db.cursor()
     token=session.get('token')
     query = "SELECT * FROM Auth_Token WHERE token = %s AND `date-exp` > %s"
-    db_cursor.execute(query, (token, datetime.now()))
-    result = db_cursor.fetchall()
+    cursor.execute(query, (token, datetime.now()))
+    result = cursor.fetchall()
     return len(result) > 0
 
 # Gestion des erreurs HTTP
@@ -72,8 +74,11 @@ def check_user_token():
 """
 @app.route('/')
 def accueil():
-    is_authenticated = 'username' in session
-    username = check_user_token()
+    is_authenticated = False
+    username=''
+    if session :
+        is_authenticated = 'token' in session
+        username = check_user_token()
     return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
 
@@ -129,6 +134,7 @@ def post_data():
     TODO : mettre des paramètes a la requete afin de pouvoir specifier les données demandées 
 """
 @app.route('/get_data', methods=['GET'])
+@auth.login_required
 def get_data():
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
@@ -140,9 +146,11 @@ def get_data():
     for i in result:
         if i[0] in data_storage:
             data.append(data_storage[i[0]])
+    print(data)
     return jsonify(data_storage)  
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
+@auth.login_required
 def get_euiList():
     username = session.get('username')
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"

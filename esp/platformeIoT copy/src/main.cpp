@@ -49,9 +49,14 @@ void traitementReceptionBluetooth()
 {
   String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
   if (SerialBT.available()) {
-    dataFromBluetooth = SerialBT.readString();
-    Serial.println(dataFromBluetooth);
-    
+    String dataFromBluetooth = SerialBT.readStringUntil('\n');
+    dataFromBluetooth.trim(); // Supprimer les espaces et les caractères de nouvelle ligne
+    if (dataFromBluetooth.length() > 0) {
+      Serial.println("Données reçues : " + dataFromBluetooth);
+      // Traitez vos données ici
+    }
+
+    /*
     char buffer[dataFromBluetooth.length() + 1];
     dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
     char *token = strtok(buffer, ",");
@@ -111,7 +116,7 @@ void traitementReceptionBluetooth()
     String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "\n";
     SerialPort.print(loraPayload);
     Serial.println(loraPayload);
-    
+    */
   }
 }
 

@@ -20,8 +20,23 @@
         <button id="themeToggle" class="btn btn-secondary mb-3">Toggle Dark Theme</button>
         <button id="home" class="btn btn-secondary mb-3" onclick="window.location.href='/'">Home</button>
         <canvas id="dataChart" width="400" height="200"></canvas>
-        <select id="euiSelect" onchange="updateEui(this.value)">
-        </select>
+        <div class="d-inline-flex flex-row">
+            <a>
+                Device: 
+            </a>
+            <select id="euiSelect" class="form-select" onchange="updateEui(this.value)"></select>
+            Duration: 
+            <select id="duration" class="form-select" onchange="updateDuration(this.value)">
+                <option value="20">20 secondes</option>
+                <option value="60">1 minute</option>
+                <option value="180">3 minutes</option>
+                <option value="600">10 minutes</option>
+                <option value="1800">30 minutes</option>
+                <option value="3600">1 heure</option>
+
+            </select>
+            
+        </div>
         <div id="dataDisplay" class="mt-4"></div>
         <div id="fieldsToggle" class="mt-4">
             <h3>Select Fields to Display:</h3>
@@ -87,12 +102,13 @@
             </div>
         </div>
     </div>
-
+    <style>
+    </style>
     <script>
         const ctx = document.getElementById('dataChart').getContext('2d');
         let chart;
         let eui ;
-    
+        let duration = 20;
         const fields = [
             "acceleration_X", "acceleration_Y", "acceleration_Z",
             "altitude", "angle", "vitesse_angulaire_X",
@@ -120,6 +136,7 @@
                     scales: {
                         x: {
                             type : 'time',
+                            
                             time: {
                                 unit: 'second' // Adjust the unit according to your data
                             },
@@ -142,9 +159,11 @@
     
         function fetchData() {
             let updated = 0;
-            fetch('/get_data')
+            console.log(duration);
+            fetch("/get_data?"+ new URLSearchParams({'duration':duration}))
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     for (i in data)
                     {
                         if (i == eui)
@@ -172,6 +191,7 @@
             
             chart.data.labels = labels;
             fields.forEach((field, index) => {
+                
                 chart.data.datasets[index].data = data.map(item => ({x: new Date(item.timestamp), y: item[field]}));
                 chart.data.datasets[index].hidden = !document.getElementById(field).checked;
                 
@@ -179,6 +199,12 @@
             // console.log(chart.data.datasets[0].data);
             chart.update();
         }
+
+        function updateDuration(dur){
+            duration = dur;
+            
+        }
+
     
         function getRandomColor() {
             const letters = '0123456789ABCDEF';

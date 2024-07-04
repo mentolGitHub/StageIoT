@@ -1,0 +1,175 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<!--
+3    ~ Copyright 2022 The TensorFlow Authors. All Rights Reserved.
+4    ~
+5    ~ Licensed under the Apache License, Version 2.0 (the "License");
+6    ~ you may not use this file except in compliance with the License.
+7    ~ You may obtain a copy of the License at
+8    ~
+9    ~       http://www.apache.org/licenses/LICENSE-2.0
+10    ~
+11    ~ Unless required by applicable law or agreed to in writing, software
+12    ~ distributed under the License is distributed on an "AS IS" BASIS,
+13    ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+14    ~ See the License for the specific language governing permissions and
+15    ~ limitations under the License.
+16-->
+17<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+18    xmlns:dist="http://schemas.android.com/apk/distribution"
+19    package="org.tensorflow.lite.examples.objectdetection"
+20    android:versionCode="1"
+21    android:versionName="1.0.0" >
+22
+23    <uses-sdk
+24        android:minSdkVersion="21"
+24-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+25        android:targetSdkVersion="32" />
+25-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+26
+27    <!-- Enable instant app support -->
+28    <dist:module dist:instant="true" />
+28-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:24:5-40
+28-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:24:18-37
+29
+30    <!-- Declare features -->
+31    <uses-feature android:name="android.hardware.camera" />
+31-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:27:5-60
+31-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:27:19-57
+32
+33    <!-- Declare permissions -->
+34    <uses-permission android:name="android.permission.CAMERA" />
+34-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:30:5-65
+34-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:30:22-62
+35    <uses-permission android:name="android.permission.BLUETOOTH" />
+35-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:31:5-68
+35-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:31:22-65
+36    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+36-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:32:5-74
+36-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:32:22-71
+37    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+37-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:33:5-76
+37-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:33:22-73
+38    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+38-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:34:5-73
+38-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:34:22-70
+39    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+40    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+41    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+42
+43    <application
+43-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:36:5-77:19
+44        android:allowBackup="true"
+44-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:40:9-35
+45        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+45-->[androidx.core:core:1.6.0] /home/local/.gradle/caches/transforms-3/22e584a398e49dc53a8e6a5e66f4da0c/transformed/core-1.6.0/AndroidManifest.xml:24:18-86
+46        android:debuggable="true"
+47        android:icon="@mipmap/ic_launcher"
+47-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:37:9-43
+48        android:label="@string/app_name"
+48-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:39:9-41
+49        android:roundIcon="@mipmap/ic_launcher_round"
+49-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:38:9-54
+50        android:taskAffinity=""
+50-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:41:9-32
+51        android:testOnly="true" >
+52        <activity
+52-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:44:9-64:20
+53            android:name="org.tensorflow.lite.examples.objectdetection.MainActivity"
+53-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:45:13-41
+54            android:clearTaskOnLaunch="true"
+54-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:46:13-45
+55            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
+55-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:52:13-91
+56            android:exported="true"
+56-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:48:13-36
+57            android:icon="@mipmap/ic_launcher"
+57-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:49:13-47
+58            android:resizeableActivity="true"
+58-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:51:13-46
+59            android:rotationAnimation="seamless"
+59-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:50:13-49
+60            android:theme="@style/AppTheme" >
+60-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:47:13-44
+61
+62            <!-- Main app intent filter -->
+63            <intent-filter>
+63-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:56:13-59:29
+64                <action android:name="android.intent.action.MAIN" />
+64-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:57:17-69
+64-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:57:25-66
+65
+66                <category android:name="android.intent.category.LAUNCHER" />
+66-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:58:17-77
+66-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:58:27-74
+67            </intent-filter>
+68
+69            <!-- Declare notch support -->
+70            <meta-data
+70-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:13-83
+71                android:name="android.notch_support"
+71-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:24-60
+72                android:value="true" />
+72-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:61-81
+73        </activity>
+74        <activity
+74-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:65:9-75:20
+75            android:name="org.tensorflow.lite.examples.objectdetection.BluetoothDeviceListActivity"
+75-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:66:13-56
+76            android:clearTaskOnLaunch="true"
+76-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:67:13-45
+77            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
+77-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:73:13-91
+78            android:exported="true"
+78-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:69:13-36
+79            android:icon="@mipmap/ic_launcher"
+79-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:70:13-47
+80            android:resizeableActivity="true"
+80-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:72:13-46
+81            android:rotationAnimation="seamless"
+81-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:71:13-49
+82            android:theme="@style/AppTheme" >
+82-->/home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:68:13-44
+83        </activity>
+84
+85        <uses-library
+85-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:25:9-27:40
+86            android:name="androidx.window.extensions"
+86-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:26:13-54
+87            android:required="false" />
+87-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:27:13-37
+88        <uses-library
+88-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:28:9-30:40
+89            android:name="androidx.window.sidecar"
+89-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:29:13-51
+90            android:required="false" />
+90-->[androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:30:13-37
+91
+92        <service
+92-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:26:9-35:19
+93            android:name="androidx.camera.core.impl.MetadataHolderService"
+93-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:27:13-75
+94            android:enabled="false"
+94-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:28:13-36
+95            android:exported="false" >
+95-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:29:13-37
+96            <meta-data
+96-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:32:13-34:89
+97                android:name="androidx.camera.core.impl.MetadataHolderService.DEFAULT_CONFIG_PROVIDER"
+97-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:33:17-103
+98                android:value="androidx.camera.camera2.Camera2Config$DefaultProvider" />
+98-->[androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:34:17-86
+99        </service>
+100
+101        <provider
+101-->[androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:25:9-29:43
+102            android:name="androidx.lifecycle.ProcessLifecycleOwnerInitializer"
+102-->[androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:26:13-79
+103            android:authorities="org.tensorflow.lite.examples.objectdetection.lifecycle-process"
+103-->[androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:27:13-69
+104            android:exported="false"
+104-->[androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:28:13-37
+105            android:multiprocess="true" />
+105-->[androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:29:13-40
+106    </application>
+107
+108</manifest>

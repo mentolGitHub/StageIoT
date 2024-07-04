@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_bluetooth_device_list.xml",
+        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/activity_bluetooth_device_list.xml"
+    },
+    {
+        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/activity_main.xml",
+        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/info_bottom_sheet.xml",
+        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/info_bottom_sheet.xml"
+    },
+    {
+        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/stripped.dir/layout/fragment_camera.xml",
+        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/fragment_camera.xml"
+    }
+]

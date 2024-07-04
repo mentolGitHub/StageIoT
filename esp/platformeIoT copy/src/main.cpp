@@ -18,6 +18,7 @@ HardwareSerial SerialPort(2);
 String dataFromBluetooth;
 String dataFromUart;
 
+String loraPayload = "";
 
 /* Déclaration des fonctions */
 
@@ -28,7 +29,7 @@ void traitementReceptionUart();
 /* Initialisation */
 void setup() 
 {
-  Serial.begin(9600); //initialisation du port série
+  Serial.begin(115200); //initialisation du port série
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
   Serial.println("The device started, now you can pair it with bluetooth!");
@@ -38,8 +39,7 @@ void setup()
 void loop() 
 {
   traitementReceptionBluetooth();
-  traitementReceptionUart();
-  delay(20);
+  //traitementReceptionUart();
 }
 
 
@@ -52,71 +52,86 @@ void traitementReceptionBluetooth()
     String dataFromBluetooth = SerialBT.readStringUntil('\n');
     dataFromBluetooth.trim(); // Supprimer les espaces et les caractères de nouvelle ligne
     if (dataFromBluetooth.length() > 0) {
-      Serial.println("Données reçues : " + dataFromBluetooth);
+      //Serial.println("Données reçues : " + dataFromBluetooth);
       // Traitez vos données ici
-    }
+    
 
-    /*
-    char buffer[dataFromBluetooth.length() + 1];
-    dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
-    char *token = strtok(buffer, ",");
-    int i = 0;
-    while (token != NULL) {
-      switch (i) {
-        case 0:
-          break;
-        case 1:
-          timestamp = token;
-          break;
-        case 2:
-          latitude = token;
-          break;
-        case 3:
-          longitude = token;
-          break;
-        case 4:
-          altitude = token;
-          break;
-        case 5:
-          luminosite = token;
-          break;
-        case 6:
-          vitesseAngulaireX = token;
-          break;
-        case 7:
-          vitesseAngulaireY = token;
-          break;
-        case 8:
-          vitesseAngulaireZ = token;
-          break;
-        case 9:
-          pression = token;
-          break;
-        case 10:
-          accelerationX = token;
-          break;
-        case 11:
-          accelerationY = token;
-          break;
-        case 12:
-          accelerationZ = token;
-          break;
-        case 13:
-          angle = token;
-          break;
-        case 14:
-          azimut = token;
-          break;
-        default:
-          break;
+      char buffer[dataFromBluetooth.length() + 1];
+      dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
+      char *token = strtok(buffer, ",");
+      int i = 1;
+      //detection du type de données recues
+      if (token != NULL)
+      {
+        // detection d'objets
+        if (strcmp(token,"o") == 0)
+        {
+          loraPayload = dataFromBluetooth;
+          SerialPort.println(loraPayload);
+          Serial.println(loraPayload);
+        }
+        //données de capteurs
+        else if (strcmp(token,"s") == 0)
+        {
+          String loraPayload = "";
+          while (token != NULL) {
+            switch (i) {
+              case 0:
+                break;
+              case 1:
+                timestamp = token;
+                break;
+              case 2:
+                latitude = token;
+                break;
+              case 3:
+                longitude = token;
+                break;
+              case 4:
+                altitude = token;
+                break;
+              case 5:
+                luminosite = token;
+                break;
+              case 6:
+                vitesseAngulaireX = token;
+                break;
+              case 7:
+                vitesseAngulaireY = token;
+                break;
+              case 8:
+                vitesseAngulaireZ = token;
+                break;
+              case 9:
+                pression = token;
+                break;
+              case 10:
+                accelerationX = token;
+                break;
+              case 11:
+                accelerationY = token;
+                break;
+              case 12:
+                accelerationZ = token;
+                break;
+              case 13:
+                angle = token;
+                break;
+              case 14:
+                azimut = token;
+                break;
+              default:
+                break;
+            }
+            token = strtok(NULL, ",");
+            i++;
+          }
+          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "\n";
+          SerialPort.print(loraPayload);
+          Serial.println(loraPayload);
+        }
       }
-      token = strtok(NULL, ",");
-      i++;
     }
-    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "\n";
-    SerialPort.print(loraPayload);
-    Serial.println(loraPayload);
-    */
   }
 }
 

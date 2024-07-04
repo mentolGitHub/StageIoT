@@ -37,3 +37,4 @@ ce format permet à l'utilisateur de définir sa propre tramme
 # Format des trammes d'envoi de donnnées Bluetooth
 
 s, timestamp, latitude, longitude, altitude, luminosité, vitesse angulaire X, vitesse angulaire Y, vitesse angulaire Z, pression, accélérationX, accélérationY, accélérationZ, angle, azimut
+o, objet1, objet2, ...

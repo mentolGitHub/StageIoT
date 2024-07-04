@@ -1,3 +1,5 @@
+package org.tensorflow.lite.examples.objectdetection
+
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket

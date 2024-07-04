@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
 MERGED from [androidx.databinding:databinding-adapters:7.1.2] /home/local/.gradle/caches/transforms-3/994b3033219528f3c6aa6ee6b791c580/transformed/databinding-adapters-7.1.2/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.databinding:databinding-ktx:7.1.2] /home/local/.gradle/caches/transforms-3/386a1967621ab2613505f4dd96b26780/transformed/jetified-databinding-ktx-7.1.2/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.databinding:databinding-runtime:7.1.2] /home/local/.gradle/caches/transforms-3/59083e42f005d287b80fc51abb486b0a/transformed/databinding-runtime-7.1.2/AndroidManifest.xml:17:1-24:12
@@ -33,6 +33,7 @@ MERGED from [androidx.camera:camera-core:1.1.0-beta03] /home/local/.gradle/cache
 MERGED from [org.tensorflow:tensorflow-lite-task-vision:0.4.0] /home/local/.gradle/caches/transforms-3/63fedd792f117efacc48dfd1a37b4259/transformed/jetified-tensorflow-lite-task-vision-0.4.0/AndroidManifest.xml:2:1-9:12
 MERGED from [org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0] /home/local/.gradle/caches/transforms-3/8604d89359f041f74c0aca5582f12050/transformed/jetified-tensorflow-lite-gpu-delegate-plugin-0.4.0/AndroidManifest.xml:2:1-6:12
 MERGED from [org.tensorflow:tensorflow-lite-gpu:2.9.0] /home/local/.gradle/caches/transforms-3/3c2a5bdcf8fb452f612a544e7760534c/transformed/jetified-tensorflow-lite-gpu-2.9.0/AndroidManifest.xml:2:1-12:12
+MERGED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:17:1-49:12
 MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] /home/local/.gradle/caches/transforms-3/721a0c1ae0f0d74711387dc2f53ba216/transformed/lifecycle-extensions-2.2.0/AndroidManifest.xml:17:1-27:12
 MERGED from [androidx.navigation:navigation-fragment:2.3.5] /home/local/.gradle/caches/transforms-3/a894cc2a13cc91a9216d10aa1c3b7f06/transformed/navigation-fragment-2.3.5/AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.fragment:fragment:1.3.6] /home/local/.gradle/caches/transforms-3/26c86de8356e3bc46ea2515989b059a3/transformed/fragment-1.3.6/AndroidManifest.xml:17:1-24:12
@@ -75,57 +76,63 @@ MERGED from [org.tensorflow:tensorflow-lite-task-base:0.4.0] /home/local/.gradle
 MERGED from [org.tensorflow:tensorflow-lite-support-api:0.4.0] /home/local/.gradle/caches/transforms-3/9491966182cdf640c7e3e7a430c8e946/transformed/jetified-tensorflow-lite-support-api-0.4.0/AndroidManifest.xml:2:1-5:12
 MERGED from [org.tensorflow:tensorflow-lite-api:2.8.0] /home/local/.gradle/caches/transforms-3/89f852bde83905877d8bcc087dbbd955/transformed/jetified-tensorflow-lite-api-2.8.0/AndroidManifest.xml:2:1-12:12
 MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/local/.gradle/caches/transforms-3/ddc5ad74e17c60bc95478790e049bdab/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:2:1-9:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
 	package
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:21:5-59
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:21:5-59
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 	android:versionName
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 	xmlns:tools
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:20:5-51
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:20:5-51
 	xmlns:dist
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:19:5-61
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:19:5-61
 	android:versionCode
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 	xmlns:android
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:18:5-63
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:18:5-63
 dist:module
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:24:5-40
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:24:5-40
 	dist:instant
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:24:18-37
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:24:18-37
 uses-feature#android.hardware.camera
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:27:5-60
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:27:5-60
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:27:19-57
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:27:19-57
+uses-feature#android.hardware.camera.ar
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:28:5-86
+	android:required
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:28:61-84
+	android:name
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:28:19-60
 uses-permission#android.permission.CAMERA
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:30:5-65
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:31:5-65
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:30:22-62
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:31:22-62
 uses-permission#android.permission.BLUETOOTH
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:31:5-68
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:32:5-68
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:31:22-65
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:32:22-65
 uses-permission#android.permission.BLUETOOTH_ADMIN
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:32:5-74
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:33:5-74
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:32:22-71
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:33:22-71
 uses-permission#android.permission.BLUETOOTH_CONNECT
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:33:5-76
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:34:5-76
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:33:22-73
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:34:22-73
 uses-permission#android.permission.BLUETOOTH_SCAN
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:34:5-73
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:35:5-73
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:34:22-70
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:35:22-70
 application
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:36:5-77:19
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:37:5-78:19
 MERGED from [androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:24:5-31:19
 MERGED from [androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:24:5-31:19
 MERGED from [androidx.constraintlayout:constraintlayout:2.0.4] /home/local/.gradle/caches/transforms-3/8b8f67dead33ecfce989ded7e88ad844/transformed/constraintlayout-2.0.4/AndroidManifest.xml:9:5-20
@@ -140,6 +147,8 @@ MERGED from [org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0] /home/loc
 MERGED from [org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0] /home/local/.gradle/caches/transforms-3/8604d89359f041f74c0aca5582f12050/transformed/jetified-tensorflow-lite-gpu-delegate-plugin-0.4.0/AndroidManifest.xml:4:4-5:18
 MERGED from [org.tensorflow:tensorflow-lite-gpu:2.9.0] /home/local/.gradle/caches/transforms-3/3c2a5bdcf8fb452f612a544e7760534c/transformed/jetified-tensorflow-lite-gpu-2.9.0/AndroidManifest.xml:10:5-20
 MERGED from [org.tensorflow:tensorflow-lite-gpu:2.9.0] /home/local/.gradle/caches/transforms-3/3c2a5bdcf8fb452f612a544e7760534c/transformed/jetified-tensorflow-lite-gpu-2.9.0/AndroidManifest.xml:10:5-20
+MERGED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:33:5-47:19
+MERGED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:33:5-47:19
 MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] /home/local/.gradle/caches/transforms-3/721a0c1ae0f0d74711387dc2f53ba216/transformed/lifecycle-extensions-2.2.0/AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] /home/local/.gradle/caches/transforms-3/721a0c1ae0f0d74711387dc2f53ba216/transformed/lifecycle-extensions-2.2.0/AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.core:core:1.6.0] /home/local/.gradle/caches/transforms-3/22e584a398e49dc53a8e6a5e66f4da0c/transformed/core-1.6.0/AndroidManifest.xml:24:5-89
@@ -157,77 +166,83 @@ MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/local/.gradle/cach
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.6.0] /home/local/.gradle/caches/transforms-3/22e584a398e49dc53a8e6a5e66f4da0c/transformed/core-1.6.0/AndroidManifest.xml:24:18-86
 	android:label
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:39:9-41
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:40:9-41
 	tools:ignore
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:42:9-35
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:43:9-35
 	android:roundIcon
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:38:9-54
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:39:9-54
 	android:icon
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:37:9-43
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:38:9-43
 	android:allowBackup
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:40:9-35
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:41:9-35
 	android:taskAffinity
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:41:9-32
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:42:9-32
 activity#org.tensorflow.lite.examples.objectdetection.MainActivity
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:44:9-64:20
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:45:9-65:20
 	android:clearTaskOnLaunch
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:46:13-45
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:47:13-45
 	android:exported
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:48:13-36
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:49:13-36
 	android:resizeableActivity
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:51:13-46
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:52:13-46
 	android:rotationAnimation
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:50:13-49
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:51:13-49
 	android:configChanges
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:52:13-91
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:53:13-91
 	tools:targetApi
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:53:13-32
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:54:13-32
 	android:icon
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:49:13-47
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:50:13-47
 	android:theme
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:47:13-44
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:48:13-44
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:45:13-41
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:46:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:56:13-59:29
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:57:13-60:29
 action#android.intent.action.MAIN
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:57:17-69
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:58:17-69
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:57:25-66
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:58:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:58:17-77
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:59:17-77
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:58:27-74
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:59:27-74
 meta-data#android.notch_support
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:13-83
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:63:13-83
 	android:value
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:61-81
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:63:61-81
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:62:24-60
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:63:24-60
 activity#org.tensorflow.lite.examples.objectdetection.BluetoothDeviceListActivity
-ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:65:9-75:20
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:66:9-76:20
 	android:clearTaskOnLaunch
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:67:13-45
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:68:13-45
 	android:exported
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:69:13-36
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:70:13-36
 	android:resizeableActivity
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:72:13-46
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:73:13-46
 	android:rotationAnimation
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:71:13-49
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:72:13-49
 	android:configChanges
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:73:13-91
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:74:13-91
 	tools:targetApi
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:74:13-32
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:75:13-32
 	android:icon
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:70:13-47
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:71:13-47
 	android:theme
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:68:13-44
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:69:13-44
 	android:name
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:66:13-56
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:67:13-56
+meta-data#com.google.ar.core
+ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:77:9-81
+	android:value
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:77:54-78
+	android:name
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:77:20-53
 uses-sdk
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 MERGED from [androidx.databinding:databinding-adapters:7.1.2] /home/local/.gradle/caches/transforms-3/994b3033219528f3c6aa6ee6b791c580/transformed/databinding-adapters-7.1.2/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.databinding:databinding-adapters:7.1.2] /home/local/.gradle/caches/transforms-3/994b3033219528f3c6aa6ee6b791c580/transformed/databinding-adapters-7.1.2/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.databinding:databinding-ktx:7.1.2] /home/local/.gradle/caches/transforms-3/386a1967621ab2613505f4dd96b26780/transformed/jetified-databinding-ktx-7.1.2/AndroidManifest.xml:20:5-22:41
@@ -284,6 +299,8 @@ MERGED from [org.tensorflow:tensorflow-lite-task-vision:0.4.0] /home/local/.grad
 MERGED from [org.tensorflow:tensorflow-lite-task-vision:0.4.0] /home/local/.gradle/caches/transforms-3/63fedd792f117efacc48dfd1a37b4259/transformed/jetified-tensorflow-lite-task-vision-0.4.0/AndroidManifest.xml:5:5-7:41
 MERGED from [org.tensorflow:tensorflow-lite-gpu:2.9.0] /home/local/.gradle/caches/transforms-3/3c2a5bdcf8fb452f612a544e7760534c/transformed/jetified-tensorflow-lite-gpu-2.9.0/AndroidManifest.xml:7:5-8:41
 MERGED from [org.tensorflow:tensorflow-lite-gpu:2.9.0] /home/local/.gradle/caches/transforms-3/3c2a5bdcf8fb452f612a544e7760534c/transformed/jetified-tensorflow-lite-gpu-2.9.0/AndroidManifest.xml:7:5-8:41
+MERGED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:25:5-27:41
+MERGED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:25:5-27:41
 MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] /home/local/.gradle/caches/transforms-3/721a0c1ae0f0d74711387dc2f53ba216/transformed/lifecycle-extensions-2.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.lifecycle:lifecycle-extensions:2.2.0] /home/local/.gradle/caches/transforms-3/721a0c1ae0f0d74711387dc2f53ba216/transformed/lifecycle-extensions-2.2.0/AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.navigation:navigation-fragment:2.3.5] /home/local/.gradle/caches/transforms-3/a894cc2a13cc91a9216d10aa1c3b7f06/transformed/navigation-fragment-2.3.5/AndroidManifest.xml:20:5-22:41
@@ -366,18 +383,18 @@ MERGED from [org.tensorflow:tensorflow-lite-api:2.8.0] /home/local/.gradle/cache
 MERGED from [org.tensorflow:tensorflow-lite-api:2.8.0] /home/local/.gradle/caches/transforms-3/89f852bde83905877d8bcc087dbbd955/transformed/jetified-tensorflow-lite-api-2.8.0/AndroidManifest.xml:7:5-8:41
 MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/local/.gradle/caches/transforms-3/ddc5ad74e17c60bc95478790e049bdab/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:5:5-44
 MERGED from [com.google.android.odml:image:1.0.0-beta1] /home/local/.gradle/caches/transforms-3/ddc5ad74e17c60bc95478790e049bdab/transformed/jetified-image-1.0.0-beta1/AndroidManifest.xml:5:5-44
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 	android:minSdkVersion
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		ADDED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		MERGED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		MERGED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
-		INJECTED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		ADDED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		MERGED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		MERGED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
+		INJECTED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml
 uses-library#androidx.window.extensions
 ADDED from [androidx.window:window:1.0.0-alpha09] /home/local/.gradle/caches/transforms-3/fd89891908524ffdf904b2e997e8aae1/transformed/jetified-window-1.0.0-alpha09/AndroidManifest.xml:25:9-27:40
 	android:required
@@ -411,11 +428,37 @@ ADDED from [androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/cac
 	android:name
 		ADDED from [androidx.camera:camera-camera2:1.1.0-beta03] /home/local/.gradle/caches/transforms-3/9886d106f8a9677d73f154939dd178e4/transformed/jetified-camera-camera2-1.1.0-beta03/AndroidManifest.xml:33:17-103
 uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
-IMPLIED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12 reason: tensorflow_lite_support.acceleration.configuration has a targetSdkVersion < 4
+IMPLIED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12 reason: tensorflow_lite_support.acceleration.configuration has a targetSdkVersion < 4
 uses-permission#android.permission.READ_PHONE_STATE
-IMPLIED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12 reason: tensorflow_lite_support.acceleration.configuration has a targetSdkVersion < 4
+IMPLIED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12 reason: tensorflow_lite_support.acceleration.configuration has a targetSdkVersion < 4
 uses-permission#android.permission.READ_EXTERNAL_STORAGE
-IMPLIED from /home/local/Téléchargements/object-detection/app/src/main/AndroidManifest.xml:17:1-79:12 reason: tensorflow_lite_support.acceleration.configuration requested WRITE_EXTERNAL_STORAGE
+IMPLIED from /home/local/Documents/StageIoT/appli/object-detection/app/src/main/AndroidManifest.xml:17:1-80:12 reason: tensorflow_lite_support.acceleration.configuration requested WRITE_EXTERNAL_STORAGE
+queries
+ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:29:5-31:15
+package#com.google.ar.core
+ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:30:9-54
+	android:name
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:30:18-51
+meta-data#com.google.ar.core.min_apk_version
+ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:36:9-38:41
+	android:value
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:38:13-38
+	android:name
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:37:13-62
+activity#com.google.ar.core.InstallActivity
+ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:40:9-46:80
+	android:excludeFromRecents
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:43:13-46
+	android:launchMode
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:45:13-43
+	android:exported
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:44:13-37
+	android:configChanges
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:42:13-74
+	android:theme
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:46:13-77
+	android:name
+		ADDED from [com.google.ar:core:1.31.0] /home/local/.gradle/caches/transforms-3/590715bc9d9cd8987ccdb44de6a00388/transformed/jetified-core-1.31.0/AndroidManifest.xml:41:13-62
 provider#androidx.lifecycle.ProcessLifecycleOwnerInitializer
 ADDED from [androidx.lifecycle:lifecycle-process:2.2.0] /home/local/.gradle/caches/transforms-3/d3b9f0ec91abda46eb69824da218d191/transformed/jetified-lifecycle-process-2.2.0/AndroidManifest.xml:25:9-29:43
 	android:authorities

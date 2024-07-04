@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
+            "outputFile": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v23/values-v23.xml",
             "map": [
                 {
                     "source": "/home/local/.gradle/caches/transforms-3/4dd143df379de96428dd9c3d35611780/transformed/cardview-1.0.0/res/values-v23/values-v23.xml",

@@ -28,9 +28,10 @@ import androidx.core.content.ContextCompat
 import java.util.LinkedList
 import kotlin.math.max
 import org.tensorflow.lite.task.vision.detector.Detection
+import org.tensorflow.lite.examples.objectdetection.fragments.CameraFragment
 
 class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
-
+    private var resultsWithDistance: List<CameraFragment.DetectionWithDistance> = LinkedList()
     private var results: List<Detection> = LinkedList<Detection>()
     private var boxPaint = Paint()
     private var textBackgroundPaint = Paint()
@@ -69,8 +70,8 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
     override fun draw(canvas: Canvas) {
         super.draw(canvas)
 
-        for (result in results) {
-            val boundingBox = result.boundingBox
+        for (result in resultsWithDistance) {
+            val boundingBox = result.detection.boundingBox
 
             val top = boundingBox.top * scaleFactor
             val bottom = boundingBox.bottom * scaleFactor
@@ -83,10 +84,10 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
 
             // Create text to display alongside detected objects
             val drawableText =
-                result.categories[0].label + " " +
-                        String.format("%.2f", result.categories[0].score)
+                "${result.detection.categories[0].label} " +
+                        String.format("%.2f", result.detection.categories[0].score) +
+                        " ${String.format("%.2f", result.distance)}m"
 
-            // Draw rect behind display text
             textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bounds)
             val textWidth = bounds.width()
             val textHeight = bounds.height()
@@ -103,18 +104,17 @@ class OverlayView(context: Context?, attrs: AttributeSet?) : View(context, attrs
         }
     }
 
-    fun setResults(
-      detectionResults: MutableList<Detection>,
-      imageHeight: Int,
-      imageWidth: Int,
+    fun setResultsWithDistance(
+        detectionResults: List<CameraFragment.DetectionWithDistance>,
+        imageHeight: Int,
+        imageWidth: Int
     ) {
-        results = detectionResults
+        resultsWithDistance = detectionResults
 
-        // PreviewView is in FILL_START mode. So we need to scale up the bounding box to match with
-        // the size that the captured images will be displayed.
         scaleFactor = max(width * 1f / imageWidth, height * 1f / imageHeight)
-    }
 
+        invalidate()
+    }
     companion object {
         private const val BOUNDING_RECT_TEXT_PADDING = 8
     }

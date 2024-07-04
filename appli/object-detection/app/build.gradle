@@ -20,6 +20,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'de.undercouch.download'
 
+
 android {
     compileSdkVersion 32
     defaultConfig {
@@ -120,4 +121,5 @@ dependencies {
     // Import the GPU delegate plugin Library for GPU inference
     implementation 'org.tensorflow:tensorflow-lite-gpu-delegate-plugin:0.4.0'
     implementation 'org.tensorflow:tensorflow-lite-gpu:2.9.0'
+    implementation 'com.google.ar:core:1.31.0'
 }

@@ -25,6 +25,7 @@
 
     <!-- Declare features -->
     <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.ar" android:required="true"/>
 
     <!-- Declare permissions -->
     <uses-permission android:name="android.permission.CAMERA" />
@@ -73,7 +74,7 @@
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             tools:targetApi="O">
         </activity>
-
+        <meta-data android:name="com.google.ar.core" android:value="required" />
     </application>
 
 </manifest>

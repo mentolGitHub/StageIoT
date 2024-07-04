@@ -1,114 +1,114 @@
 [
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher_foreground.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/layout_activity_main.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/activity_main.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/layout_activity_bluetooth_device_list.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/layout/activity_bluetooth_device_list.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher_round.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/layout_fragment_camera.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/layout/fragment_camera.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher_foreground.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/color_selector_ic.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/color/selector_ic.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/drawable_ic_plus.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/drawable/ic_plus.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/color_selector_ic.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/color/selector_ic.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/layout_activity_bluetooth_device_list.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/activity_bluetooth_device_list.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/layout_info_bottom_sheet.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/info_bottom_sheet.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher_round.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher_round.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/build/generated/res/pngs/debug/drawable-anydpi-v24/ic_launcher_foreground.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/drawable-anydpi-v24_ic_launcher_foreground.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/build/generated/res/pngs/debug/drawable-anydpi-v24/ic_launcher_foreground.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/navigation_nav_graph.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/navigation/nav_graph.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/navigation_nav_graph.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/navigation/nav_graph.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/drawable_ic_minus.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/drawable/ic_minus.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/layout_info_bottom_sheet.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/layout/info_bottom_sheet.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher_round.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher_foreground.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/drawable_ic_minus.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/drawable/ic_minus.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher_round.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/drawable_icn_chevron_up.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/drawable/icn_chevron_up.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/drawable_ic_plus.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/drawable/ic_plus.xml"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher_foreground.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/drawable-v24_tfl_logo.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/drawable-v24/tfl_logo.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-hdpi_ic_launcher_foreground.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/layout_fragment_camera.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/layout/fragment_camera.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/drawable_icn_chevron_up.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/drawable/icn_chevron_up.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher_round.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/drawable-v24_tfl_logo.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/drawable-v24/tfl_logo.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxhdpi_ic_launcher.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxhdpi/ic_launcher.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-mdpi_ic_launcher_foreground.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.png"
     },
     {
-        "merged": "/home/local/Téléchargements/object-detection/app/build/intermediates/merged_res/debug/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "/home/local/Téléchargements/object-detection/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/merged_res/debug/layout_activity_main.xml.flat",
+        "source": "/home/local/Documents/StageIoT/appli/object-detection/app/src/main/res/layout/activity_main.xml"
     }
 ]

@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/home/local/Téléchargements/object-detection/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ar/values-ar.xml",
+            "outputFile": "/home/local/Documents/StageIoT/appli/object-detection/app/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ar/values-ar.xml",
             "map": [
                 {
                     "source": "/home/local/.gradle/caches/transforms-3/22e584a398e49dc53a8e6a5e66f4da0c/transformed/core-1.6.0/res/values-ar/values-ar.xml",

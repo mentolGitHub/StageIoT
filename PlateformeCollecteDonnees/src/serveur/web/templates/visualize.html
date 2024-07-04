@@ -220,7 +220,7 @@
         fetchData();
         const selectElement = document.getElementById("euiSelect");
         
-        let euiList = fetch('/get_euiList', {credentials: "same-origin"})
+        let euiList = fetch('/get_euiList')
         .then(response => {
             // Vérifier si la requête a réussi
             if (!response.ok) {

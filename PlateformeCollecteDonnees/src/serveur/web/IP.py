@@ -11,6 +11,7 @@ from wtforms.validators import DataRequired, Length, EqualTo
 import bcrypt
 from flask_httpauth import HTTPTokenAuth
 from pydoc import locate
+from web.api import *
 
 def hash_password(password):
     # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
@@ -549,6 +550,46 @@ def delete_device(deveui):
 
     return redirect(url_for('deviceList'))
 
+
+"""==============================================================="""
+"""                             API                               """
+"""==============================================================="""
+
+@app.route('/api/deviceList', methods=['GET', 'POST'])
+@auth.login_required
+def apiDeviceList():
+        print("device List")
+        query = "SELECT `dev-eui`, name FROM Device"
+        db_cursor.execute(query)
+        devices = db_cursor.fetchall()
+        
+        result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
+        
+        return jsonify(result)
+
+@app.route('/api/device/<deveui>', methods=['GET', 'POST'])
+@auth.login_required
+def apiDevice_data(deveui):
+    start_date = request.args.get('start_date', default=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
+    end_date = request.args.get('end_date', default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    
+    query = """
+    SELECT * FROM Data 
+    WHERE source = %s AND timestamp BETWEEN %s AND %s
+    ORDER BY timestamp DESC
+    """
+    db_cursor.execute(query, (deveui, start_date, end_date))
+    data = db_cursor.fetchall()
+    
+    columns = [col[0] for col in db_cursor.description]
+    result = [dict(zip(columns, row)) for row in data]
+    
+    return jsonify(result)
+
+
+"""==============================================================="""
+"""                          Lancement                            """
+"""==============================================================="""
 
 """
     Lancement du serveur avec un fichier de configuration

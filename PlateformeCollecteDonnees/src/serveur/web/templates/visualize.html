@@ -21,19 +21,20 @@
         <button id="home" class="btn btn-secondary mb-3" onclick="window.location.href='/'">Home</button>
         <canvas id="dataChart" width="400" height="200"></canvas>
         <div class="d-inline-flex flex-row">
-            <a>
-                Device: 
-            </a>
+            
+            <h6 class="text-center text-nowrap mt-2" style="margin-right: 0.5em;">Device :    </h6>
             <select id="euiSelect" class="form-select" onchange="updateEui(this.value)"></select>
-            Duration: 
-            <select id="duration" class="form-select" onchange="updateDuration(this.value)">
+            <h6 class="text-center text-nowrap mt-2" style="margin-left: 0.5em;margin-right: 0.5em;">Duration :    </h6>
+            <select id="duration" class="form-select" onselect="updateDuration(this.value)" onchange="updateDuration(this.value)">
                 <option value="20">20 secondes</option>
                 <option value="60">1 minute</option>
                 <option value="180">3 minutes</option>
                 <option value="600">10 minutes</option>
                 <option value="1800">30 minutes</option>
                 <option value="3600">1 heure</option>
-
+                <option value="86400">1 jour</option>
+                <option value="604800">1 semaine</option>
+                <option value="2678400">1 mois</option>
             </select>
             
         </div>
@@ -108,7 +109,7 @@
         const ctx = document.getElementById('dataChart').getContext('2d');
         let chart;
         let eui ;
-        let duration = 20;
+        let duration = document.getElementById('duration').value;
         const fields = [
             "acceleration_X", "acceleration_Y", "acceleration_Z",
             "altitude", "angle", "vitesse_angulaire_X",
@@ -159,14 +160,16 @@
     
         function fetchData() {
             let updated = 0;
-            console.log(duration);
+            // console.log(duration);
             fetch("/get_data?"+ new URLSearchParams({'duration':duration}))
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    // console.log(data);
                     for (i in data)
                     {
-                        if (i == eui)
+                        // console.log(data[i].length > 0)
+                        // console.log(new Date(data[i][0].timestamp));
+                        if (i == eui && data[i].length > 0)
                         {   
                             updateChart(data[i]);
                             updated = 1;
@@ -239,6 +242,7 @@
         function updateEui(selected_eui)
         {
             eui = selected_eui;
+            console.log(eui)
             fetchData();
         }
     
@@ -258,11 +262,12 @@
             // Utiliser les données pour remplir la liste déroulante
             selectElement.innerHTML = ''; // Vider les options existantes
             // Parcourir chaque EUI dans les données reçues
+            
             eui = data[0][0];
-            data.forEach(eui => {
+            data.forEach(devices => {
                 const option = document.createElement("option");
-                option.value = eui;
-                option.textContent = eui;
+                option.value = devices[0];
+                option.textContent = devices[1];
                 selectElement.appendChild(option);
             });
         })
@@ -276,11 +281,10 @@
         document.querySelectorAll('input[name="fields"]').forEach(checkbox => {
             checkbox.addEventListener('change', updateChartVisibility);
         });
-    
         // Add event listeners to select all / deselect all buttons
         document.getElementById('selectAll').addEventListener('click', selectAllFields);
         document.getElementById('deselectAll').addEventListener('click', deselectAllFields);
-    
+        
     </script>
     
 </body>

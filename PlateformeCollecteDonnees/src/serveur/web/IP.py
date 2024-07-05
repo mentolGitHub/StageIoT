@@ -154,7 +154,7 @@ def post_data():
 @auth.login_required
 def get_data():
     duration = request.args.get('duration')
-    nb_points = request.args.get('nb_points')
+    champs = request.args.get('field')
 
     
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
@@ -175,25 +175,29 @@ def get_data():
         for device in result[:][0]:
             if duration != None and float(duration) > 60:
                 duration = float(duration)
-                if device in data_storage:
-                    
-                    # print(labels)
-                    # print(types)
+                
+                
+                
+                # print(types)
+                if (device in data_storage) and len(data_storage[device])>0:
                     args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
-                    
-                    query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
-                    cursor.execute(query,args)
-                    result = cursor.fetchall()
-                    # print(result)
-                    data[device]=[]
-                    for d in result:
-                        mesure={}
-                        for i in range(len(d)):
-                            mesure[labels[i]]=d[i]
-                        
-                        data[device].append(mesure)
                 else : 
-                    result=[]
+                    args = (device,datetime.fromtimestamp(datetime.now().timestamp()-duration-1))
+                
+                query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
+                cursor.execute(query,args)
+                # print(args)
+                result = cursor.fetchall()
+                # print(result)
+                data[device]=[]
+                for d in result:
+                    mesure={}
+                    mesure['timestamp']=d[0].timestamp()*1000
+                    
+                    for i in range(1,len(d)-1):
+                        mesure[labels[i]]=d[i]
+                    
+                    data[device].append(mesure)
                 
             else:
                 data[device]=[]
@@ -208,7 +212,7 @@ def get_data():
                         data[device]+=info[seuil:]
                     else :
                         data[device]+=data_storage[device]
-    print(data)
+    # print(data)
     return jsonify(data) 
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
@@ -218,7 +222,14 @@ def get_euiList():
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     db_cursor.execute(query,(username,))
     result= db_cursor.fetchall()
-    return jsonify(result[:][:])  
+    print(result)
+    devices=[]
+    for device in result[:][0]:
+        query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
+        db_cursor.execute(query,(device,))
+        devices.append(db_cursor.fetchall())
+    print(devices[0])
+    return jsonify(devices[0])  
 
 
 """

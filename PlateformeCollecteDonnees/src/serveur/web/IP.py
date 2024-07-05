@@ -62,6 +62,9 @@ def err_handler(error):
             return redirect(url_for('login'))
         case 404 :
             return redirect(url_for('/'))
+        case 302 :
+            flash('You must be logged in to view this page.', 'danger')
+            return redirect(url_for('login'))
 
 
 def check_user_token():
@@ -349,6 +352,9 @@ class DeviceRegistrationForm(FlaskForm):
 """
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    query = "DELETE FROM Auth_Token WHERE `date-exp` < %s "
+    db_cursor.execute(query,(datetime.now(),))
+    
     form = LoginForm()
     if form.validate_on_submit():
         # Recuperation des données rentrées dans le formulaire

@@ -61,6 +61,8 @@ CREATE TABLE IF NOT EXISTS Auth_Token (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+
+
 INSERT INTO Users (username, password, role) VALUES ('a', '$2b$12$MF83CvvYYxd6QSOb4SPm4.m4PXghwwRncpURAro7sfs2AAkZ6ORuW', 'admin');
 
 -- renvoie les données entre 2 dates d'un device / d'une liste de device

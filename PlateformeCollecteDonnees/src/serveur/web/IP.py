@@ -34,6 +34,11 @@ app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = {}
 Config = {}
+data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
+                'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
+                'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
+                'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
+                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
 
 # Verify token
 @auth.verify_token
@@ -162,50 +167,47 @@ def get_data():
     
 
     data = {}
-    for device in result[:][0]:
-        if duration != None and float(duration) > 60:
-            duration = float(duration)
-            if device in data_storage:
-                query = "DESC Data"
-                cursor.execute(query)
-                desc = cursor.fetchall()
-                labels = [desc[i][0] for i in range(len(desc))]
-                print(desc[17][1])
-                for i in range(len(desc)):
-                    if desc[i][1] in ['datetime(3)','varchar(255)']:
-                        types += 
-                print(labels)
-                print(types)
-                args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
-                
-                query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
-                cursor.execute(query,args)
-                result = cursor.fetchall()
-                print(result)
-                # data[device]=[]
-                # for d in result:
-                #     label = ["timestamp","temperature","humidity","luminosity","presence","pressure","gps","altitude","angle","vitesse_angulaire_X","vitesse_angulaire_Y","vitesse_angulaire_Z","acceleration_X","acceleration_Y","acceleration_Z","azimuth","distance_recul","eui"]
-                #     mesure={}
-                #     for i in range(len(d)-1):
-                #         mesure[label[i]]=d[i]
+    if len(result) !=0:
+        query = "DESC Data"
+        cursor.execute(query)
+        desc = cursor.fetchall()
+        labels = [desc[i][0] for i in range(len(desc))]
+        for device in result[:][0]:
+            if duration != None and float(duration) > 60:
+                duration = float(duration)
+                if device in data_storage:
                     
-                #     data[device].append(mesure)
-            else : 
-                result=[]
-            
-        else:
-            data[device]=[]
-            if device in data_storage:
-                if duration != None:
-                    duration = float(duration)
-                    info = data_storage[device]
-                    seuil = 0
-                    # print(info)
-                    while (info[-1]['timestamp']-info[seuil]['timestamp'])/1000 > duration+1:
-                        seuil+=1
-                    data[device]+=info[seuil:]
-                else :
-                    data[device]+=data_storage[device]
+                    # print(labels)
+                    # print(types)
+                    args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
+                    
+                    query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
+                    cursor.execute(query,args)
+                    result = cursor.fetchall()
+                    # print(result)
+                    data[device]=[]
+                    for d in result:
+                        mesure={}
+                        for i in range(len(d)):
+                            mesure[labels[i]]=d[i]
+                        
+                        data[device].append(mesure)
+                else : 
+                    result=[]
+                
+            else:
+                data[device]=[]
+                if device in data_storage:
+                    if duration != None:
+                        duration = float(duration)
+                        info = data_storage[device]
+                        seuil = 0
+                        # print(info)
+                        while (info[-1]['timestamp']-info[seuil]['timestamp'])/1000 > duration+1:
+                            seuil+=1
+                        data[device]+=info[seuil:]
+                    else :
+                        data[device]+=data_storage[device]
     print(data)
     return jsonify(data) 
 

@@ -10,11 +10,11 @@ import requests
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 Config = {}
-data_format = { 'timestamp':"", 'luminosite':None, 'pression':None, 'temperature':None,
+data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
-                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
+                'azimuth':None, 'distance_recul':None, 'presence':None , 'humidite':None }
 
 def save_DB(data,id=0):
     global db, db_cursor
@@ -44,20 +44,22 @@ def save_DB(data,id=0):
                     query = "UPDATE "+ table +" SET acceleration_X=%(acceleration_X)s, acceleration_Y=%(acceleration_Y)s,\
                         acceleration_Z=%(acceleration_Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
                 case 5 :
-                    query = "UPDATE "+ table +" SET azimut=%(azimut)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
+                    query = "UPDATE "+ table +" SET azimuth=%(azimuth)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
                         luminosity=%(luminosite)s ,  humidity=%(humidite)s WHERE timestamp=%(timestamp)s"
                 
             
         else :
             query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
-                    presence, pression, gps, altitude, angle, \
+                    presence, pression, longitude, latitude, altitude, angle, \
                     vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
-                    azimut, distance_recul, source) \
-                    VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosite)s,\
-                    %(presence)s, %(pression)s, Point(%(longitude)s, %(latitude)s), %(altitude)s, %(angle)s,\
-                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s, %(azimut)s, %(distance_recul)s, %(eui)s)"
+                    acceleration_X, acceleration_Y,acceleration_Z,\
+                    azimuth, distance_recul, source) \
+                    VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosity)s,\
+                    %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
+                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
+                    %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s, %(eui)s)"
         # print(query,data)
-        
+        # print(data)
         db_cursor.execute(query,data)
         #print(db_cursor)
         db.commit()

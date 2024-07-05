@@ -36,7 +36,8 @@ CREATE TABLE IF NOT EXISTS Data (
     `luminosity` float DEFAULT NULL,
     `presence` tinyint(1) DEFAULT NULL,
     `pression` float DEFAULT NULL,
-    `gps` POINT DEFAULT NULL,
+    `longitude` float DEFAULT NULL,
+    `latitude` float DEFAULT NULL,
     `altitude` float DEFAULT NULL,
     `angle` float DEFAULT NULL,
     `vitesse_angulaire_X` float DEFAULT NULL,
@@ -45,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Data (
     `acceleration_X` float DEFAULT NULL,
     `acceleration_Y` float DEFAULT NULL,
     `acceleration_Z` float DEFAULT NULL,
-    `azimut` float DEFAULT NULL,
+    `azimuth` float DEFAULT NULL,
     `distance_recul` float DEFAULT NULL,
     `source` varchar(255) NOT NULL,
     FOREIGN KEY (`source`) REFERENCES Device (`dev-eui`)

@@ -22,6 +22,7 @@ def save_DB(data,id=0):
         # db_cursor.execute("show tables")
         # print(db_cursor)
         # utils.print_SQL_response(db_cursor)
+        
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
         table = "Data"
         db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s",data)
@@ -32,22 +33,7 @@ def save_DB(data,id=0):
             match id :
                 case 0 :
                     pass
-                case 1 :
-                    query = "UPDATE "+ table +" SET data=%(data)s WHERE timestamp=%(timestamp)s"
-                case 2 :
-                    query = "UPDATE "+ table +" SET gps=Point(%(longitude)s, %(latitude)s),\
-                        altitude=%(altitude)s, angle=%(angle)s WHERE timestamp=%(timestamp)s"
-                case 3 :
-                    query = "UPDATE "+ table +" SET vitesse_angulaire_X=%(vitesse_angulaire_X)s , vitesse_angulaire_Y=%(vitesse_angulaire_Y)s ,\
-                        vitesse_angulaire_Z=%(vitesse_angulaire_Z)s ,  pression=%(pression)s WHERE timestamp=%(timestamp)s"
-                case 4 :
-                    query = "UPDATE "+ table +" SET acceleration_X=%(acceleration_X)s, acceleration_Y=%(acceleration_Y)s,\
-                        acceleration_Z=%(acceleration_Z)s, temperature=%(temperature)s WHERE timestamp=%(timestamp)s"
-                case 5 :
-                    query = "UPDATE "+ table +" SET azimuth=%(azimuth)s , distance_recul=%(distance_recul)s, presence=%(presence)s ,\
-                        luminosity=%(luminosite)s ,  humidity=%(humidite)s WHERE timestamp=%(timestamp)s"
                 
-            
         else :
             query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
                     presence, pression, longitude, latitude, altitude, angle, \
@@ -108,12 +94,14 @@ def IP_msg_handler(msg):
         data[key]=msg[key]
     data['timestamp']= int(data['timestamp'])/1000
     # print(data)
-
+    assert(data['timestamp']<=datetime.datetime.now().timestamp())
+    db=mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor=db.cursor(buffered=True)
 
     device = data["eui"]
     query = "SELECT * FROM Device WHERE `dev-eui`=%s"
-    db_cursor.execute(query,(device,))
-    res = db_cursor.fetchall()
+    cursor.execute(query,(device,))
+    res = cursor.fetchall()
     # print(res)
     if len(res)!=0:
         save_DB(data)

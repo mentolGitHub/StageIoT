@@ -69,8 +69,6 @@
                         <input class="form-check-input" type="checkbox" id="vitesse_angulaire_X" name="fields" value="vitesse_angulaire_X" checked>
                         <label class="form-check-label" for="vitesse_angulaire_X">Angular Velocity X</label>
                     </div>
-                </div>
-                <div class="col-md-6">
                     <div class="form-check checkbox-container">
                         <input class="form-check-input" type="checkbox" id="vitesse_angulaire_Y" name="fields" value="vitesse_angulaire_Y" checked>
                         <label class="form-check-label" for="vitesse_angulaire_Y">Angular Velocity Y</label>
@@ -79,6 +77,9 @@
                         <input class="form-check-input" type="checkbox" id="vitesse_angulaire_Z" name="fields" value="vitesse_angulaire_Z" checked>
                         <label class="form-check-label" for="vitesse_angulaire_Z">Angular Velocity Z</label>
                     </div>
+                </div>
+                <div class="col-md-6">
+                    
                     <div class="form-check checkbox-container">
                         <input class="form-check-input" type="checkbox" id="azimuth" name="fields" value="azimuth" checked>
                         <label class="form-check-label" for="azimuth">Azimuth</label>
@@ -99,6 +100,10 @@
                         <input class="form-check-input" type="checkbox" id="pressure" name="fields" value="pressure" checked>
                         <label class="form-check-label" for="pressure">Pressure</label>
                     </div>
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="distance_recul" name="fields" value="distance_recul" checked>
+                        <label class="form-check-label" for="pressure">Distance de Recul</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -115,7 +120,7 @@
             "altitude", "angle", "vitesse_angulaire_X",
             "vitesse_angulaire_Y", "vitesse_angulaire_Z",
             "azimuth", "latitude", "longitude",
-            "luminosity", "pressure"
+            "luminosity", "pressure","distance_recul"
         ];
     
         function createChart() {

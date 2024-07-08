@@ -72,9 +72,9 @@ def check_user_token():
     
     query = "SELECT user FROM Auth_Token WHERE token=%s"
     db_cursor.execute(query, (token,))
-    res = db_cursor.fetchall()[0][0]
+    res = db_cursor.fetchall()
     if db_cursor.rowcount==1:
-        username = res
+        username = res[0][0]
         return username
     else:
         return None
@@ -105,9 +105,12 @@ def post_data():
     if request.method == 'POST':
         global data_storage
         raw_data = request.get_data().decode('utf-8')
+        raw_data= raw_data.removesuffix("\n")
         data_list = raw_data[1:].split(',')
+        
         if int(raw_data[0]) == 2:
-            if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
+            if len(data_list) == 16:  # Assurez-vous que tous les champs attendus sont présents
+                
                 data = {
                     "eui": str(data_list[0]),
 
@@ -124,9 +127,10 @@ def post_data():
                     "acceleration_Y": float(data_list[11]),
                     "acceleration_Z": float(data_list[12]),
                     "angle": float(data_list[13]),
-                    "azimuth": float(data_list[14])
+                    "azimuth": float(data_list[14]),
+                    "distance_recul": float(data_list[15])
                 }
-                # print(data)
+                
                 Q_out.put(data)
                 if data_list[0] not in data_storage:
                     data_storage[data_list[0]] = [data]
@@ -150,6 +154,9 @@ def post_data():
 """
     Envoi de données vers un appareil exterieur 
 
+    champs possibles : 
+    - duration : la durée en seconde depuis la derniere mesure en memoire, ou depuis le moment présent le cas échéant
+    
     Returns: Données au format json
 
     TODO : mettre des paramètes a la requete afin de pouvoir specifier les données demandées 
@@ -228,12 +235,15 @@ def get_euiList():
     result= db_cursor.fetchall()
     print(result)
     devices=[]
-    for device in result[:][0]:
-        query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
-        db_cursor.execute(query,(device,))
-        devices.append(db_cursor.fetchall())
-    print(devices[0])
-    return jsonify(devices[0])  
+    length = len(result[:])
+    if length != None and length > 0:
+        for device in result[:][0]:
+            query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
+            db_cursor.execute(query,(device,))
+            devices.append(db_cursor.fetchall())
+        print(devices[0])
+        return jsonify(devices[0])  
+    return jsonify([])
 
 
 """
@@ -289,8 +299,13 @@ def download():
     if request.method == 'POST':
         start_time = request.form.get('start_time')
         end_time = request.form.get('end_time')
-        selected_fields = request.form.getlist('fields')
-
+        selected_fields = []
+        for field in request.form.getlist('fields'):
+            field = field.split(" ")
+            for f in field:
+                selected_fields.append(f)
+        
+        
         # Convert datetime-local input to datetime object
         start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M')
         end_time = datetime.strptime(end_time, '%Y-%m-%dT%H:%M')

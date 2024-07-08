@@ -11,7 +11,6 @@ from wtforms.validators import DataRequired, Length, EqualTo
 import bcrypt
 from flask_httpauth import HTTPTokenAuth
 from pydoc import locate
-from web.api import *
 from flask_restful import Api
 from flask_cors import CORS
 
@@ -579,22 +578,17 @@ def delete_device(deveui):
 """                             API                               """
 """==============================================================="""
 
-api.add_resource(exemple_route,"/exemple_route") 
-
 @app.route('/api/deviceList', methods=['GET', 'POST'])
-@auth.login_required
 def apiDeviceList():
         print("device List")
         query = "SELECT `dev-eui`, name FROM Device"
         db_cursor.execute(query)
         devices = db_cursor.fetchall()
-        
         result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
         
         return jsonify(result)
 
-@app.route('/api/device/<deveui>', methods=['GET', 'POST'])
-@auth.login_required
+@app.route('/api/deviceData/<deveui>', methods=['GET', 'POST'])
 def apiDevice_data(deveui):
     start_date = request.args.get('start_date', default=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
     end_date = request.args.get('end_date', default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

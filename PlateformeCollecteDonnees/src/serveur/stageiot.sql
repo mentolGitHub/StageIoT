@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS Users (
     `password` varchar(255) NOT NULL,
     `email` varchar(255),
     `role` varchar(255) NOT NULL DEFAULT 'user'
+    'api_key' varchar(255) NOT NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 

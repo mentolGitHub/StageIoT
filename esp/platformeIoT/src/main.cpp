@@ -27,7 +27,7 @@ void traitementReceptionUart();
 const int triggerPin = 5; // Remplacer par la broche GPIO utilisée pour le Trigger
 const int echoPin = 18; // Remplacer par la broche GPIO utilisée pour l'Echo
 
-long distance();
+float distance();
 
 
 /* Initialisation */
@@ -147,10 +147,10 @@ void traitementReceptionUart()
   }
 }
 
-long distance(){
+float distance(){
   //calcul de la distance avec le capteur hc sr04
 
-  long duration, distance;
+  float duration, distance;
 
   digitalWrite(triggerPin, LOW);
   delayMicroseconds(2);
@@ -159,7 +159,7 @@ long distance(){
   digitalWrite(triggerPin, LOW);
 
   duration = pulseIn(echoPin, HIGH);
-  distance = (duration / 2) * 340/1000; 
+  distance = (duration / 2) * 340/1000/10; 
   Serial.print("Distance: ");
   Serial.println(distance);
   return distance;

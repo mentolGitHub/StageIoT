@@ -12,6 +12,8 @@ import bcrypt
 from flask_httpauth import HTTPTokenAuth
 from pydoc import locate
 from web.api import *
+from flask_restful import Api
+from flask_cors import CORS
 
 def hash_password(password):
     # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
@@ -29,6 +31,8 @@ def check_password(hashed_password, user_password):
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 app = Flask(__name__)
+CORS(app)
+api = Api(app)
 auth = HTTPTokenAuth(scheme='Bearer')
 app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
@@ -110,7 +114,6 @@ def post_data():
             if len(data_list) == 15:  # Assurez-vous que tous les champs attendus sont présents
                 data = {
                     "eui": str(data_list[0]),
-
                     "timestamp": int(data_list[1]),
                     "latitude": float(data_list[2]),
                     "longitude": float(data_list[3]),
@@ -560,6 +563,8 @@ def delete_device(deveui):
 """==============================================================="""
 """                             API                               """
 """==============================================================="""
+
+api.add_resource(exemple_route,"/exemple_route") 
 
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 @auth.login_required

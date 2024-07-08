@@ -2,6 +2,7 @@
 #include <HardwareSerial.h>
 #include <stdio.h>
 #include <string.h>
+#include <Arduino.h>
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -23,6 +24,10 @@ String dataFromUart;
 
 void traitementReceptionBluetooth();
 void traitementReceptionUart();
+const int triggerPin = 5; // Remplacer par la broche GPIO utilisée pour le Trigger
+const int echoPin = 18; // Remplacer par la broche GPIO utilisée pour l'Echo
+
+long distance();
 
 
 /* Initialisation */
@@ -30,6 +35,8 @@ void setup()
 {
   Serial.begin(9600); //initialisation du port série
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
+  pinMode(triggerPin, OUTPUT);
+  pinMode(echoPin, INPUT);
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
   Serial.println("The device started, now you can pair it with bluetooth!");
 }
@@ -108,7 +115,8 @@ void traitementReceptionBluetooth()
       token = strtok(NULL, ",");
       i++;
     }
-    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "\n";
+    long distanceValue = distance();
+    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
     SerialPort.print(loraPayload);
     Serial.println(loraPayload);
     
@@ -137,4 +145,22 @@ void traitementReceptionUart()
     Serial.write(dataFromUart.c_str());
     SerialBT.print(dataFromUart);
   }
+}
+
+long distance(){
+  //calcul de la distance avec le capteur hc sr04
+
+  long duration, distance;
+
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration / 2) * 340/1000; 
+  Serial.print("Distance: ");
+  Serial.println(distance);
+  return distance;
 }

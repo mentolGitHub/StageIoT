@@ -33,7 +33,7 @@ lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868) # Initialise LoRa en mode LORA
 
 app_eui = ubinascii.unhexlify('7532159875321598')
 app_key = ubinascii.unhexlify('11CBA1678ECF54273F5834C41D82E57F')
-dev_eui = ubinascii.unhexlify('70B3D57ED0068A6F')
+dev_eui = ubinascii.unhexlify('70B3D57ED0068A6E')
 
 ####### Connexion LoRa #######
 lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0) # Connexion au réseau LoRaWAN

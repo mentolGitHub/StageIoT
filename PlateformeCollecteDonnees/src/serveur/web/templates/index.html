@@ -26,7 +26,7 @@
                     <button class="btn btn-primary" onclick="window.location.href='/register'">Register</button>
                 {% else %}
                     <div class="d-flex align-items-center">
-                        <p class="me-2 mt-3">{{ username }}</p>
+                        <div class="d-flex flex-row me-2">{{ username }}</div>
                         <button class="btn btn-danger" onclick="window.location.href='/logout'">Logout</button>
                     </div>
                 {% endif %}

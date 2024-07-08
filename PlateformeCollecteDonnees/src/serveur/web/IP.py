@@ -579,7 +579,6 @@ def delete_device(deveui):
 """                             API                               """
 """==============================================================="""
 
-api.add_resource(exemple_route,"/exemple_route") 
 
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 @auth.login_required

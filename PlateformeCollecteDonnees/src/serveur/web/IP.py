@@ -14,18 +14,6 @@ from pydoc import locate
 from flask_restful import Api
 from flask_cors import CORS
 
-def hash_password(password):
-    # Convertir le mot de passe en bytes, générer un sel et hacher le mot de passe
-    password_bytes = password.encode('utf-8')
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password_bytes, salt)
-    return hashed_password
-
-def check_password(hashed_password, user_password):
-    # Vérifier si le mot de passe fourni correspond au hachage
-    password_bytes = user_password.encode('utf-8')
-    return bcrypt.checkpw(password_bytes, hashed_password)
-
 
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
@@ -44,9 +32,52 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
                 'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
 
-# Verify token
+
+
+def hash_password(password):
+    """
+    Hashes the given password using bcrypt.
+
+    Args:
+        password (str): The password to be hashed.
+
+    Returns:
+        bytes: The hashed password.
+
+    """
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password_bytes, salt)
+    return hashed_password
+
+
+def check_password(hashed_password, user_password):
+    """
+    Check if the provided user password matches the hashed password.
+
+    Args:
+        hashed_password (bytes): The hashed password stored in the database.
+        user_password (str): The user's input password.
+
+    Returns:
+        bool: True if the user password matches the hashed password, False otherwise.
+    """
+    password_bytes = user_password.encode('utf-8')
+    return bcrypt.checkpw(password_bytes, hashed_password)
+
+
+
 @auth.verify_token
 def verify_token(t):
+    """
+    Verify the authenticity of a token.
+
+    Parameters:
+    t (str): The token to be verified.
+
+    Returns:
+    bool: True if the token is valid, False otherwise.
+    """
     # print(t)
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
@@ -59,6 +90,15 @@ def verify_token(t):
 # Gestion des erreurs HTTP
 @auth.error_handler
 def err_handler(error):
+    """
+    Error handler function for authentication errors.
+
+    Parameters:
+    - error: The error code.
+
+    Returns:
+    - A redirect response based on the error code.
+    """
     match (error):
         case 401 :
             flash('You must be logged in to view this page.', 'danger')
@@ -71,6 +111,13 @@ def err_handler(error):
 
 
 def check_user_token():
+    """
+    Checks if the user token is valid and returns the corresponding username.
+
+    Returns:
+        str: The username associated with the token if it is valid.
+        None: If the token is invalid or not found in the database.
+    """
     token = session.get('token')
     
     query = "SELECT user FROM Auth_Token WHERE token=%s"
@@ -82,11 +129,15 @@ def check_user_token():
     else:
         return None
 
-"""
-    Index
-"""
+
 @app.route('/')
 def accueil():
+    """
+    Renders the index.html template with the appropriate variables.
+
+    Returns:
+        The rendered template with the 'is_authenticated' and 'username' variables.
+    """
     is_authenticated = False
     username=''
     if session :
@@ -95,18 +146,16 @@ def accueil():
     return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
 
-"""
-    Gère la requête POST pour envoyer des données au serveur.
-    
-    Returns:
-        - Si les données sont valides, renvoie un JSON avec le statut "success" et le code de statut 200.
-        - Si les données sont invalides, renvoie un JSON avec le statut "error", le message "Invalid data format" et le code de statut 400.
-"""
+
 @app.route('/post_data', methods=['POST'])
 def post_data():
+    """
+    Endpoint for receiving and processing data sent via POST request.
     
-    if request.method == 'POST':
-        global data_storage
+    Returns:
+        JSON response: A JSON response indicating the status of the request.
+    """
+    if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
         data_list = raw_data[1:].split(',')
@@ -134,17 +183,7 @@ def post_data():
                 }
                 
                 Q_out.put(data)
-                if data_list[0] not in data_storage:
-                    data_storage[data_list[0]] = [data]
-                else:
-                    data_storage[data_list[0]].append(data)
-                # Supprimer les données de plus d'une heure
-                for device in data_storage:
-                    seuil=0
-                    while (data_storage[device][-1]['timestamp']-data_storage[device][seuil]['timestamp'])/1000 > 61:
-                        seuil+=1
-
-                    data_storage[device]=data_storage[device][seuil:]                  
+                add_data_to_cache(data)         
                 # print (data_storage)
                 return jsonify({"status": "success"}), 200
             else:
@@ -153,22 +192,46 @@ def post_data():
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
 
 
-"""
-    Envoi de données vers un appareil exterieur 
+def add_data_to_cache(data):
+    """
+    Add data to the cache based on the 'eui' value in the data dictionary.
 
-    champs possibles : 
-    - duration : la durée en seconde depuis la derniere mesure en memoire, ou depuis le moment présent le cas échéant
-    
-    Returns: Données au format json
+    Parameters:
+    - data (dict): The data to be added to the cache.
 
-    TODO : mettre des paramètes a la requete afin de pouvoir specifier les données demandées 
-"""
+    Returns:
+    - None
+    """
+    global data_storage
+    if data['eui'] not in data_storage:
+        data_storage[data['eui']] = [data]
+    else:
+        data_storage[data['eui']].append(data)
+    # Supprimer les données de plus d'une heure
+    for device in data_storage:
+        seuil=0
+        while (data_storage[device][-1]['timestamp']-data_storage[device][seuil]['timestamp'])/1000 > 61:
+            seuil+=1
+
+        data_storage[device]=data_storage[device][seuil:] 
+
+
 @app.route('/get_data', methods=['GET'])
 @auth.login_required
 def get_data():
-    duration = request.args.get('duration')
-    champs = request.args.get('field')
+    """
+        This function retrieves data from a MySQL database based on the provided parameters.
 
+        Args:
+            None
+
+        Returns:
+            A JSON response containing the retrieved data.
+
+        Raises:
+            None
+    """
+    duration = request.args.get('duration')
     
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
@@ -177,14 +240,8 @@ def get_data():
     cursor.execute(query,(username,))
     result= cursor.fetchall()
 
-    
-
     data = {}
     if len(result) !=0:
-        query = "DESC Data"
-        cursor.execute(query)
-        desc = cursor.fetchall()
-        labels = [desc[i][0] for i in range(len(desc))]
         for device in result[:][0]:
             if duration != None and float(duration) > 60:
                 duration = float(duration)
@@ -199,18 +256,8 @@ def get_data():
                 
                 query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
                 cursor.execute(query,args)
-                # print(args)
                 result = cursor.fetchall()
-                # print(result)
-                data[device]=[]
-                for d in result:
-                    mesure={}
-                    mesure['timestamp']=d[0].timestamp()*1000
-                    
-                    for i in range(1,len(d)-1):
-                        mesure[labels[i]]=d[i]
-                    
-                    data[device].append(mesure)
+                data[device]=data_labels_to_json(result,"Data")
                 
             else:
                 data[device]=[]
@@ -228,9 +275,32 @@ def get_data():
     # print(data)
     return jsonify(data) 
 
+def data_labels_to_json(data,table):
+    result = []
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor = db.cursor()
+    query = "DESC "+table
+    cursor.execute(query)
+    desc = cursor.fetchall()
+    label = [desc[i][0] for i in range(len(desc))]
+    for d in data:
+        mesure={}
+        mesure['timestamp']=d[0].timestamp()*1000
+        
+        for i in range(1,len(d)-1):
+            mesure[label[i]]=d[i]
+        
+        result.append(mesure)
+
 @app.route('/get_euiList', methods=['GET', 'POST'])
 @auth.login_required
 def get_euiList():
+    """
+    Retrieves a list of eui associated with the logged-in user.
+
+    Returns:
+        A JSON response containing the list of devices eui.
+    """
     username = session.get('username')
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     db_cursor.execute(query,(username,))
@@ -248,23 +318,29 @@ def get_euiList():
     return jsonify([])
 
 
-"""
-    Visualisation des données sous forme de courbes
-"""
+
 @app.route('/visualize')
 @auth.login_required
 def visualize():
+    """
+    Renders the visualize.html template.
+
+    Returns:
+        The rendered visualize.html template.
+    """
     return render_template('visualize.html')
 
 
-"""
-    Télécharge toutes les données stockées au format CSV.
 
-    Returns: Flask.Response: Réponse Flask contenant le fichier CSV en tant que pièce jointe.
-"""
 @app.route('/downloadall')
 @auth.login_required
 def downloadall():
+    """
+    Downloads all data from the data storage as a CSV file.
+
+    Returns:
+        Flask Response: Response object containing the CSV file as an attachment.
+    """
     output = io.StringIO()
     writer = csv.writer(output)
     
@@ -289,15 +365,14 @@ def downloadall():
         download_name=f'iot_data_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
     )
 
-"""
-    Permet d'acceder a une page de téléchargement des données ou l'on peut choisir quelles données l'on veut
-    
-    Returns: Les données demandées au format csv
-
-    TODO : fix la page pour utiliser des requetes a la bdd
-"""
 @app.route('/download', methods=['GET', 'POST'])
 def download():
+    """
+    Handle the download route for retrieving data from the database and generating a CSV file.
+
+    Returns:
+        Response: Flask response object containing the generated CSV file as an attachment.
+    """
     if request.method == 'POST':
         start_time = request.form.get('start_time')
         end_time = request.form.get('end_time')
@@ -364,11 +439,24 @@ class DeviceRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit2 = SubmitField('Register')
 
-"""
-    Page permettant de se connecter
-"""
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    """
+    Function to handle user login.
+
+    Deletes expired authentication tokens from the database.
+    Validates the login form submitted by the user.
+    Checks the username and password against the database records.
+    Generates a new authentication token and stores it in the database.
+    Sets the session variables for the logged-in user.
+    Redirects the user to the home page if login is successful.
+    Displays an error message if login is unsuccessful.
+
+    Returns:
+        If login is successful, redirects to the home page.
+        If login is unsuccessful, renders the login page with an error message.
+    """
     query = "DELETE FROM Auth_Token WHERE `date-exp` < %s "
     db_cursor.execute(query,(datetime.now(),))
     
@@ -397,11 +485,21 @@ def login():
         flash('Login Unsuccessful. Please check username and password', 'danger')
     return render_template('login.html', form=form)
 
-"""
-    Page permettant de s'enregistrer'
-"""
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Register a new user.
+
+    This function handles the registration process for a new user. It validates the registration form,
+    checks if the username already exists in the database, and inserts the new user into the database
+    if the username is unique. It also displays flash messages to indicate the status of the registration
+    process and redirects the user to the appropriate page.
+
+    Returns:
+        A redirect response to the login page if the registration is successful, or the registration page
+        with the registration form if there are validation errors or the username already exists.
+    """
     form = RegistrationForm()
     if form.validate_on_submit():
         # Recuperation des données rentrées dans le formulaire
@@ -426,35 +524,47 @@ def register():
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 
-"""
-    Page permettant de se deconnecter
-"""
+
 @app.route('/logout')
 def logout():
+    """
+    Logs out the user by removing the 'username' and 'token' from the session.
+    Displays a flash message to inform the user that they have been logged out.
+    Redirects the user to the login page.
+    """
     session.pop('username', None)
     session.pop('token')
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
 
-"""
-    Visualisation des appareils sur une carte
 
-    TODO : verifier si ca fonctionne avec plusieurs appareils et centrer la map sur l'appareil favori de l'utilisateur
-"""
 @app.route('/map')
 @auth.login_required
 def map_view():
-    # if 'username' not in session:
-    #     flash('Please log in to access this page', 'warning')
-    #     return redirect(url_for('login'))
+    """
+    Renders the map view page.
+
+    Returns:
+        The rendered map.html template.
+    """
     return render_template('map.html')
 
-"""
-    Page permettant d'enregistrer un appareil
-"""
+
 @app.route('/register_device', methods=['GET', 'POST'])
 @auth.login_required
 def register_device():
+    """
+    Register a device and associate it with a user.
+
+    This function handles the registration of a device and its association with a user account.
+    It first checks if the device is already registered. If not, it adds the device to the database
+    and associates it with the currently logged-in user. If the device is already registered, it
+    checks if it is already associated with the user. If not, it associates the device with the user.
+
+    Returns:
+        A redirect response to the 'register_device' page.
+
+    """
     form_associate = DeviceAssociationForm()
     if form_associate.submit.data and form_associate.validate():
         deveui = form_associate.deveui.data
@@ -520,15 +630,22 @@ def register_device():
 
     return render_template('register_device.html', form_associate=form_associate, form=form)
 
-"""
-    Liste des Devices enregistrés
-"""
+
 @app.route('/deviceList')
 @auth.login_required
 def deviceList():
-    # if 'username' not in session:
-    #     flash('Please log in to access this page', 'warning')
-    #     return redirect(url_for('login'))
+    """
+    Retrieves the list of devices associated with the logged-in user.
+
+    Returns:
+        A rendered template 'deviceList.html' with the following variables:
+        - username: The username of the logged-in user.
+        - devices: A list of devices associated with the user.
+        - names: A list of names corresponding to the devices.
+        
+    Redirects:
+        - If the user is not logged in, redirects to the 'login' page.
+    """
     username = session.get('username')
     if username:
         #selectionner les appareils de l'utilisateur
@@ -550,12 +667,19 @@ def deviceList():
         return redirect(url_for('login'))
     
 
-"""
-    Supprimer un appareil
-"""
+
 @app.route('/delete_device/<deveui>', methods=['GET', 'POST'])
 @auth.login_required
 def delete_device(deveui):
+    """
+    Deletes the device and its association with the user.
+
+    Args:
+        deveui (str): The device EUI to be deleted.
+
+    Returns:
+        redirect: A redirect response to the device list page.
+    """
     # Supprimer la liaison entre l'appareil et l'utilisateur
     username = session.get('username')
     query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
@@ -578,23 +702,51 @@ def delete_device(deveui):
 """                             API                               """
 """==============================================================="""
 
+
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 def apiDeviceList():
-        print("device List")
-        query = "SELECT `dev-eui`, name FROM Device"
-        db_cursor.execute(query)
-        devices = db_cursor.fetchall()
-        result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
-        
-        return jsonify(result)
+    """
+    Retrieves a list of devices from the database.
+
+    Returns:
+        A JSON response containing the list of devices, where each device is represented as a dictionary with 'dev-eui' and 'name' keys.
+    """
+    query = "SELECT `dev-eui`, name FROM Device"
+    db_cursor.execute(query)
+    devices = db_cursor.fetchall()
+    
+    result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
+    
+    return jsonify(result)
+
 
 @app.route('/api/deviceData/<deveui>', methods=['GET', 'POST'])
 def apiDevice_data(deveui):
+    """
+    Retrieve data from the 'Data' table based on the specified device EUI and time range.
+
+    Args:
+        deveui (str): The device EUI.
+
+    Returns:
+        flask.Response: A JSON response containing the retrieved data.
+
+    """
     start_date = request.args.get('start_date', default=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
     end_date = request.args.get('end_date', default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     
-    query = """
-    SELECT * FROM Data 
+    dataType = str(request.args.get('dataType', default='*'))
+    print(dataType)
+
+    if dataType in data_format.keys():
+        select_clause = dataType
+    elif dataType == "*":
+        select_clause = "*"
+    else:
+        return jsonify({"error": "Invalid data type"})
+
+    query = f"""
+    SELECT {select_clause} FROM Data 
     WHERE source = %s AND timestamp BETWEEN %s AND %s
     ORDER BY timestamp DESC
     """
@@ -607,14 +759,47 @@ def apiDevice_data(deveui):
     return jsonify(result)
 
 
+@app.route('/api/neighbourList/<deveui>', methods=['GET', 'POST'])
+def apiNeighbourList(deveui):
+    """
+    Retrieves the list of neighboring sources based on the given device EUI.
+
+    Args:
+        deveui (str): The device EUI.
+
+    Returns:
+        list: A list of neighboring sources.
+
+    """
+    query = "SELECT latitude, longitude FROM Data WHERE `source`=%s ORDER BY timestamp DESC LIMIT 1"
+    db_cursor.execute(query, (deveui,))
+    coords = db_cursor.fetchall()
+
+    query = "SELECT DISTINCT `source` FROM Data WHERE abs(latitude - %s) < 0.001 AND abs(longitude - %s)< 0.001 AND timestamp > %s"
+    db_cursor.execute(query, (coords[0][0], coords[0][1], (datetime.now() - timedelta(seconds=50)).strftime('%Y-%m-%d %H:%M:%S')))
+    neighbours = db_cursor.fetchall()
+
+    
+    return jsonify(neighbours)
+
+
+
 """==============================================================="""
 """                          Lancement                            """
 """==============================================================="""
 
-"""
-    Lancement du serveur avec un fichier de configuration
-"""
+
 def IPnode(Q_output: Queue, config):
+    """
+    Starts the IP node server.
+
+    Args:
+        Q_output (Queue): The output queue for sending messages.
+        config (dict): The configuration settings.
+
+    Returns:
+        None
+    """
     global Q_out, db, db_cursor, Config
     Config= config
     Q_out = Q_output
@@ -626,10 +811,17 @@ def IPnode(Q_output: Queue, config):
         db_cursor.execute(db_query)
         app.run(host=config['server_host'], port=int(config['server_port']), debug=False)
 
-"""
-    Lancement du serveur sans fichier de configuration
-"""
+
 def IPnode_noconfig(Q_output: Queue):
+    """
+    Starts the IP node server without any configuration.
+
+    Args:
+        Q_output (Queue): The output queue for sending messages.
+
+    Returns:
+        None
+    """
     global Q_out
     Q_out = Q_output
     

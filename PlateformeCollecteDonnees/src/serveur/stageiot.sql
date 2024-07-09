@@ -7,7 +7,8 @@
 CREATE TABLE IF NOT EXISTS Device (
     `dev-eui` varchar(255) NOT NULL PRIMARY KEY,
     `name` varchar(255) NOT NULL,
-    `password` varchar(255) NOT NULL
+    `password` varchar(255) NOT NULL,
+    `status` varchar(255) NOT NULL DEFAULT 'public'
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

@@ -29,7 +29,6 @@ def init_db():
         #connect to mySQL
 
         mydb = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
-        db=mydb
         cursor = mydb.cursor()
         
         # Seaching for DB
@@ -40,8 +39,7 @@ def init_db():
 
         #print(liste_db)
         if len(liste_db)== 1:
-            db_query = "USE "+ utils.sql_var(Config["db_name"])
-            cursor.execute(db_query)
+            mydb.cmd_init_db(Config["db_name"])
 
         elif len(liste_db)==0:
             print("Aucune base de données de ce nom n'a été trouvé. Voulez vous la créer ? ", end="")
@@ -68,9 +66,10 @@ def init_db():
                         
         # Import tables (if they dont exist yet)
         path_setup_DB = __file__.rsplit("/",1)[0]+"/"+Config['db_init_file']+".sql"
-        sql=open(path_setup_DB).read()
-        cursor.execute(sql)
-        utils.print_SQL_response(cursor)
+        sql=open(path_setup_DB)
+        cursor.execute(sql.read(), multi=True)
+        
+        db=mydb
         
 
     except mysql.connector.errors.ProgrammingError as e :

@@ -765,6 +765,12 @@ def profile():
 @app.route('/getApiKey', methods=['GET'])
 @auth.login_required
 def get_api_keys():
+    """
+    Retrieves the API keys associated with the user.
+
+    Returns:
+        A JSON response containing the API keys.
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
     username = ''
@@ -780,6 +786,12 @@ def get_api_keys():
 @app.route('/generateApiKey', methods=['GET', 'POST'])
 @auth.login_required
 def generate_api_key():
+    """
+    Generates a new API key for the user and updates it in the database.
+
+    Returns:
+        A JSON response containing the generated API key.
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
     username = ''

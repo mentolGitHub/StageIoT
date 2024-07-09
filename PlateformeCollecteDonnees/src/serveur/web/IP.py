@@ -771,12 +771,14 @@ def apiNeighbourList(deveui):
         list: A list of neighboring sources.
 
     """
+    size = request.args.get('size', 0.001)
+
     query = "SELECT latitude, longitude FROM Data WHERE `source`=%s ORDER BY timestamp DESC LIMIT 1"
     db_cursor.execute(query, (deveui,))
     coords = db_cursor.fetchall()
 
-    query = "SELECT DISTINCT `source` FROM Data WHERE abs(latitude - %s) < 0.001 AND abs(longitude - %s)< 0.001 AND timestamp > %s"
-    db_cursor.execute(query, (coords[0][0], coords[0][1], (datetime.now() - timedelta(seconds=50)).strftime('%Y-%m-%d %H:%M:%S')))
+    query = "SELECT DISTINCT `source` FROM Data WHERE abs(latitude - %s) < %s AND abs(longitude - %s)< %s AND timestamp > %s"
+    db_cursor.execute(query, (coords[0][0], size, coords[0][1], size, (datetime.now() - timedelta(seconds=50)).strftime('%Y-%m-%d %H:%M:%S')))
     neighbours = db_cursor.fetchall()
 
     

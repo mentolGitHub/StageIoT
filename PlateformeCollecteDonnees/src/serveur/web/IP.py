@@ -735,15 +735,6 @@ def delete_device(deveui):
     cursor.execute(query, (deveui, username))
     db.commit()
 
-    # Supprimer l'appareil si aucun utilisateur n'est associé
-    query = "SELECT * FROM DeviceOwners WHERE `device` = %s"
-    cursor.execute(query, (deveui,))
-    result = cursor.fetchall()
-    if len(result) == 0:
-        query = "DELETE FROM Device WHERE `dev-eui` = %s"
-        cursor.execute(query, (deveui,))
-        db.commit()
-
     return redirect(url_for('deviceList'))
 
 @app.route('/profile', methods=['GET', 'POST'])

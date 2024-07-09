@@ -13,13 +13,18 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@^1"></script>
     
     <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <style>
+        
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="text-center">Data Visualization</h1>
         <button id="themeToggle" class="btn btn-secondary mb-3">Toggle Dark Theme</button>
         <button id="home" class="btn btn-primary mb-3" onclick="window.location.href='/'">Home</button>
-        <canvas id="dataChart" width="400" height="200"></canvas>
+        <div class="chart">
+            <canvas id="dataChart" ></canvas>
+        </div>
         <div class="d-inline-flex flex-row">
             
             <h6 class="text-center text-nowrap mt-2" style="margin-right: 0.5em;">Device :    </h6>
@@ -62,10 +67,6 @@
                         <label class="form-check-label" for="altitude">Altitude</label>
                     </div>
                     <div class="form-check checkbox-container">
-                        <input class="form-check-input" type="checkbox" id="angle" name="fields" value="angle" checked>
-                        <label class="form-check-label" for="angle">Angle</label>
-                    </div>
-                    <div class="form-check checkbox-container">
                         <input class="form-check-input" type="checkbox" id="vitesse_angulaire_X" name="fields" value="vitesse_angulaire_X" checked>
                         <label class="form-check-label" for="vitesse_angulaire_X">Angular Velocity X</label>
                     </div>
@@ -80,6 +81,10 @@
                 </div>
                 <div class="col-md-6">
                     
+                    <div class="form-check checkbox-container">
+                        <input class="form-check-input" type="checkbox" id="angle" name="fields" value="angle" checked>
+                        <label class="form-check-label" for="angle">Angle</label>
+                    </div>
                     <div class="form-check checkbox-container">
                         <input class="form-check-input" type="checkbox" id="azimuth" name="fields" value="azimuth" checked>
                         <label class="form-check-label" for="azimuth">Azimuth</label>
@@ -127,6 +132,7 @@
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
+                    
                     labels: [],
                     datasets: fields.map(field => ({
                         label: field,

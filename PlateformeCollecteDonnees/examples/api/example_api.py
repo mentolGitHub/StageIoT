@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # server URL
 url = "http://localhost:5000/api/"
+apiKey = "your_api_key"
 
 
 #######################################

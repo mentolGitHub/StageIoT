@@ -13,6 +13,7 @@ from flask_httpauth import HTTPTokenAuth
 from pydoc import locate
 from flask_restful import Api
 from flask_cors import CORS
+import base64
 
 
 db : mysql.connector.MySQLConnection
@@ -31,6 +32,7 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
                 'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
+
 
 
 
@@ -692,6 +694,53 @@ def delete_device(deveui):
         db.commit()
 
     return redirect(url_for('deviceList'))
+
+@app.route('/profile', methods=['GET', 'POST'])
+@auth.login_required
+def profile():
+    """
+    Displays the user profile page.
+
+    Returns:
+        The rendered profile.html template with the 'username' variable.
+    """
+    username=''
+    if 'token' in session :
+        username = check_user_token()
+
+
+    return render_template('profile.html', username=username)
+
+@app.route('/getApiKey', methods=['GET'])
+@auth.login_required
+def get_api_keys():
+    username = ''
+    if 'token' in session:
+        username = check_user_token()
+
+    query = "SELECT `api-key` FROM Users WHERE username = %s"
+    db_cursor.execute(query, (username,))
+    api_keys = db_cursor.fetchall()
+
+    return jsonify(api_keys[0][0])
+
+@app.route('/generateApiKey', methods=['GET', 'POST'])
+@auth.login_required
+def generate_api_key():
+    username = ''
+    if 'token' in session:
+        username = check_user_token()
+
+    # Générer une nouvelle clé API
+    api_key = bcrypt.gensalt()
+    # Convertir la clé API en une chaîne de caractères encodée en base64
+    api_key_str = base64.b64encode(api_key).decode('utf-8')
+    query = "UPDATE Users SET `api-key` = %s WHERE username = %s"
+    db_cursor.execute(query, (api_key_str, username))
+    db.commit()
+    api_key = {"api_key": api_key_str}
+    print(api_key)
+    return jsonify(api_key)
 
 
 """==============================================================="""

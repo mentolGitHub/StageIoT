@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <title>Profil Utilisateur</title>
+    <style>
+        .profile-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .profile-header img {
+            border-radius: 50%;
+        }
+        .profile-info {
+            margin-top: 20px;
+        }
+        .profile-info h2 {
+            margin: 0;
+            padding: 0;
+        }
+        .profile-info p {
+            color: #666;
+        }
+        .apiKeyCover {
+            background-color: grey;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-left">
+            <button id="themeToggle" class="btn btn-secondary">Toggle Dark Mode</button>
+            <button id="home" class="btn btn-primary" onclick="window.location.href='/'">Home</button>
+        </div>
+        <div class="profile-header mt-3">
+            <button class="btn btn-primary">Modifier le profil</button>
+        </div>
+        <div class="profile-info mt-3">
+            <h2>{{ username }}</h2>
+            <p>Email: utilisateur@example.com</p>
+            
+            <div class="apiKey mt-3">
+                <div id="apiKeyCover" class="apiKeyCover alert alert-secondary" role="alert">Cliquez pour afficher votre clé API</div>
+                <button id="generateApiKey" class="btn btn-warning hidden">Regénérer votre clé API</button>
+                <div id="apiKeyDiv" class="hidden alert alert-info" role="alert"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.getElementById('apiKeyCover').addEventListener('click', function() {
+            this.style.display = 'none'; // Cache le bandeau
+            fetch('/getApiKey')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Réponse réseau non ok');
+                    }
+                    return response.json(); // Convertit la réponse en JSON
+                })
+                .then(apiKey => {
+                    const apiKeysListElement = document.getElementById('apiKeyDiv');
+                    const keyElement = document.createElement('p');
+                    keyElement.textContent = apiKey;
+                    apiKeysListElement.innerHTML = ''; 
+                    apiKeysListElement.appendChild(keyElement);
+                })
+                .catch(error => {
+                    console.error('Il y a eu un problème avec l\'opération fetch: ', error);
+                });
+            document.getElementById('generateApiKey').style.display = 'block'; // Affiche le bouton "Générer une clé API"
+            document.getElementById('apiKeyDiv').classList.remove('hidden'); // Prépare l'affichage des clés API
+            document.getElementById('generateApiKey').classList.remove('hidden'); // Prépare l'affichage des clés API
+        });
+
+        document.getElementById('generateApiKey').addEventListener('click', function() {
+            const userConfirmed = confirm('Attention : Régénérer votre clé API invalidera l\'ancienne clé. Voulez-vous continuer ?');
+            if (userConfirmed) {
+                // Code pour régénérer la clé API
+                fetch('/generateApiKey')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Réponse réseau non ok');
+                        }
+                        return response.json(); // Convertit la réponse en JSON
+                    })
+                    .then(apiKey => {
+                        const apiKeysListElement = document.getElementById('apiKeyDiv');
+                        const keyElement = document.createElement('p');
+                        keyElement.textContent = apiKey.api_key; // Assurez-vous que c'est la bonne propriété de l'objet apiKey
+                        apiKeysListElement.innerHTML = ''; 
+                        apiKeysListElement.appendChild(keyElement);
+                        document.getElementById('apiKeyCover').style.display = 'none';
+                        apiKeysListElement.classList.remove('hidden'); // Affiche le div si caché
+                    })
+                    .catch(error => {
+                        console.error('Il y a eu un problème avec l\'opération fetch: ', error);
+                    });
+            }
+        });
+    </script>
+
+</body>
+</html>

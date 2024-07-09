@@ -20,6 +20,7 @@
         }
         
         
+        
     </style>
 </head>
 <body class="light-theme">
@@ -32,7 +33,9 @@
                     <button class="btn btn-primary" onclick="window.location.href='/register'">Register</button>
                 {% else %}
                     <div class="d-flex align-items-center">
-                        <div class="d-flex flex-row">{{ username }}</div>
+                        <div class="d-flex flex-row">
+                            <a href="/profile">{{ username }}</a>
+                        </div>
                         <button class="btn btn-danger" onclick="window.location.href='/logout'">Logout</button>
                     </div>
                 {% endif %}

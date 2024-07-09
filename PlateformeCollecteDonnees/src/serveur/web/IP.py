@@ -44,9 +44,11 @@ def get_user_from_api_key(api_key):
         str: The username associated with the API key if it is valid.
         None: If the API key is invalid or not found in the database.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "SELECT username FROM Users WHERE `api-key` = %s"
-    db_cursor.execute(query, (api_key,))
-    result = db_cursor.fetchall()
+    cursor.execute(query, (api_key,))
+    result = cursor.fetchall()
     if len(result) == 1:
         return result[0][0]
     else:
@@ -139,10 +141,13 @@ def check_user_token():
     """
     token = session.get('token')
     
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     query = "SELECT user FROM Auth_Token WHERE token=%s"
-    db_cursor.execute(query, (token,))
-    res = db_cursor.fetchall()
-    if db_cursor.rowcount==1:
+    cursor.execute(query, (token,))
+    res = cursor.fetchall()
+    if cursor.rowcount==1:
         username = res[0][0]
         return username
     else:
@@ -318,16 +323,20 @@ def get_euiList():
     """
     username = session.get('username')
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
-    db_cursor.execute(query,(username,))
-    result= db_cursor.fetchall()
+
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
+    cursor.execute(query,(username,))
+    result= cursor.fetchall()
     print(result)
     devices=[]
     length = len(result[:])
     if length != None and length > 0:
         for device in result[:][0]:
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
-            db_cursor.execute(query,(device,))
-            devices.append(db_cursor.fetchall())
+            cursor.execute(query,(device,))
+            devices.append(cursor.fetchall())
         print(devices[0])
         return jsonify(devices[0])  
     return jsonify([])
@@ -397,6 +406,8 @@ def download():
             for f in field:
                 selected_fields.append(f)
         
+        db = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
+        cursor = db.cursor()
         
         # Convert datetime-local input to datetime object
         start_time = datetime.strptime(start_time, '%Y-%m-%dT%H:%M')
@@ -404,8 +415,8 @@ def download():
 
         # Retrieve data from the database based on the selected criteria
         query = f"SELECT {', '.join(selected_fields)} FROM Data WHERE timestamp BETWEEN %s AND %s"
-        db_cursor.execute(query, (start_time, end_time))
-        data = db_cursor.fetchall()
+        cursor.execute(query, (start_time, end_time))
+        data = cursor.fetchall()
 
         # Generate CSV file
         output = io.StringIO()
@@ -472,28 +483,31 @@ def login():
         If login is successful, redirects to the home page.
         If login is unsuccessful, renders the login page with an error message.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     query = "DELETE FROM Auth_Token WHERE `date-exp` < %s "
-    db_cursor.execute(query,(datetime.now(),))
+    cursor.execute(query,(datetime.now(),))
     
     form = LoginForm()
     if form.validate_on_submit():
         # Recuperation des données rentrées dans le formulaire
         username = form.username.data
         password = form.password.data
-        db_cursor.fetchall()
+        cursor.fetchall()
         # Verification du username/password avec ce qui est enregistré dans la db
         query = "SELECT (password) FROM Users WHERE username = %s;"
-        db_cursor.execute(query,(username,))
-        result= db_cursor.fetchall()
+        cursor.execute(query,(username,))
+        result= cursor.fetchall()
         # print(result)
-        if db_cursor.rowcount == 1:
+        if cursor.rowcount == 1:
             pwdhash=result[0][0].encode("utf-8")
             # print(pwdhash)
             if check_password(pwdhash,password):
                 session['username'] = username
                 query = "INSERT INTO Auth_Token (token, user, `date-exp`) VALUES (%s, %s, %s)"
                 token = bcrypt.gensalt()
-                db_cursor.execute(query, (token, username, (datetime.now() + timedelta(hours=2))))
+                cursor.execute(query, (token, username, (datetime.now() + timedelta(hours=2))))
                 db.commit()
                 session['token']=token
                 return redirect('/')
@@ -515,6 +529,9 @@ def register():
         A redirect response to the login page if the registration is successful, or the registration page
         with the registration form if there are validation errors or the username already exists.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     form = RegistrationForm()
     if form.validate_on_submit():
         # Recuperation des données rentrées dans le formulaire
@@ -523,8 +540,8 @@ def register():
 
         # Verification du username pour éviter que 2 personnes aient le même
         query = "SELECT (username) FROM Users WHERE username = %s;"
-        db_cursor.execute(query,(username,))
-        result= db_cursor.fetchall()
+        cursor.execute(query,(username,))
+        result= cursor.fetchall()
 
 
         if len(result) > 0:
@@ -533,7 +550,7 @@ def register():
         else:
             # Ajout a la base de donnée
             query = "INSERT INTO Users (username,password) VALUES (%s,%s)"
-            db_cursor.execute(query,(username,password))
+            cursor.execute(query,(username,password))
             db.commit()
         flash('Account created successfully', 'success')
         return redirect(url_for('login'))
@@ -580,23 +597,26 @@ def register_device():
         A redirect response to the 'register_device' page.
 
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     form_associate = DeviceAssociationForm()
     if form_associate.submit.data and form_associate.validate():
         deveui = form_associate.deveui.data
         password = hash_password(form_associate.password.data)
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-        db_cursor.execute(query, (deveui,))
+        cursor.execute(query, (deveui,))
         # print("nb trouvé :"+str(db_cursor.rowcount))
-        if len(db_cursor.fetchall())==1:
+        if len(cursor.fetchall())==1:
             username = check_user_token()
             if username:
                 query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
-                db_cursor.execute(query, (deveui, username))
-                if len(db_cursor.fetchall())>0:
+                cursor.execute(query, (deveui, username))
+                if len(cursor.fetchall())>0:
                     flash('Device already linked to account', 'danger')
                     return redirect(url_for('register_device'))
                 query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-                db_cursor.execute(query, (deveui, username))
+                cursor.execute(query, (deveui, username))
                 db.commit()
                 flash('Device added successfully', 'success')
                 return redirect(url_for('register_device'))
@@ -616,8 +636,8 @@ def register_device():
 
         # Verifier si l'appareil existe déjà
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-        db_cursor.execute(query, (deveui,))
-        result = db_cursor.fetchall()
+        cursor.execute(query, (deveui,))
+        result = cursor.fetchall()
         if len(result) > 0:
             flash('Device already exists', 'danger')
             return redirect(url_for('register_device'))
@@ -643,13 +663,17 @@ def register_device():
     return render_template('register_device.html', form_associate=form_associate, form=form)
 
 def add_device_DB(deveui, name, password):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
-    db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
+    cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
     db.commit()
 
 def add_device_user_DB(deveui, username):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-    db_cursor.execute(query, (deveui, username))
+    cursor.execute(query, (deveui, username))
     db.commit()
 
 @app.route('/deviceList')
@@ -667,18 +691,20 @@ def deviceList():
     Redirects:
         - If the user is not logged in, redirects to the 'login' page.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     username = session.get('username')
     if username:
         #selectionner les appareils de l'utilisateur
         query = "SELECT `device` FROM DeviceOwners WHERE owner = %s"
-        db_cursor.execute(query, (username,))
-        devices = db_cursor.fetchall()
+        cursor.execute(query, (username,))
+        devices = cursor.fetchall()
         names = []
         for i in devices:
             # print(i)
             query = "SELECT name FROM Device WHERE `dev-eui` = %s"
-            db_cursor.execute(query, i)
-            names += [j[0] for j in db_cursor.fetchall()]
+            cursor.execute(query, i)
+            names += [j[0] for j in cursor.fetchall()]
         
             #clement
         devices = [i[0] for i in devices]
@@ -701,19 +727,21 @@ def delete_device(deveui):
     Returns:
         redirect: A redirect response to the device list page.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     # Supprimer la liaison entre l'appareil et l'utilisateur
     username = session.get('username')
     query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
-    db_cursor.execute(query, (deveui, username))
+    cursor.execute(query, (deveui, username))
     db.commit()
 
     # Supprimer l'appareil si aucun utilisateur n'est associé
     query = "SELECT * FROM DeviceOwners WHERE `device` = %s"
-    db_cursor.execute(query, (deveui,))
-    result = db_cursor.fetchall()
+    cursor.execute(query, (deveui,))
+    result = cursor.fetchall()
     if len(result) == 0:
         query = "DELETE FROM Device WHERE `dev-eui` = %s"
-        db_cursor.execute(query, (deveui,))
+        cursor.execute(query, (deveui,))
         db.commit()
 
     return redirect(url_for('deviceList'))
@@ -737,19 +765,23 @@ def profile():
 @app.route('/getApiKey', methods=['GET'])
 @auth.login_required
 def get_api_keys():
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     username = ''
     if 'token' in session:
         username = check_user_token()
 
     query = "SELECT `api-key` FROM Users WHERE username = %s"
-    db_cursor.execute(query, (username,))
-    api_keys = db_cursor.fetchall()
+    cursor.execute(query, (username,))
+    api_keys = cursor.fetchall()
 
     return jsonify(api_keys[0][0])
 
 @app.route('/generateApiKey', methods=['GET', 'POST'])
 @auth.login_required
 def generate_api_key():
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     username = ''
     if 'token' in session:
         username = check_user_token()
@@ -759,7 +791,7 @@ def generate_api_key():
     # Convertir la clé API en une chaîne de caractères encodée en base64
     api_key_str = base64.b64encode(api_key).decode('utf-8')
     query = "UPDATE Users SET `api-key` = %s WHERE username = %s"
-    db_cursor.execute(query, (api_key_str, username))
+    cursor.execute(query, (api_key_str, username))
     db.commit()
     api_key = {"api_key": api_key_str}
     print(api_key)
@@ -781,9 +813,11 @@ def get_user_from_api_key(api_key):
         str: The username associated with the API key if it is valid.
         None: If the API key is invalid or not found in the database.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "SELECT username FROM Users WHERE `api-key` = %s"
-    db_cursor.execute(query, (api_key,))
-    result = db_cursor.fetchall()
+    cursor.execute(query, (api_key,))
+    result = cursor.fetchall()
     if len(result) == 1:
         return result[0][0]
     else:
@@ -798,6 +832,8 @@ def apiDeviceList():
     Returns:
         A JSON response containing the list of devices, where each device is represented as a dictionary with 'dev-eui' and 'name' keys.
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     key = request.args.get('key')
     username = get_user_from_api_key(key)
     query = """
@@ -806,8 +842,8 @@ def apiDeviceList():
     JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
     WHERE DeviceOwners.owner = %s
     """ 
-    db_cursor.execute(query, (username,))
-    devices = db_cursor.fetchall()
+    cursor.execute(query, (username,))
+    devices = cursor.fetchall()
     
     result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
     
@@ -826,6 +862,8 @@ def apiDevice_data(deveui):
         flask.Response: A JSON response containing the retrieved data.
 
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     key = request.args.get('key')
     username = get_user_from_api_key(key)
 
@@ -850,10 +888,59 @@ def apiDevice_data(deveui):
     AND Device.`dev-eui` = %s   
     ORDER BY Data.timestamp DESC;
     """
-    db_cursor.execute(query, (username, start_date, end_date, deveui))
-    data = db_cursor.fetchall()
+    cursor.execute(query, (username, start_date, end_date, deveui))
+    data = cursor.fetchall()
     
-    columns = [col[0] for col in db_cursor.description]
+    columns = [col[0] for col in cursor.description]
+    result = [dict(zip(columns, row)) for row in data]
+    
+    return jsonify(result)
+
+
+@app.route('/api/publicDeviceData/<deveui>', methods=['GET'])
+def publicApiDevice_data(deveui):
+    """
+    Retrieve data from the 'Data' table based on the specified device EUI and time range.
+
+    Args:
+        deveui (str): The device EUI.
+
+    Returns:
+        flask.Response: A JSON response containing the retrieved data.
+
+    """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+
+    start_date = request.args.get('start_date', default=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
+    end_date = request.args.get('end_date', default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+    
+    dataType = str(request.args.get('dataType', default='*'))
+
+    if dataType in data_format.keys():
+        select_clause = dataType
+    elif dataType == "*":
+        select_clause = "*"
+    else:
+        return jsonify({"error": "Invalid data type"})
+
+    query = f"""
+    SELECT {select_clause} FROM Data
+    JOIN Device ON Data.source = Device.`dev-eui`
+    JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+    WHERE Data.timestamp BETWEEN %s AND %s
+    AND Device.`dev-eui` = %s   
+    AND Device.status = 'public'
+    ORDER BY Data.timestamp DESC;
+    """
+    
+    cursor.execute(query, (username, start_date, end_date, deveui))
+    data = cursor.fetchall()
+    
+    columns = [col[0] for col in cursor.description]
     result = [dict(zip(columns, row)) for row in data]
     
     return jsonify(result)
@@ -871,14 +958,17 @@ def apiRegisterDevice():
     Returns:
     None
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     deveui = request.args.get('deveui')
     name = request.args.get('name')
     password = request.args.get('pwd')
 
 
     query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-    db_cursor.execute(query, (deveui,))
-    result = db_cursor.fetchall()
+    cursor.execute(query, (deveui,))
+    result = cursor.fetchall()
     if len(result) > 0:
         
         return jsonify({"status": "error", "message": 'Device already exists'}), 400 
@@ -902,6 +992,8 @@ def apiNeighbourList(deveui):
         list: A list of neighboring sources.
 
     """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
 
     key = request.args.get('key')
     username = get_user_from_api_key(key)
@@ -915,8 +1007,8 @@ def apiNeighbourList(deveui):
         ORDER BY timestamp DESC
         LIMIT 1;
     """
-    db_cursor.execute(query, (deveui,))
-    device_location = db_cursor.fetchone()
+    cursor.execute(query, (deveui,))
+    device_location = cursor.fetchone()
     if device_location is None:
         return jsonify([])
     latitude, longitude = device_location
@@ -930,8 +1022,8 @@ def apiNeighbourList(deveui):
         AND Data.timestamp > %s;
         AND Device.`dev-eui` != %s;
     """
-    db_cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=180000), deveui))
-    neighbours = db_cursor.fetchall()
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=180000), deveui))
+    neighbours = cursor.fetchall()
 
     print(deveui, neighbours)
     

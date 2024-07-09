@@ -14,7 +14,7 @@ from pydoc import locate
 from flask_restful import Api
 from flask_cors import CORS
 import base64
-
+import uuid
 
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
@@ -749,7 +749,7 @@ def generate_api_key():
         username = check_user_token()
 
     # Générer une nouvelle clé API
-    api_key = bcrypt.gensalt()
+    api_key = uuid.uuid4().bytes + uuid.uuid4().bytes
     # Convertir la clé API en une chaîne de caractères encodée en base64
     api_key_str = base64.b64encode(api_key).decode('utf-8')
     query = "UPDATE Users SET `api-key` = %s WHERE username = %s"
@@ -820,11 +820,13 @@ def apiDevice_data(deveui):
         flask.Response: A JSON response containing the retrieved data.
 
     """
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+
     start_date = request.args.get('start_date', default=(datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d %H:%M:%S'))
     end_date = request.args.get('end_date', default=datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
     
     dataType = str(request.args.get('dataType', default='*'))
-    print(dataType)
 
     if dataType in data_format.keys():
         select_clause = dataType
@@ -834,11 +836,15 @@ def apiDevice_data(deveui):
         return jsonify({"error": "Invalid data type"})
 
     query = f"""
-    SELECT {select_clause} FROM Data 
-    WHERE source = %s AND timestamp BETWEEN %s AND %s
-    ORDER BY timestamp DESC
+    SELECT {select_clause} FROM Data
+    JOIN Device ON Data.source = Device.`dev-eui`
+    JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+    WHERE DeviceOwners.owner = %s 
+    AND Data.timestamp BETWEEN %s AND %s
+    AND Device.`dev-eui` = %s   
+    ORDER BY Data.timestamp DESC;
     """
-    db_cursor.execute(query, (deveui, start_date, end_date))
+    db_cursor.execute(query, (username, start_date, end_date, deveui))
     data = db_cursor.fetchall()
     
     columns = [col[0] for col in db_cursor.description]
@@ -849,9 +855,16 @@ def apiDevice_data(deveui):
 @app.route('/api/registerDevice', methods=['POST'])
 def apiRegisterDevice():
     """
-    
+    Register a device with the given parameters.
+
+    Parameters:
+    - deveui (str): The device EUI.
+    - name (str): The name of the device.
+    - pwd (str): The password for the device.
+
+    Returns:
+    None
     """
-    
     deveui = request.args.get('deveui')
     name = request.args.get('name')
     pwd = request.args.get('pwd')
@@ -871,16 +884,38 @@ def apiNeighbourList(deveui):
         list: A list of neighboring sources.
 
     """
+
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+
     size = request.args.get('size', 0.001)
 
-    query = "SELECT latitude, longitude FROM Data WHERE `source`=%s ORDER BY timestamp DESC LIMIT 1"
+    query = """
+        SELECT latitude, longitude
+        FROM Data
+        WHERE source = %s
+        ORDER BY timestamp DESC
+        LIMIT 1;
+    """
     db_cursor.execute(query, (deveui,))
-    coords = db_cursor.fetchall()
+    device_location = db_cursor.fetchone()
+    if device_location is None:
+        return jsonify([])
+    latitude, longitude = device_location
 
-    query = "SELECT DISTINCT `source` FROM Data WHERE abs(latitude - %s) < %s AND abs(longitude - %s)< %s AND timestamp > %s"
-    db_cursor.execute(query, (coords[0][0], size, coords[0][1], size, (datetime.now() - timedelta(seconds=50)).strftime('%Y-%m-%d %H:%M:%S')))
+    query = """
+        SELECT DISTINCT Device.`dev-eui`, Device.name
+        FROM Data
+        JOIN Device ON Data.source = Device.`dev-eui`
+        JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+        AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
+        AND Data.timestamp > %s;
+        AND Device.`dev-eui` != %s;
+    """
+    db_cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=180000), deveui))
     neighbours = db_cursor.fetchall()
 
+    print(deveui, neighbours)
     
     return jsonify(neighbours)
 

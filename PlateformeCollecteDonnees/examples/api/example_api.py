@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # server URL
 url = "http://localhost:5000/api/"
-apiKey = "JDJiJDEyJHczSGpNaU1PU0tYdHBzUU1Odi5RcE8="
+apiKey = "aZvzEHU8STuB5gBDLzhOWynRpGrjMExJoofJ84ej4Us="
 
 
 #######################################
@@ -38,7 +38,7 @@ apiField = "deviceData"
 deveui = "70b3d57ed0068a6f"
 
 params = {
-    "start_date": "2024-08-08 13:08:10",
+    "start_date": "2024-07-09 14:51:10",
     "end_date": "2027-09-09 23:59:59",
     "dataType": "*",
     "key": apiKey

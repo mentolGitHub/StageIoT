@@ -245,10 +245,6 @@ def get_data():
         for device in result[:][0]:
             if duration != None and float(duration) > 60:
                 duration = float(duration)
-                
-                
-                
-                # print(types)
                 if (device in data_storage) and len(data_storage[device])>0:
                     args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
                 else : 
@@ -289,8 +285,8 @@ def data_labels_to_json(data,table):
         
         for i in range(1,len(d)-1):
             mesure[label[i]]=d[i]
-        
         result.append(mesure)
+    return result
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
 @auth.login_required
@@ -720,7 +716,7 @@ def apiDeviceList():
     return jsonify(result)
 
 
-@app.route('/api/deviceData/<deveui>', methods=['GET', 'POST'])
+@app.route('/api/deviceData/<deveui>', methods=['GET'])
 def apiDevice_data(deveui):
     """
     Retrieve data from the 'Data' table based on the specified device EUI and time range.
@@ -758,8 +754,20 @@ def apiDevice_data(deveui):
     
     return jsonify(result)
 
+@app.route('/api/registerDevice', methods=['POST'])
+def apiRegisterDevice():
+    """
+    
+    """
+    
+    deveui = request.args.get('deveui')
+    name = request.args.get('name')
+    pwd = request.args.get('pwd')
 
-@app.route('/api/neighbourList/<deveui>', methods=['GET', 'POST'])
+    
+
+
+@app.route('/api/neighbourList/<deveui>', methods=['GET'])
 def apiNeighbourList(deveui):
     """
     Retrieves the list of neighboring sources based on the given device EUI.

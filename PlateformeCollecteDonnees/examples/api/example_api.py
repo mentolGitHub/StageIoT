@@ -5,7 +5,7 @@ from requests.auth import HTTPBasicAuth
 
 # server URL
 url = "http://localhost:5000/api/"
-apiKey = "your_api_key"
+apiKey = "JDJiJDEyJHczSGpNaU1PU0tYdHBzUU1Odi5RcE8="
 
 
 #######################################
@@ -14,7 +14,11 @@ apiKey = "your_api_key"
 
 apiField = "deviceList"
 
-response = requests.get(url+apiField)
+params = {
+    "key": apiKey
+}
+
+response = requests.get(url+apiField, params=params)
 
 if response.status_code == 200:
     print(response.json())
@@ -34,9 +38,10 @@ apiField = "deviceData"
 deveui = "70b3d57ed0068a6f"
 
 params = {
-    "start_date": "2024-07-08 16:50:50",
+    "start_date": "2024-08-08 13:08:10",
     "end_date": "2027-09-09 23:59:59",
-    "dataType": "*"
+    "dataType": "*",
+    "key": apiKey
 }
 
 response = requests.get(url+apiField+"/"+deveui, params=params)
@@ -58,7 +63,8 @@ apiField = "neighbourList"
 deveui = "70b3d57ed0068a6f"
 
 params = {
-    "size": 0.002
+    "size": 0.002,
+    "key": apiKey
 }
 
 response = requests.get(url+apiField+"/"+deveui, params=params)

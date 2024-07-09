@@ -33,7 +33,24 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
                 'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
 
+def get_user_from_api_key(api_key):
+    """
+    Retrieve the username associated with the given API key.
 
+    Args:
+        api_key (str): The API key to be verified.
+
+    Returns:
+        str: The username associated with the API key if it is valid.
+        None: If the API key is invalid or not found in the database.
+    """
+    query = "SELECT username FROM Users WHERE `api-key` = %s"
+    db_cursor.execute(query, (api_key,))
+    result = db_cursor.fetchall()
+    if len(result) == 1:
+        return result[0][0]
+    else:
+        return None
 
 
 def hash_password(password):
@@ -753,6 +770,25 @@ def generate_api_key():
 """                             API                               """
 """==============================================================="""
 
+def get_user_from_api_key(api_key):
+    """
+    Retrieve the username associated with the given API key.
+
+    Args:
+        api_key (str): The API key to be verified.
+
+    Returns:
+        str: The username associated with the API key if it is valid.
+        None: If the API key is invalid or not found in the database.
+    """
+    query = "SELECT username FROM Users WHERE `api-key` = %s"
+    db_cursor.execute(query, (api_key,))
+    result = db_cursor.fetchall()
+    if len(result) == 1:
+        return result[0][0]
+    else:
+        return None
+
 
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 def apiDeviceList():
@@ -762,8 +798,15 @@ def apiDeviceList():
     Returns:
         A JSON response containing the list of devices, where each device is represented as a dictionary with 'dev-eui' and 'name' keys.
     """
-    query = "SELECT `dev-eui`, name FROM Device"
-    db_cursor.execute(query)
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+    query = """
+    SELECT Device.`dev-eui`, Device.name 
+    FROM Device
+    JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+    WHERE DeviceOwners.owner = %s
+    """ 
+    db_cursor.execute(query, (username,))
     devices = db_cursor.fetchall()
     
     result = [{"dev-eui": device[0], "name": device[1]} for device in devices]

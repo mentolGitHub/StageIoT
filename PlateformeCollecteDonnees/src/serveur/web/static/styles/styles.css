@@ -42,3 +42,6 @@ a:hover{
     color: #ffffff;
     
 }
+.leaflet-bar a{
+    color: black;
+}

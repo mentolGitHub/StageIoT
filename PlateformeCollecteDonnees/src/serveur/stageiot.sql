@@ -8,7 +8,8 @@ CREATE TABLE IF NOT EXISTS Device (
     `dev-eui` varchar(255) NOT NULL PRIMARY KEY,
     `name` varchar(255) NOT NULL,
     `password` varchar(255) NOT NULL,
-    `status` varchar(255) NOT NULL DEFAULT 'public'
+    `status` varchar(255) NOT NULL DEFAULT 'public',
+    `description` varchar(500) DEFAULT NULL
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
@@ -25,6 +26,7 @@ CREATE TABLE IF NOT EXISTS DeviceOwners (
     `id` serial,
     `owner` varchar(255) NOT NULL,
     `device` varchar(255) NOT NULL,
+    `super-owner` tinyint(1) NOT NULL DEFAULT 0,
     FOREIGN KEY (`owner`) REFERENCES Users(`username`),
     FOREIGN KEY (`device`) REFERENCES Device(`dev-eui`)
 )ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
@@ -59,7 +61,6 @@ CREATE TABLE IF NOT EXISTS Auth_Token (
     `user` varchar(255) NOT NULL,
     `date-exp` DATETIME(3) NOT NULL,
     FOREIGN KEY (`user`) REFERENCES Users(`username`)
-
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

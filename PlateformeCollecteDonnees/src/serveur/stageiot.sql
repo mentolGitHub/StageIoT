@@ -1,8 +1,8 @@
--- DROP TABLE IF EXISTS Auth_Token;
--- DROP TABLE IF EXISTS Data;
--- DROP TABLE IF EXISTS DeviceOwners;
--- DROP TABLE IF EXISTS Device;
--- DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Auth_Token;
+DROP TABLE IF EXISTS Data;
+DROP TABLE IF EXISTS DeviceOwners;
+DROP TABLE IF EXISTS Device;
+DROP TABLE IF EXISTS Users;
 
 CREATE TABLE IF NOT EXISTS Device (
     `dev-eui` varchar(255) NOT NULL PRIMARY KEY,
@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS Users (
     `username` varchar(255) PRIMARY KEY NOT NULL,
     `password` varchar(255) NOT NULL,
     `email` varchar(255),
-    `role` varchar(255) NOT NULL DEFAULT 'user'
-    'api_key' varchar(255) NOT NULL
+    `role` varchar(255) NOT NULL DEFAULT 'user',
+    `api-key` varchar(255)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 

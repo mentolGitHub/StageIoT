@@ -56,9 +56,15 @@ else:
 apiField = "neighbourList"
 deveui = "70b3d57ed0068a6f"
 
-response = requests.get(url+apiField+"/"+deveui)
+params = {
+    "size": 0.002
+}
+
+response = requests.get(url+apiField+"/"+deveui, params=params)
 
 if response.status_code == 200:
     print(response.json())
 else:
     print("Erreur:", response.status_code)
+
+

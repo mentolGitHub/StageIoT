@@ -605,21 +605,18 @@ def register_device():
             flash('Device already exists', 'danger')
             return redirect(url_for('register_device'))
 
+        username = check_user_token()
+        
         # Ajouter l'appareil a la base
-        query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
-        db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
-        db.commit()
+        add_device_DB(deveui, name, password)
 
         # TODO: Ajout a TTN via http ou via l'api
         # appid="stm32lora1"
         # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
 
         # Assicier un utilisateur à l'appareil
-        username = check_user_token()
         if username:
-            query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-            db_cursor.execute(query, (deveui, username))
-            db.commit()
+            add_device_user_DB(deveui, username)
             flash('Device added successfully', 'success')
             return redirect(url_for('register_device'))
         else:
@@ -628,6 +625,15 @@ def register_device():
 
     return render_template('register_device.html', form_associate=form_associate, form=form)
 
+def add_device_DB(deveui, name, password):
+    query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
+    db_cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
+    db.commit()
+
+def add_device_user_DB(deveui, username):
+    query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
+    db_cursor.execute(query, (deveui, username))
+    db.commit()
 
 @app.route('/deviceList')
 @auth.login_required
@@ -811,9 +817,21 @@ def apiRegisterDevice():
     
     deveui = request.args.get('deveui')
     name = request.args.get('name')
-    pwd = request.args.get('pwd')
+    password = request.args.get('pwd')
+
+
+    query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
+    db_cursor.execute(query, (deveui,))
+    result = db_cursor.fetchall()
+    if len(result) > 0:
+        
+        return jsonify({"status": "error", "message": 'Device already exists'}), 400 
+
+    # Ajouter l'appareil a la base
+    add_device_DB(deveui,name,password)
 
     
+
 
 
 @app.route('/api/neighbourList/<deveui>', methods=['GET'])

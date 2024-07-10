@@ -85,3 +85,4 @@ src/
 
 ### Base de donnée
 
+![Schema de la base de données](img/schema_bdd.png)

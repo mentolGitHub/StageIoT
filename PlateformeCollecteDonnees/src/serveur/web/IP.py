@@ -1000,6 +1000,8 @@ def apiNeighbourList(deveui):
 
     key = request.args.get('key')
     username = get_user_from_api_key(key)
+    if username is None:
+        return jsonify({"error": "Invalid API key"}), 401
 
     size = request.args.get('size', 0.001)
 
@@ -1025,7 +1027,7 @@ def apiNeighbourList(deveui):
         AND Data.timestamp > %s;
         AND Device.`dev-eui` != %s;
     """
-    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=180000), deveui))
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15), deveui))
     neighbours = cursor.fetchall()
 
     print(deveui, neighbours)

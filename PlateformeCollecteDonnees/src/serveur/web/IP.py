@@ -1142,6 +1142,8 @@ def apiNeighbourList(deveui):
     key = request.args.get('key')
     size = request.args.get('size', 0.001)
     username = get_user_from_api_key(key)
+    if username is None:
+        return jsonify({"error": "Invalid API key"}), 401
 
     neighbours=[]
     if username:
@@ -1158,17 +1160,17 @@ def apiNeighbourList(deveui):
             return jsonify([])
         latitude, longitude = device_location
 
-        query = """
-            SELECT DISTINCT Device.`dev-eui`, Device.name
-            FROM Data
-            JOIN Device ON Data.source = Device.`dev-eui`
-            JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
-            AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
-            AND Data.timestamp > %s;
-            AND Device.`dev-eui` != %s;
-        """
-        cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=180000), deveui))
-        neighbours = cursor.fetchall()
+    query = """
+        SELECT DISTINCT Device.`dev-eui`, Device.name
+        FROM Data
+        JOIN Device ON Data.source = Device.`dev-eui`
+        JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+        AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
+        AND Data.timestamp > %s;
+        AND Device.`dev-eui` != %s;
+    """
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15), deveui))
+    neighbours = cursor.fetchall()
 
     
     return jsonify(neighbours)

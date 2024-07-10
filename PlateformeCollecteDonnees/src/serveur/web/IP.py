@@ -457,6 +457,19 @@ class DeviceRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit2 = SubmitField('Register')
 
+# formulaire d'enregistrement d'un appareil
+class DeviceEditForm(FlaskForm):
+    
+
+    def __init__(self, curent_name, curent_description):
+        self.name = StringField('Name', validators=[Length(min=2, max=20)], default=curent_name)
+        self.description = StringField('Name', validators=[Length(min=0, max=500)], default=curent_description)
+        self.password = PasswordField('curent Password', validators=[DataRequired(), Length(min=6, max=60)])
+        self.new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
+        self.confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
+        self.submit = SubmitField('Edit Device')
+        
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -738,21 +751,27 @@ def edit_dev(deveui):
     cursor = db.cursor()
     username = check_user_token()
 
-    form_associate = DeviceAssociationForm()
+    curent_name=""
+    curent_description=""
+
+    form_associate = DeviceEditForm(curent_name, curent_description)
     if form_associate.submit.data and form_associate.validate():
         password = form_associate.password.data
         
         new_password = form_associate.new_password.data
         description = form_associate.description.data
+
         if check_device_DB(deveui,password)>0:
             if username:
-                
-                if len(cursor.fetchall())>0:
-                    flash('Device already linked to account', 'danger')
-                    return redirect(url_for('edit_device/'+deveui))
-                add_device_user_DB(deveui,username) 
-                flash('Device added successfully', 'success')
-                return redirect(url_for('edit_device/'+deveui))
+                if check_superowner(deveui,username):
+                    res = edit_device(deveui,username,password,description)
+                    if res==False:
+                        return jsonify({"status": "error"}), 400 
+                    else : 
+                        return jsonify({'status': 'success'}), 200
+                else:
+                    flash('You are not the super user of this device', 'danger')
+                    return redirect(url_for('deviceList'))
             else:
                 flash('User not logged in', 'danger')
                 return redirect(url_for('login'))
@@ -760,17 +779,9 @@ def edit_dev(deveui):
             flash('This device is not registered yet', 'danger')
             return redirect(url_for('edit_device/'+deveui))
 
+    return render_template("edit_device.html", device=deveui)
 
-
-
-
-
-    res = edit_device(deveui,username)
-    if res==False:
-        return jsonify({"status": "error"}), 400 
-    return redirect(url_for('deviceList'))
-
-def edit_device(deveui,username,password):
+def edit_device(deveui,username,password,description):
     """
     Deletes the device and its association with the user.
 
@@ -790,6 +801,14 @@ def edit_device(deveui,username,password):
         pass
     return cond
 
+def check_superowner(deveui,username):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+    query = "SELECT `super-owner` FROM DeviceOwners WHERE device = %s AND owner=%s"
+    cursor.execute(query, (deveui, username))
+    res = cursor.fetchall()
+    print(res)
+    return res[0][0]
 
 @app.route('/delete_device/<deveui>', methods=['GET', 'POST'])
 @auth.login_required

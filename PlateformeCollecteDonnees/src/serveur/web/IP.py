@@ -99,7 +99,6 @@ def verify_token(t):
     Returns:
     bool: True if the token is valid, False otherwise.
     """
-    # print(t)
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
     token=session.get('token')
@@ -208,8 +207,7 @@ def post_data():
                 }
                 
                 Q_out.put(data)
-                add_data_to_cache(data)         
-                # print (data_storage)
+                add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
@@ -287,13 +285,11 @@ def get_data():
                         duration = float(duration)
                         info = data_storage[device]
                         seuil = 0
-                        # print(info)
                         while (info[-1]['timestamp']-info[seuil]['timestamp'])/1000 > duration+1:
                             seuil+=1
                         data[device]+=info[seuil:]
                     else :
                         data[device]+=data_storage[device]
-    # print(data)
     return jsonify(data) 
 
 def data_labels_to_json(data,table):
@@ -330,7 +326,6 @@ def get_euiList():
 
     cursor.execute(query,(username,))
     result= cursor.fetchall()
-    print(result)
     devices=[]
     length = len(result[:])
     if length != None and length > 0:
@@ -338,7 +333,6 @@ def get_euiList():
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
             cursor.execute(query,(device,))
             devices.append(cursor.fetchall())
-        print(devices[0])
         return jsonify(devices[0])  
     return jsonify([])
 
@@ -423,9 +417,7 @@ def download():
         output = io.StringIO()
         writer = csv.writer(output)
         writer.writerow(selected_fields)
-        print (data)
         for row in data:
-            print (row)
             writer.writerow(row)
         output.seek(0)
 
@@ -466,6 +458,19 @@ class DeviceRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit2 = SubmitField('Register')
 
+# formulaire d'enregistrement d'un appareil
+class DeviceEditForm(FlaskForm):
+    
+
+    def __init__(self, curent_name, curent_description):
+        self.name = StringField('Name', validators=[Length(min=2, max=20)], default=curent_name)
+        self.description = StringField('Name', validators=[Length(min=0, max=500)], default=curent_description)
+        self.password = PasswordField('curent Password', validators=[DataRequired(), Length(min=6, max=60)])
+        self.new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
+        self.confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
+        self.submit = SubmitField('Edit Device')
+        
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -500,10 +505,8 @@ def login():
         query = "SELECT (password) FROM Users WHERE username = %s;"
         cursor.execute(query,(username,))
         result= cursor.fetchall()
-        # print(result)
         if cursor.rowcount == 1:
             pwdhash=result[0][0].encode("utf-8")
-            # print(pwdhash)
             if check_password(pwdhash,password):
                 session['username'] = username
                 query = "INSERT INTO Auth_Token (token, user, `date-exp`) VALUES (%s, %s, %s)"
@@ -598,27 +601,18 @@ def register_device():
         A redirect response to the 'register_device' page.
 
     """
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
-    cursor = db.cursor()
-
     form_associate = DeviceAssociationForm()
     if form_associate.submit.data and form_associate.validate():
         deveui = form_associate.deveui.data
-        password = hash_password(form_associate.password.data)
-        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-        cursor.execute(query, (deveui,))
-        # print("nb trouvé :"+str(db_cursor.rowcount))
-        if len(cursor.fetchall())==1:
+        password = form_associate.password.data
+        if check_device_DB(deveui,password)>0:
             username = check_user_token()
             if username:
-                query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
-                cursor.execute(query, (deveui, username))
-                if len(cursor.fetchall())>0:
+                
+                if len(db_cursor.fetchall())>0:
                     flash('Device already linked to account', 'danger')
                     return redirect(url_for('register_device'))
-                query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-                cursor.execute(query, (deveui, username))
-                db.commit()
+                add_device_user_DB(deveui,username) 
                 flash('Device added successfully', 'success')
                 return redirect(url_for('register_device'))
             else:
@@ -633,27 +627,25 @@ def register_device():
         # Recuperation des données du formulaire
         deveui = form.deveui.data
         name = form.name.data
-        password = hash_password(form.password.data)
+        hashed_password = hash_password(form.password.data)
 
         # Verifier si l'appareil existe déjà
-        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-        cursor.execute(query, (deveui,))
-        result = cursor.fetchall()
-        if len(result) > 0:
+        
+        if check_device_DB(deveui) > 0:
             flash('Device already exists', 'danger')
             return redirect(url_for('register_device'))
 
         username = check_user_token()
         
         # Ajouter l'appareil a la base
-        add_device_DB(deveui, name, password)
-
-        # TODO: Ajout a TTN via http ou via l'api
-        # appid="stm32lora1"
-        # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
-
-        # Assicier un utilisateur à l'appareil
         if username:
+            add_device_DB(deveui, name, hashed_password)
+
+            # TODO: Ajout a TTN via http ou via l'api
+            # appid="stm32lora1"
+            # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
+
+            # Assicier un utilisateur à l'appareil
             add_device_user_DB(deveui, username)
             flash('Device added successfully', 'success')
             return redirect(url_for('register_device'))
@@ -663,16 +655,44 @@ def register_device():
 
     return render_template('register_device.html', form_associate=form_associate, form=form)
 
-def add_device_DB(deveui, name, password):
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
-    cursor = db.cursor()
-    query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
-    cursor.execute(query, (deveui, name, password))  # Ensure password is hashed
+def check_device_DB(deveui,password=None):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor= db.cursor()
+    if password != None:
+        # Verification du username/password avec ce qui est enregistré dans la db
+        query = "SELECT (password) FROM Device WHERE `dev-eui` = %s;"
+        db_cursor.execute(query,(deveui,))
+        result= db_cursor.fetchall()
+        if db_cursor.rowcount == 1:
+            pwdhash=result[0][0].encode("utf-8")
+            if check_password(pwdhash,password):
+                return 1
+    else :
+        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
+        cursor.execute(query, (deveui,))
+        res = cursor.fetchall()
+    if cursor.rowcount>0:
+        return len(res)
+    else :
+        return 0
+
+def check_link_device(deveui, username):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor= db.cursor()
+    query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
+    cursor.execute(query, (deveui, username))
+    return len(cursor.fetchall())
+
+def add_device_DB(deveui, name, hashed_password):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor= db.cursor()
+    query = "INSERT INTO Device (`dev-eui`, name, password, `super-owner`) VALUES (%s, %s, %s, %s)"
+    cursor.execute(query, (deveui, name, hashed_password, 1))  # Ensure password is hashed
     db.commit()
 
 def add_device_user_DB(deveui, username):
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
-    cursor = db.cursor()
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor= db.cursor()
     query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
     cursor.execute(query, (deveui, username))
     db.commit()
@@ -697,28 +717,28 @@ def deviceList():
     username = session.get('username')
     if username:
         #selectionner les appareils de l'utilisateur
-        query = "SELECT `device` FROM DeviceOwners WHERE owner = %s"
+        query = "SELECT `device`, `super-owner` FROM DeviceOwners WHERE owner = %s"
         cursor.execute(query, (username,))
-        devices = cursor.fetchall()
+        res = cursor.fetchall()
+        
+        devices= [res[i][0] for i in range(len(res))]
+        superowner = [res[i][1] for i in range(len(res))]
         names = []
         for i in devices:
-            # print(i)
-            query = "SELECT name FROM Device WHERE `dev-eui` = %s"
-            cursor.execute(query, i)
+            query = "SELECT `name` FROM Device WHERE `dev-eui` = %s"
+            cursor.execute(query, (i,))
             names += [j[0] for j in cursor.fetchall()]
         
             #clement
-        devices = [i[0] for i in devices]
-        return render_template('deviceList.html', username=username, devices=devices, names = names)
+        devices = [i for i in devices]
+        return render_template('deviceList.html', username=username, devices=devices, names = names, superowner=superowner)
     else:
         flash('User not logged in', 'danger')
         return redirect(url_for('login'))
     
-
-
-@app.route('/delete_device/<deveui>', methods=['GET', 'POST'])
+@app.route('/edit_device/<deveui>', methods=['GET', 'POST'])
 @auth.login_required
-def delete_device(deveui):
+def edit_dev(deveui):
     """
     Deletes the device and its association with the user.
 
@@ -730,13 +750,106 @@ def delete_device(deveui):
     """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
-    # Supprimer la liaison entre l'appareil et l'utilisateur
-    username = session.get('username')
-    query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
-    cursor.execute(query, (deveui, username))
-    db.commit()
+    username = check_user_token()
 
+    curent_name=""
+    curent_description=""
+
+    form_associate = DeviceEditForm(curent_name, curent_description)
+    if form_associate.submit.data and form_associate.validate():
+        password = form_associate.password.data
+        
+        new_password = form_associate.new_password.data
+        description = form_associate.description.data
+
+        if check_device_DB(deveui,password)>0:
+            if username:
+                if check_superowner(deveui,username):
+                    res = edit_device(deveui,username,password,description)
+                    if res==False:
+                        return jsonify({"status": "error"}), 400 
+                    else : 
+                        return jsonify({'status': 'success'}), 200
+                else:
+                    flash('You are not the super user of this device', 'danger')
+                    return redirect(url_for('deviceList'))
+            else:
+                flash('User not logged in', 'danger')
+                return redirect(url_for('login'))
+        else :
+            flash('This device is not registered yet', 'danger')
+            return redirect(url_for('edit_device/'+deveui))
+
+    return render_template("edit_device.html", device=deveui)
+
+def edit_device(deveui,username,password,description):
+    """
+    Deletes the device and its association with the user.
+
+    Args:
+        deveui (str): The device EUI to be deleted.
+        username (str): The name of the user you want to delete the device from.
+
+    """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+    # Supprimer la liaison entre l'appareil et l'utilisateur
+    cond =(check_link_device(deveui,username) == 1)
+    if cond:
+        # query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
+        # cursor.execute(query, (deveui, username))
+        # db.commit()
+        pass
+    return cond
+
+def check_superowner(deveui,username):
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+    query = "SELECT `super-owner` FROM DeviceOwners WHERE device = %s AND owner=%s"
+    cursor.execute(query, (deveui, username))
+    res = cursor.fetchall()
+    print(res)
+    return res[0][0]
+
+@app.route('/delete_device/<deveui>', methods=['GET', 'POST'])
+@auth.login_required
+def delete_dev(deveui):
+    """
+    Deletes the device and its association with the user.
+
+    Args:
+        deveui (str): The device EUI to be deleted.
+
+    Returns:
+        redirect: A redirect response to the device list page.
+    """
+    username = check_user_token()
+    res = delete_device(deveui,username)
+    if res==False:
+        return jsonify({"status": "error"}), 400 
     return redirect(url_for('deviceList'))
+
+
+def delete_device(deveui,username):
+    """
+    Deletes the device and its association with the user.
+
+    Args:
+        deveui (str): The device EUI to be deleted.
+        username (str): The name of the user you want to delete the device from.
+
+    """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+    # Supprimer la liaison entre l'appareil et l'utilisateur
+    cond =(check_link_device(deveui,username) == 1)
+    if cond:
+        query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
+        cursor.execute(query, (deveui, username))
+        db.commit()
+    return cond
+    
+        
 
 @app.route('/profile', methods=['GET', 'POST'])
 @auth.login_required
@@ -798,7 +911,6 @@ def generate_api_key():
     cursor.execute(query, (api_key_str, username))
     db.commit()
     api_key = {"api_key": api_key_str}
-    print(api_key)
     return jsonify(api_key)
 
 
@@ -884,7 +996,7 @@ def apiDevice_data(deveui):
         return jsonify({"error": "Invalid data type"})
 
     query = f"""
-    SELECT {select_clause} FROM Data
+    SELECT * FROM Data
     JOIN Device ON Data.source = Device.`dev-eui`
     JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
     WHERE DeviceOwners.owner = %s 
@@ -892,12 +1004,27 @@ def apiDevice_data(deveui):
     AND Device.`dev-eui` = %s   
     ORDER BY Data.timestamp DESC;
     """
+
     cursor.execute(query, (username, start_date, end_date, deveui))
     data = cursor.fetchall()
-    
+
     columns = [col[0] for col in cursor.description]
-    result = [dict(zip(columns, row)) for row in data]
+    to_remove =[]
+    to_remove.append(columns.index('password'))
+    to_remove.append(columns.index('source'))
+    to_remove.append(columns.index('dev-eui'))
+    for col in range(len(columns)-1):
+        if not (columns[col] in select_clause) and select_clause!="*":
+            to_remove.append(col)
     
+    indexes = list(range(0,len(columns)-1))
+    to_remove.sort(reverse=True)
+    for i in to_remove:
+        columns.pop(i)
+        indexes.pop(i)
+    data = [[row[i] for i in indexes] for row in data]
+    
+    result = [dict(zip(columns, row)) for row in data]
     return jsonify(result)
 
 
@@ -932,7 +1059,7 @@ def publicApiDevice_data(deveui):
         return jsonify({"error": "Invalid data type"})
 
     query = f"""
-    SELECT {select_clause} FROM Data
+    SELECT * FROM Data
     JOIN Device ON Data.source = Device.`dev-eui`
     JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
     WHERE Data.timestamp BETWEEN %s AND %s
@@ -945,6 +1072,7 @@ def publicApiDevice_data(deveui):
     data = cursor.fetchall()
     
     columns = [col[0] for col in cursor.description]
+    
     result = [dict(zip(columns, row)) for row in data]
     
     return jsonify(result)
@@ -968,19 +1096,51 @@ def apiRegisterDevice():
     deveui = request.args.get('deveui')
     name = request.args.get('name')
     password = request.args.get('pwd')
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+    if  not (name and deveui and password and key) :
+        return jsonify({"status": "error", "message": 'Require Fields : deveui, name, pwd, key'}), 400
 
+    if username:
 
-    query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
-    cursor.execute(query, (deveui,))
-    result = cursor.fetchall()
-    if len(result) > 0:
-        
-        return jsonify({"status": "error", "message": 'Device already exists'}), 400 
+        query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
+        cursor.execute(query, (deveui,))
+        result = cursor.fetchall()
+        if len(result) > 0:
+            if check_link_device(deveui,username):
+                return jsonify({"status": "error", "message": 'Device already exists'}), 400 
+            else:
+                add_device_user_DB(deveui,username)
+                return jsonify({"status": "success", "message": "device lié au compte"}), 200        
+        # Ajouter l'appareil a la base
+        add_device_DB(deveui,name,password)
+        add_device_user_DB(deveui,username)
 
-    # Ajouter l'appareil a la base
-    add_device_DB(deveui,name,password)
+        return jsonify({"status": "success"}), 200
+    else :
+        return jsonify({"status": "error", "message": 'API key not linked to any user'}), 401
 
+@app.route('/api/deleteDevice', methods=['POST'])
+def apiDeleteDevice():
     
+
+    deveui = request.args.get('deveui')
+    
+    key = request.args.get('key')
+
+    username = get_user_from_api_key(key)
+    if  not (deveui and key) :
+        return jsonify({"status": "error", "message": 'Require Fields : deveui key'}), 400
+
+    if username:
+        if check_link_device(deveui,username):
+            delete_device(deveui,username)
+            return jsonify({"status": "success"}), 200
+        else:
+            return jsonify({"status": "error", "message": 'no such linked Device was found'}), 400 
+    else :
+        return jsonify({"status": "error", "message": 'API key not linked to any user'}), 401
+
 
 
 
@@ -1000,24 +1160,25 @@ def apiNeighbourList(deveui):
     cursor = db.cursor()
 
     key = request.args.get('key')
+    size = request.args.get('size', 0.001)
     username = get_user_from_api_key(key)
     if username is None:
         return jsonify({"error": "Invalid API key"}), 401
 
-    size = request.args.get('size', 0.001)
-
-    query = """
-        SELECT latitude, longitude
-        FROM Data
-        WHERE source = %s
-        ORDER BY timestamp DESC
-        LIMIT 1;
-    """
-    cursor.execute(query, (deveui,))
-    device_location = cursor.fetchone()
-    if device_location is None:
-        return jsonify([])
-    latitude, longitude = device_location
+    neighbours=[]
+    if username:
+        query = """
+            SELECT latitude, longitude
+            FROM Data
+            WHERE source = %s
+            ORDER BY timestamp DESC
+            LIMIT 1;
+        """
+        cursor.execute(query, (deveui,))
+        device_location = cursor.fetchone()
+        if device_location is None:
+            return jsonify([])
+        latitude, longitude = device_location
 
     query = """
         SELECT DISTINCT Device.`dev-eui`, Device.name
@@ -1031,7 +1192,6 @@ def apiNeighbourList(deveui):
     cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15), deveui))
     neighbours = cursor.fetchall()
 
-    print(deveui, neighbours)
     
     return jsonify(neighbours)
 

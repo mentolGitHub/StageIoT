@@ -182,6 +182,7 @@ def post_data():
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
+        print(raw_data)
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
@@ -203,7 +204,7 @@ def post_data():
                     "acceleration_Z": float(data_list[12]),
                     "angle": float(data_list[13]),
                     "azimuth": float(data_list[14]),
-                    "distance_recul": float(data_list[15])
+                    "distance_recul": str(data_list[15])
                 }
                 
                 Q_out.put(data)

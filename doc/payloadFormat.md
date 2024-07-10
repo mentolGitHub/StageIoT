@@ -14,7 +14,12 @@
 ce format permet au système de faire remonter des messages au serveur via de courts messages
 | ID | timestamp | Donnée 1        |
 |----|-----------|-----------------|
-| 0  | time      | Message système |
+| 0  | oui       | Message système |
+
+| ID | SubId | timestamp | Donnée 1        |
+|----|-------|-----------|-----------------|
+| 0  |   1   | non       | DevEui          |
+| 0  |   2   | non       | activation 4g   |
 
 ## Trammes Utilisateur
 
@@ -22,15 +27,16 @@ ce format permet à l'utilisateur de définir sa propre tramme
 
 | ID | SubID | timestamp | Données |
 |----|-------|-----------|---------|
-| 1  | 0-15  | time      | Message |
+| 1  | 0-15  | oui       | Message |
 
 ## Trammes de données
 
-| ID  | timestamp | Donnée               | Donnée                | Donnée                | Donnée         | Donnée        |  Donnée              |
-|-----|-----------|----------------------|-----------------------|-----------------------|----------------|---------------|----------------------|
-| 2   | time      | Latitude             | Longitude             | Altitude              | Angle          | luminosite    | Vitesse Angulaire X  |
-|     |           | Vitesse Angulaire Y  | Vitesse Angulaire Z   | Pression              | Accelération X | Accelération Y| Accelération Z       | 
-|     |           | Angle                | Azimut                |                       |                |               |                      |
+| ID  | subId | timestamp | Donnée               | Donnée                | Donnée                | Donnée         | Donnée        |  Donnée              |
+|-----|-------|-----------|----------------------|-----------------------|-----------------------|----------------|---------------|----------------------|
+|  2  |  non  | oui       | Latitude             | Longitude             | Altitude              | Angle          | luminosite    | Vitesse Angulaire X  |
+|     |       |           | Vitesse Angulaire Y  | Vitesse Angulaire Z   | Pression              | Accelération X | Accelération Y| Accelération Z       | 
+|     |       |           | Angle                | Azimut                |                       |                |               |                      |
+|  3  |   0   | non       | Distance             |                       |                       |                |               |                      |
 
 
 
@@ -38,3 +44,7 @@ ce format permet à l'utilisateur de définir sa propre tramme
 
 s, timestamp, latitude, longitude, altitude, luminosité, vitesse angulaire X, vitesse angulaire Y, vitesse angulaire Z, pression, accélérationX, accélérationY, accélérationZ, angle, azimut
 o, objet1, objet2, ...
+
+020\n desactivation 4g
+021\n activation 4g
+30 distance\n envoi de la distance

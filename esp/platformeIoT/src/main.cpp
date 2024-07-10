@@ -28,7 +28,7 @@ const int triggerPin = 5; // Remplacer par la broche GPIO utilisée pour le Trig
 const int echoPin = 18; // Remplacer par la broche GPIO utilisée pour l'Echo
 
 float distance();
-
+bool is_ip_allowed = false;
 
 /* Initialisation */
 void setup() 
@@ -63,63 +63,94 @@ void traitementReceptionBluetooth()
     dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
     char *token = strtok(buffer, ",");
     int i = 0;
-    while (token != NULL) {
-      switch (i) {
-        case 0:
+    if (token != NULL) {
+      switch (token[0]) {
+        case '0':
+          if(token[1] == '2'){
+            if (token[2] == '1'){
+              is_ip_allowed = true;
+              Serial.println("IP is allowed");
+            }
+            else if (token[2] == '0'){
+              is_ip_allowed = false;
+              Serial.println("IP is not allowed");
+            }
+          }
           break;
-        case 1:
-          timestamp = token;
+        case '1':
           break;
-        case 2:
-          latitude = token;
-          break;
-        case 3:
-          longitude = token;
-          break;
-        case 4:
-          altitude = token;
-          break;
-        case 5:
-          luminosite = token;
-          break;
-        case 6:
-          vitesseAngulaireX = token;
-          break;
-        case 7:
-          vitesseAngulaireY = token;
-          break;
-        case 8:
-          vitesseAngulaireZ = token;
-          break;
-        case 9:
-          pression = token;
-          break;
-        case 10:
-          accelerationX = token;
-          break;
-        case 11:
-          accelerationY = token;
-          break;
-        case 12:
-          accelerationZ = token;
-          break;
-        case 13:
-          angle = token;
-          break;
-        case 14:
-          azimut = token;
+        case 's':
+          while (token != NULL) {
+            switch (i) {
+              case 0:
+                break;
+              case 1:
+                timestamp = token;
+                break;
+              case 2:
+                latitude = token;
+                break;
+              case 3:
+                longitude = token;
+                break;
+              case 4:
+                altitude = token;
+                break;
+              case 5:
+                luminosite = token;
+                break;
+              case 6:
+                vitesseAngulaireX = token;
+                break;
+              case 7:
+                vitesseAngulaireY = token;
+                break;
+              case 8:
+                vitesseAngulaireZ = token;
+                break;
+              case 9:
+                pression = token;
+                break;
+              case 10:
+                accelerationX = token;
+                break;
+              case 11:
+                accelerationY = token;
+                break;
+              case 12:
+                accelerationZ = token;
+                break;
+              case 13:
+                angle = token;
+                break;
+              case 14:
+                azimut = token;
+                break;
+              default:
+                break;
+            }
+            token = strtok(NULL, ",");
+            i++;
+          }
           break;
         default:
           break;
       }
-      token = strtok(NULL, ",");
-      i++;
     }
     long distanceValue = distance();
-    String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
-    SerialPort.print(loraPayload);
-    Serial.println(loraPayload);
     
+    if (is_ip_allowed) {
+      char formattedDistance[6]; // 5 digits + null terminator
+      snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
+      String btPayload = "30" + String(formattedDistance);
+      SerialBT.print(btPayload);
+      Serial.println("btPayload" + btPayload);
+    }
+    else {
+      String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
+      SerialPort.print(loraPayload);
+      Serial.println("loraPayload:" + loraPayload);
+    }    
   }
 }
 

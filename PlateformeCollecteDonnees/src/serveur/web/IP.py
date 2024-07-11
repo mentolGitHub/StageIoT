@@ -17,8 +17,6 @@ from flask_cors import CORS
 import base64
 import uuid
 
-db : mysql.connector.MySQLConnection
-db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -86,12 +84,9 @@ def check_password(hashed_password, user_password):
         bool: True if the user password matches the hashed password, False otherwise.
     """
     password_bytes = user_password.encode('utf-8')
-    try:
-
-        return bcrypt.checkpw(password_bytes, hashed_password)
-    except ValueError as e:
-        print("Error :" , e)
-        return False
+    print ("password_bytes : ", password_bytes)
+    print ("hashed_password", hashed_password)
+    return bcrypt.checkpw(password_bytes, hashed_password)
 
 
 @auth.verify_token
@@ -606,6 +601,10 @@ def register_device():
         A redirect response to the 'register_device' page.
 
     """
+
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
     form_associate = DeviceAssociationForm()
     if form_associate.submit.data and form_associate.validate():
         deveui = form_associate.deveui.data
@@ -614,7 +613,7 @@ def register_device():
             username = check_user_token()
             if username:
                 
-                if len(db_cursor.fetchall())>0:
+                if len(cursor.fetchall())>0:
                     flash('Device already linked to account', 'danger')
                     return redirect(url_for('register_device'))
                 add_device_user_DB(deveui,username) 
@@ -669,9 +668,9 @@ def check_device_DB(deveui,password=None):
     if password != None:
         # Verification du username/password avec ce qui est enregistré dans la db
         query = "SELECT (password) FROM Device WHERE `dev-eui` = %s;"
-        db_cursor.execute(query,(deveui,))
-        result= db_cursor.fetchall()
-        if db_cursor.rowcount == 1:
+        cursor.execute(query,(deveui,))
+        result= cursor.fetchall()
+        if cursor.rowcount == 1:
             pwdhash=result[0][0].encode("utf-8")
             if check_password(pwdhash,password):
                 return 1
@@ -738,8 +737,6 @@ def deviceList():
             query = "SELECT `name` FROM Device WHERE `dev-eui` = %s"
             cursor.execute(query, (i,))
             names += [j[0] for j in cursor.fetchall()]
-        
-            #clement
         devices = [i for i in devices]
         return render_template('deviceList.html', username=username, devices=devices, names = names, superowner=superowner)
     else:
@@ -1257,7 +1254,7 @@ def IPnode(Q_output: Queue, config):
     Returns:
         None
     """
-    global Q_out, db, db_cursor, Config
+    global Q_out, Config
     Config= config
     Q_out = Q_output
     db = mysql.connector.connect(host="localhost", user=config["SQL_username"])

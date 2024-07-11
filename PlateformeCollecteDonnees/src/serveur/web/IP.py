@@ -1,12 +1,13 @@
 from queue import Queue
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash, Request
 import io
+from flask_wtf.form import _Auto
 import mysql.connector
 import mysql.connector.abstracts
 import csv
 from datetime import datetime, timedelta
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, TextAreaField
 from wtforms.validators import DataRequired, Length, EqualTo
 import bcrypt
 from flask_httpauth import HTTPTokenAuth
@@ -66,10 +67,11 @@ def hash_password(password):
         bytes: The hashed password.
 
     """
-    password_bytes = password.encode('utf-8')
-    salt = bcrypt.gensalt()
-    hashed_password = bcrypt.hashpw(password_bytes, salt)
-    return hashed_password
+    if password != None and len(password)>0:
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password_bytes, salt)
+        return hashed_password
 
 
 def check_password(hashed_password, user_password):
@@ -84,8 +86,12 @@ def check_password(hashed_password, user_password):
         bool: True if the user password matches the hashed password, False otherwise.
     """
     password_bytes = user_password.encode('utf-8')
-    return bcrypt.checkpw(password_bytes, hashed_password)
+    try:
 
+        return bcrypt.checkpw(password_bytes, hashed_password)
+    except ValueError as e:
+        print("Error :" , e)
+        return False
 
 
 @auth.verify_token
@@ -458,22 +464,16 @@ class DeviceRegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
     submit2 = SubmitField('Register')
 
-# formulaire d'enregistrement d'un appareil
+# formulaire d'edition d'un appareil
 class DeviceEditForm(FlaskForm):
-    name = StringField('Name', validators=[Length(min=2, max=20)])
-    description = StringField('Description', validators=[Length(min=0, max=500)])
-    password = PasswordField('Curent Password', validators=[DataRequired(), Length(min=6, max=60)])
-    new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
-    confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
+    name = StringField('Name *', validators=[DataRequired(), Length(min=2, max=20)])
+    description = TextAreaField('Description', validators=[Length(min=0, max=500)])
+    password = PasswordField('Curent Password *', validators=[DataRequired(), Length(min=6, max=60)])
+    new_password = PasswordField('new Password', validators=[Length(min=6, max=60)], default="")
+    confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')], default="")
     submit = SubmitField('Edit Device')
-
-    # def __init__(self, curent_name, curent_description):
-    #     self.name = StringField('Name', validators=[Length(min=2, max=20)], default=curent_name)
-    #     self.description = StringField('Name', validators=[Length(min=0, max=500)], default=curent_description)
-    #     self.password = PasswordField('curent Password', validators=[DataRequired(), Length(min=6, max=60)])
-    #     self.new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
-    #     self.confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
-    #     self.submit = SubmitField('Edit Device')
+    
+        
         
 
 
@@ -628,6 +628,9 @@ def register_device():
             return redirect(url_for('register_device'))
 
     form = DeviceRegistrationForm()
+    print(form.validate_on_submit())
+    print(form.submit2.data)
+    print(form.validate())
     if form.submit2.data and form.validate():
         # Recuperation des données du formulaire
         deveui = form.deveui.data
@@ -672,6 +675,8 @@ def check_device_DB(deveui,password=None):
             pwdhash=result[0][0].encode("utf-8")
             if check_password(pwdhash,password):
                 return 1
+            else :
+                return -1
     else :
         query = "SELECT `dev-eui` FROM Device WHERE `dev-eui` = %s;"
         cursor.execute(query, (deveui,))
@@ -753,43 +758,63 @@ def edit_device(deveui):
     Returns:
         redirect: A redirect response to the device list page.
     """
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
-    cursor = db.cursor()
+    
     username = check_user_token()
 
-    curent_name=""
-    curent_description=""
-
-    form = DeviceEditForm()
-    if form.submit.data and form.validate():
-        password = form.password.data
+    if username:
         
-        new_password = form.new_password.data
-        description = form.description.data
 
-        if username:
-            if check_device_DB(deveui,password)>0:
-                if check_superowner(deveui,username):
-                    res = edit_dev(deveui,username,password,description)
-                    if res==False:
-                        return jsonify({"status": "error"}), 400 
-                    else : 
-                        return jsonify({'status': 'success'}), 200
-                else:
-                    flash('You are not the super user of this device', 'danger')
+        form = DeviceEditForm()
+        
+        
+
+        db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+        cursor = db.cursor()
+        query = "SELECT name, description FROM Device WHERE `dev-eui` = %s"
+        cursor.execute(query,(deveui,))
+        res = cursor.fetchall()
+        
+        
+        
+        if form.is_submitted():
+            name = form.name.data
+            password = form.password.data
+            if password == None:
+                flash('please enter the password', 'danger')
+                return redirect(url_for('edit_device', deveui=deveui))
+            new_password = hash_password(form.new_password.data)
+            description = form.description.data
+            
+            match check_device_DB(deveui,password):
+                case 1:
+                    if check_superowner(deveui,username):
+                        edit_dev(deveui,name,new_password,description)
+                        return redirect(url_for('deviceList'))
+                    else:
+                        flash('You are not the super user of this device', 'danger')
+                        return redirect(url_for('deviceList'))
+                case 0:
+                
+                    flash('This device is not registered yet', 'danger')
                     return redirect(url_for('deviceList'))
-            else:
-                flash('This device is not registered yet', 'danger')
-                return redirect(url_for('deviceList'))
+                case -1 :
+                    flash('Wrong password', 'danger')
+                    return redirect(url_for('edit_device', deveui=deveui))
+        else:
+            if len(res) != 0:
+                curent_name=res[0][0]
+                curent_description=res[0][1]
+                form.name.data = curent_name
+                form.description.data = curent_description
+            return render_template("edit_device.html", device=deveui, form=form)
+    
+    else :
+        flash('User not logged in', 'danger')
+        return redirect(url_for('login'))
 
-        else :
-            flash('User not logged in', 'danger')
-            return redirect(url_for('login'))
 
 
-    return render_template("edit_device.html", device=deveui, form=form)
-
-def edit_dev(deveui,username,password,description):
+def edit_dev(deveui,name,password,description):
     """
     Deletes the device and its association with the user.
 
@@ -800,14 +825,27 @@ def edit_dev(deveui,username,password,description):
     """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
-    # Supprimer la liaison entre l'appareil et l'utilisateur
-    cond =(check_link_device(deveui,username) == 1)
-    if cond:
-        # query = "DELETE FROM DeviceOwners WHERE device = %s AND owner = %s"
-        # cursor.execute(query, (deveui, username))
-        # db.commit()
-        pass
-    return cond
+    
+    data = {}
+    if name not in [None, ""]:
+        data['name']= name
+    if password not in [None, ""]:
+        data['password']= password.decode("utf-8")
+
+    data['description'] = description
+    print(password)
+    fields = ""
+    values=[]
+    for d in data:
+        fields+="`"+ d+"`=%s ,"
+        values.append(str(data[d]))
+    fields=fields[:-2]
+    query = "UPDATE Device SET "+ fields +" WHERE `dev-eui` = %s"
+    values.append(deveui)
+    print(query)
+    cursor.execute(query, values)
+    db.commit()
+
 
 def check_superowner(deveui,username):
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
@@ -815,7 +853,6 @@ def check_superowner(deveui,username):
     query = "SELECT `super-owner` FROM DeviceOwners WHERE device = %s AND owner=%s"
     cursor.execute(query, (deveui, username))
     res = cursor.fetchall()
-    print(res)
     return res[0][0]
 
 @app.route('/delete_device/<deveui>', methods=['GET', 'POST'])

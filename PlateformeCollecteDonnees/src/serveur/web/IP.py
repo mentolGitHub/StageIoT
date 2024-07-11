@@ -460,15 +460,20 @@ class DeviceRegistrationForm(FlaskForm):
 
 # formulaire d'enregistrement d'un appareil
 class DeviceEditForm(FlaskForm):
-    
+    name = StringField('Name', validators=[Length(min=2, max=20)])
+    description = StringField('Description', validators=[Length(min=0, max=500)])
+    password = PasswordField('Curent Password', validators=[DataRequired(), Length(min=6, max=60)])
+    new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
+    confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
+    submit = SubmitField('Edit Device')
 
-    def __init__(self, curent_name, curent_description):
-        self.name = StringField('Name', validators=[Length(min=2, max=20)], default=curent_name)
-        self.description = StringField('Name', validators=[Length(min=0, max=500)], default=curent_description)
-        self.password = PasswordField('curent Password', validators=[DataRequired(), Length(min=6, max=60)])
-        self.new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
-        self.confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
-        self.submit = SubmitField('Edit Device')
+    # def __init__(self, curent_name, curent_description):
+    #     self.name = StringField('Name', validators=[Length(min=2, max=20)], default=curent_name)
+    #     self.description = StringField('Name', validators=[Length(min=0, max=500)], default=curent_description)
+    #     self.password = PasswordField('curent Password', validators=[DataRequired(), Length(min=6, max=60)])
+    #     self.new_password = PasswordField('new Password', validators=[Length(min=6, max=60)])
+    #     self.confirm_password = PasswordField('Confirm new Password', validators=[EqualTo('new Password')])
+    #     self.submit = SubmitField('Edit Device')
         
 
 
@@ -646,7 +651,7 @@ def register_device():
             # requests.post(Config['APP_hostname']+"/applications/"+appid+"/devices/"+deveui)
 
             # Assicier un utilisateur à l'appareil
-            add_device_user_DB(deveui, username)
+            add_device_user_DB(deveui, username, 1)
             flash('Device added successfully', 'success')
             return redirect(url_for('register_device'))
         else:
@@ -686,15 +691,15 @@ def check_link_device(deveui, username):
 def add_device_DB(deveui, name, hashed_password):
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
-    query = "INSERT INTO Device (`dev-eui`, name, password, `super-owner`) VALUES (%s, %s, %s, %s)"
-    cursor.execute(query, (deveui, name, hashed_password, 1))  # Ensure password is hashed
+    query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
+    cursor.execute(query, (deveui, name, hashed_password))  # Ensure password is hashed
     db.commit()
 
-def add_device_user_DB(deveui, username):
+def add_device_user_DB(deveui, username, superowner=0):
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
-    query = "INSERT INTO DeviceOwners (device, owner) VALUES (%s, %s)"
-    cursor.execute(query, (deveui, username))
+    query = "INSERT INTO DeviceOwners (device, owner, `super-owner`) VALUES (%s, %s, %s)"
+    cursor.execute(query, (deveui, username, superowner))
     db.commit()
 
 @app.route('/deviceList')
@@ -738,7 +743,7 @@ def deviceList():
     
 @app.route('/edit_device/<deveui>', methods=['GET', 'POST'])
 @auth.login_required
-def edit_dev(deveui):
+def edit_device(deveui):
     """
     Deletes the device and its association with the user.
 
@@ -755,17 +760,17 @@ def edit_dev(deveui):
     curent_name=""
     curent_description=""
 
-    form_associate = DeviceEditForm(curent_name, curent_description)
-    if form_associate.submit.data and form_associate.validate():
-        password = form_associate.password.data
+    form = DeviceEditForm()
+    if form.submit.data and form.validate():
+        password = form.password.data
         
-        new_password = form_associate.new_password.data
-        description = form_associate.description.data
+        new_password = form.new_password.data
+        description = form.description.data
 
-        if check_device_DB(deveui,password)>0:
-            if username:
+        if username:
+            if check_device_DB(deveui,password)>0:
                 if check_superowner(deveui,username):
-                    res = edit_device(deveui,username,password,description)
+                    res = edit_dev(deveui,username,password,description)
                     if res==False:
                         return jsonify({"status": "error"}), 400 
                     else : 
@@ -774,15 +779,17 @@ def edit_dev(deveui):
                     flash('You are not the super user of this device', 'danger')
                     return redirect(url_for('deviceList'))
             else:
-                flash('User not logged in', 'danger')
-                return redirect(url_for('login'))
+                flash('This device is not registered yet', 'danger')
+                return redirect(url_for('deviceList'))
+
         else :
-            flash('This device is not registered yet', 'danger')
-            return redirect(url_for('edit_device/'+deveui))
+            flash('User not logged in', 'danger')
+            return redirect(url_for('login'))
 
-    return render_template("edit_device.html", device=deveui)
 
-def edit_device(deveui,username,password,description):
+    return render_template("edit_device.html", device=deveui, form=form)
+
+def edit_dev(deveui,username,password,description):
     """
     Deletes the device and its association with the user.
 

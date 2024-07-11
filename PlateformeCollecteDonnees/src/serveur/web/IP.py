@@ -31,7 +31,7 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
-                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None }
+                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None, 'distance_recul':None }
 
 def get_user_from_api_key(api_key):
     """
@@ -188,7 +188,7 @@ def post_data():
             if len(data_list) == 16:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
-                    "eui": str(data_list[0]),
+                    "eui": str(data_list[0]).lower(),
                     "timestamp": int(data_list[1]),
                     "latitude": float(data_list[2]),
                     "longitude": float(data_list[3]),

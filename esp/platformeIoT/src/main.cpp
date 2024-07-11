@@ -18,7 +18,9 @@ HardwareSerial SerialPort(2);
 //variables de réception
 String dataFromBluetooth;
 String dataFromUart;
-
+String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
+String loraPayload, btPayload;
+long distanceValue = 0;
 
 /* Déclaration des fonctions */
 
@@ -54,7 +56,6 @@ void loop()
 
 void traitementReceptionBluetooth()
 {
-  String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
   if (SerialBT.available()) {
     dataFromBluetooth = SerialBT.readString();
     Serial.println(dataFromBluetooth);
@@ -67,13 +68,21 @@ void traitementReceptionBluetooth()
       switch (token[0]) {
         case '0':
           if(token[1] == '2'){
-            if (token[2] == '1'){
-              is_ip_allowed = true;
-              Serial.println("IP is allowed");
-            }
-            else if (token[2] == '0'){
-              is_ip_allowed = false;
-              Serial.println("IP is not allowed");
+            switch (token[2])
+            {
+              case '1':
+                is_ip_allowed = true;
+                Serial.println("IP is allowed");
+                break;
+
+              case '0':
+                is_ip_allowed = false;
+                Serial.println("IP is not allowed");
+                break;
+            
+              default:
+                Serial.println("inconnu2 : " + token[2]);
+                break;
             }
           }
           break;
@@ -132,32 +141,36 @@ void traitementReceptionBluetooth()
             token = strtok(NULL, ",");
             i++;
           }
+          // envoi des data LoRa
+          distanceValue = distance();
+          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
+          SerialPort.print(loraPayload);
+          Serial.println("loraPayload : " + loraPayload);
           break;
+
+        case '.':
+          distanceValue = distance();
+          char formattedDistance[6]; // 5 digits + null terminator
+          snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
+          btPayload = "30" + String(formattedDistance);
+          SerialBT.print(btPayload);
+          Serial.println("btPayload : " + btPayload + "\n");
+          break;
+
         default:
+          Serial.println("inconnu0 : " + token[0]);
           break;
       }
+      
     }
-    long distanceValue = distance();
-    
-    if (is_ip_allowed) {
-      char formattedDistance[6]; // 5 digits + null terminator
-      snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
-      String btPayload = "30" + String(formattedDistance);
-      SerialBT.print(btPayload);
-      Serial.println("btPayload" + btPayload);
-    }
-    else {
-      String loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
-      SerialPort.print(loraPayload);
-      Serial.println("loraPayload:" + loraPayload);
-    }    
   }
 }
 
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
-    dataFromUart = SerialPort.readString();
+    dataFromUart = SerialPort.readStringUntil('\n');
+    Serial.print("UART : " + dataFromUart);
     //verifier le premier caractere
     switch (dataFromUart[0])
     {
@@ -165,7 +178,7 @@ void traitementReceptionUart()
         switch (dataFromUart[1])
         {
           case '1': //envoi du dev eui
-            SerialBT.print(dataFromUart.substring(2));
+            SerialBT.print(dataFromUart);
             break;
         }
         break;

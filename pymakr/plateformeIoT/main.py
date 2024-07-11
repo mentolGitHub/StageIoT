@@ -17,7 +17,7 @@ def isfloat(num):
 dataFromUart = ""
 idTramme = 2
 sendBuffer = struct.pack('i', idTramme)
-oldTimer = 0
+oldTimer = time.time()
 
 print("initialisation")
 
@@ -31,12 +31,16 @@ uart = UART(1, baudrate=115200) # Tx : P3, Rx : P4
 ####### Initialisation LoRa #######
 lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868) # Initialise LoRa en mode LORAWAN.
 
-app_eui = ubinascii.unhexlify('7532159875321598')
-app_key = ubinascii.unhexlify('11CBA1678ECF54273F5834C41D82E57F')
-dev_eui = ubinascii.unhexlify('70B3D57ED0068A6E')
+app_eui = '7532159875321598'
+app_key = '11CBA1678ECF54273F5834C41D82E57F'
+dev_eui = '70B3D57ED0068A6E'
+
+app_eui_unhex = ubinascii.unhexlify(app_eui)
+app_key_unhex = ubinascii.unhexlify(app_key)
+dev_eui_unhex = ubinascii.unhexlify(dev_eui)
 
 ####### Connexion LoRa #######
-lora.join(activation=LoRa.OTAA, auth=(dev_eui, app_eui, app_key), timeout=0) # Connexion au réseau LoRaWAN
+lora.join(activation=LoRa.OTAA, auth=(dev_eui_unhex, app_eui_unhex, app_key_unhex), timeout=0) # Connexion au réseau LoRaWAN
 
 
 
@@ -76,7 +80,9 @@ while 1 :
 #struct.pack('%sf' % len(floatlist), *floatlist)
         print(dataFromUart)
         s.send(dataFromUart)                  # Envoi des données UART par LoRa (max 256 caractères)
-        if (time.time() > oldTimer + 10):
-            uart.write("01"+ubinascii.hexlify(lora.mac()).decode('utf-8')) 
-        sendBuffer = struct.pack('i', idTramme)
         dataFromUart = ""
+    if (time.time() > oldTimer + 20):
+        uart.write("01"+dev_eui.lower()+"\n") 
+        oldTimer = time.time()
+    sendBuffer = struct.pack('i', idTramme)
+    

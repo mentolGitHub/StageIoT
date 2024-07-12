@@ -16,6 +16,7 @@ from flask_restful import Api
 from flask_cors import CORS
 import base64
 import uuid
+from Interface import data_format
 
 app = Flask(__name__)
 CORS(app)
@@ -26,12 +27,6 @@ app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = {}
 Config = {}
-data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
-                'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
-                'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
-                'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
-                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None, 
-                'distance_recul':None }
 
 def get_user_from_api_key(api_key):
     """
@@ -183,7 +178,7 @@ def post_data():
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
-        print(raw_data)
+        
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
@@ -329,14 +324,16 @@ def get_euiList():
 
     cursor.execute(query,(username,))
     result= cursor.fetchall()
+    
     devices=[]
     length = len(result[:])
     if length != None and length > 0:
-        for device in result[:][0]:
+        for device in result:
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
-            cursor.execute(query,(device,))
-            devices.append(cursor.fetchall())
-        return jsonify(devices[0])  
+            cursor.execute(query,(device[0],))
+            res = cursor.fetchall()
+            devices+=res
+        return jsonify(devices)  
     return jsonify([])
 
 
@@ -982,7 +979,6 @@ def get_user_from_api_key(api_key):
     else:
         return None
 
-
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 def apiDeviceList():
     """
@@ -1007,7 +1003,6 @@ def apiDeviceList():
     result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
     
     return jsonify(result)
-
 
 @app.route('/api/deviceData/<deveui>', methods=['GET'])
 def apiDevice_data(deveui):
@@ -1069,7 +1064,6 @@ def apiDevice_data(deveui):
     
     result = [dict(zip(columns, row)) for row in data]
     return jsonify(result)
-
 
 @app.route('/api/publicDeviceData/<deveui>', methods=['GET'])
 def publicApiDevice_data(deveui):
@@ -1183,9 +1177,6 @@ def apiDeleteDevice():
             return jsonify({"status": "error", "message": 'no such linked Device was found'}), 400 
     else :
         return jsonify({"status": "error", "message": 'API key not linked to any user'}), 401
-
-
-
 
 @app.route('/api/neighbourList/<deveui>', methods=['GET'])
 def apiNeighbourList(deveui):

@@ -49,10 +49,13 @@ uint32_t delayMS;
 /* Initialisation */
 void setup() 
 {
-  
+  // Initialisation des communications
   Serial.begin(9600); //initialisation du port série
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
+  SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
   
+  // Initialisation des capteurs
+  // capteur de température et d'humidité
   dht.begin();
   sensor_t sensor;
   dht.temperature().getSensor(&sensor);
@@ -78,9 +81,11 @@ void setup()
   
   delayMS = sensor.min_delay / 1000;
 
+  // capteur de distance
   pinMode(triggerPin, OUTPUT);
   pinMode(echoPin, INPUT);
-  SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
+  
+
   Serial.println("The device started, now you can pair it with bluetooth!");
 }
 
@@ -96,6 +101,10 @@ void loop()
 
 /* Fonctions */
 
+/**
+ * @brief Traitement de la réception du bluetooth
+ * 
+ */
 void traitementReceptionBluetooth()
 {
   if (SerialBT.available()) {
@@ -188,13 +197,21 @@ void traitementReceptionBluetooth()
           loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "," + String(humidity) + "," + String(temperature) + "\n";
           SerialPort.print(loraPayload);
           Serial.println("loraPayload : " + loraPayload);
+
           break;
 
         case '.':
           distanceValue = distance();
           char formattedDistance[6]; // 5 digits + null terminator
           snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
-          btPayload = "30" + String(formattedDistance) + "," + String(humidity) + "," + String(temperature) + "\n";
+
+          char formattedTemperature[6]; // 5 digits + null terminator
+          snprintf(formattedTemperature, sizeof(formattedTemperature), "%05.2f", temperature);
+
+          char formattedHumidity[6]; // 5 digits + null terminator
+          snprintf(formattedHumidity, sizeof(formattedHumidity), "%05.2f", humidity);
+
+          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + "\n";
           SerialBT.print(btPayload);
           Serial.println("btPayload : " + btPayload);
           break;
@@ -208,6 +225,10 @@ void traitementReceptionBluetooth()
   }
 }
 
+/**
+ * @brief Traitement de la réception de l'UART
+ * 
+ */
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
@@ -233,6 +254,11 @@ void traitementReceptionUart()
   }
 }
 
+/**
+ * @brief Mesure la distance
+ * 
+ * @return float
+ */
 float distance(){
   //calcul de la distance avec le capteur hc sr04
 
@@ -251,6 +277,14 @@ float distance(){
   return distance;
 }
 
+/**
+ * @brief Mesure la température et l'humidité
+ * 
+ * @param temperature 
+ * @param humidity
+ *
+ * @return void
+ */
 void dht_mesure(float* temperature, float* humidity){
   sensors_event_t event;
   dht.temperature().getEvent(&event);

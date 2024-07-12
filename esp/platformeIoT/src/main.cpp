@@ -3,6 +3,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <Arduino.h>
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
+#define DHTPIN 2     
+#define DHTTYPE DHT11
+
+DHT_Unified dht(DHTPIN, DHTTYPE);
+
 
 #if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
@@ -21,22 +30,54 @@ String dataFromUart;
 String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
 String loraPayload, btPayload;
 long distanceValue = 0;
+float temperature, humidity;
 
 /* Déclaration des fonctions */
 
 void traitementReceptionBluetooth();
 void traitementReceptionUart();
-const int triggerPin = 5; // Remplacer par la broche GPIO utilisée pour le Trigger
-const int echoPin = 18; // Remplacer par la broche GPIO utilisée pour l'Echo
+void dht_mesure(float* temperature, float* humidity);
+const int triggerPin = 5; 
+const int echoPin = 18; 
+
 
 float distance();
 bool is_ip_allowed = false;
 
+uint32_t delayMS;
+
 /* Initialisation */
 void setup() 
 {
+  
   Serial.begin(9600); //initialisation du port série
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
+  
+  dht.begin();
+  sensor_t sensor;
+  dht.temperature().getSensor(&sensor);
+  Serial.println(F("------------------------------------"));
+  Serial.println(F("Temperature Sensor"));
+  Serial.print  (F("Sensor Type: ")); Serial.println(sensor.name);
+  Serial.print  (F("Driver Ver:  ")); Serial.println(sensor.version);
+  Serial.print  (F("Unique ID:   ")); Serial.println(sensor.sensor_id);
+  Serial.print  (F("Max Value:   ")); Serial.print(sensor.max_value); Serial.println(F("°C"));
+  Serial.print  (F("Min Value:   ")); Serial.print(sensor.min_value); Serial.println(F("°C"));
+  Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("°C"));
+  Serial.println(F("------------------------------------"));
+  // Print humidity sensor details.
+  dht.humidity().getSensor(&sensor);
+  Serial.println(F("Humidity Sensor"));
+  Serial.print  (F("Sensor Type: ")); Serial.println(sensor.name);
+  Serial.print  (F("Driver Ver:  ")); Serial.println(sensor.version);
+  Serial.print  (F("Unique ID:   ")); Serial.println(sensor.sensor_id);
+  Serial.print  (F("Max Value:   ")); Serial.print(sensor.max_value); Serial.println(F("%"));
+  Serial.print  (F("Min Value:   ")); Serial.print(sensor.min_value); Serial.println(F("%"));
+  Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("%"));
+  Serial.println(F("------------------------------------"));
+  
+  delayMS = sensor.min_delay / 1000;
+
   pinMode(triggerPin, OUTPUT);
   pinMode(echoPin, INPUT);
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
@@ -46,9 +87,10 @@ void setup()
 /* Main loop */
 void loop() 
 {
+  dht_mesure(&temperature, &humidity);
   traitementReceptionBluetooth();
   traitementReceptionUart();
-  delay(20);
+  delay(delayMS);
 }
 
 
@@ -143,7 +185,7 @@ void traitementReceptionBluetooth()
           }
           // envoi des data LoRa
           distanceValue = distance();
-          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "\n";
+          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "," + String(humidity) + "," + String(temperature) + "\n";
           SerialPort.print(loraPayload);
           Serial.println("loraPayload : " + loraPayload);
           break;
@@ -152,9 +194,9 @@ void traitementReceptionBluetooth()
           distanceValue = distance();
           char formattedDistance[6]; // 5 digits + null terminator
           snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
-          btPayload = "30" + String(formattedDistance);
+          btPayload = "30" + String(formattedDistance) + "," + String(humidity) + "," + String(temperature) + "\n";
           SerialBT.print(btPayload);
-          Serial.println("btPayload : " + btPayload + "\n");
+          Serial.println("btPayload : " + btPayload);
           break;
 
         default:
@@ -207,4 +249,29 @@ float distance(){
   Serial.print("Distance: ");
   Serial.println(distance);
   return distance;
+}
+
+void dht_mesure(float* temperature, float* humidity){
+  sensors_event_t event;
+  dht.temperature().getEvent(&event);
+  if (isnan(event.temperature)) {
+    Serial.println(F("Error reading temperature!"));
+  }
+  else {
+    Serial.print(F("Temperature: "));
+    Serial.print(event.temperature);
+    *temperature = event.temperature;
+    Serial.println(F("°C"));
+  }
+  // Get humidity event and print its value.
+  dht.humidity().getEvent(&event);
+  if (isnan(event.relative_humidity)) {
+    Serial.println(F("Error reading humidity!"));
+  }
+  else {
+    Serial.print(F("Humidity: "));
+    Serial.print(event.relative_humidity);
+    *humidity = event.relative_humidity;
+    Serial.println(F("%"));
+  }
 }

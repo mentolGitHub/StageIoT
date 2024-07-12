@@ -332,9 +332,7 @@ def get_euiList():
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
             cursor.execute(query,(device[0],))
             res = cursor.fetchall()
-            print(res)
             devices+=res
-        print(devices)
         return jsonify(devices)  
     return jsonify([])
 
@@ -981,7 +979,6 @@ def get_user_from_api_key(api_key):
     else:
         return None
 
-
 @app.route('/api/deviceList', methods=['GET', 'POST'])
 def apiDeviceList():
     """
@@ -1006,7 +1003,6 @@ def apiDeviceList():
     result = [{"dev-eui": device[0], "name": device[1]} for device in devices]
     
     return jsonify(result)
-
 
 @app.route('/api/deviceData/<deveui>', methods=['GET'])
 def apiDevice_data(deveui):
@@ -1068,7 +1064,6 @@ def apiDevice_data(deveui):
     
     result = [dict(zip(columns, row)) for row in data]
     return jsonify(result)
-
 
 @app.route('/api/publicDeviceData/<deveui>', methods=['GET'])
 def publicApiDevice_data(deveui):
@@ -1182,9 +1177,6 @@ def apiDeleteDevice():
             return jsonify({"status": "error", "message": 'no such linked Device was found'}), 400 
     else :
         return jsonify({"status": "error", "message": 'API key not linked to any user'}), 401
-
-
-
 
 @app.route('/api/neighbourList/<deveui>', methods=['GET'])
 def apiNeighbourList(deveui):

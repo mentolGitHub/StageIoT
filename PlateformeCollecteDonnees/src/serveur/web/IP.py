@@ -204,7 +204,6 @@ def post_data():
                     "humidite": float(data_list[16]),
                     "temperature": float(data_list[17])
                 }
-                
                 Q_out.put(data)
                 add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200

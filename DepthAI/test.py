@@ -55,37 +55,25 @@ def main():
             print("Can't receive frame (stream end?). Exiting ...")
             break
 
-        imgray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        imgray2 = cv.cvtColor(frame2, cv.COLOR_BGR2GRAY)
+        imgray = cv.rotate(cv.cvtColor(frame, cv.COLOR_BGR2GRAY),cv.ROTATE_90_CLOCKWISE)
+        imgray2 = cv.rotate(cv.cvtColor(frame2, cv.COLOR_BGR2GRAY),cv.ROTATE_90_CLOCKWISE)
         #analyse en composante principale
-        f = local_contour(frame)
-
-        cv.imshow('contour', f)
-        print("frame")
-
-        # threshold = 70
-
-        # #detection contours
-        # ret, thresh = cv.threshold(imgray, threshold, 255, 0)
-        # contours, im2 = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        
+        cv.imshow("left", imgray)
+        cv.imshow("right", imgray2)
         
 
+        #disparity check
+        stereo = cv.StereoBM.create(numDisparities=32, blockSize=21)
+        disparity = stereo.compute(imgray,imgray2)
+        norm_image = cv.normalize(disparity, None, alpha = 0, beta = 1, norm_type=cv.NORM_MINMAX, dtype=cv.CV_32F)
+        cv.imshow('not gray',norm_image)
 
-        # cv.drawContours(frame, contours_cleanup(contours), -1, (0,255,0), 1)
-        # ret, thresh2 = cv.threshold(imgray2, threshold, 255, 0)
-        # contours2, im22 = cv.findContours(thresh2, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        # cv.drawContours(frame2, contours_cleanup(contours2), -1, (0,255,0), 1)
-
-        # #disparity check
-
-        # #distance evaluation
+        #distance evaluation
 
 
 
         
-        # # Display the resulting frame
-        # cv.imshow('frame', frame)
-        # cv.imshow('frame2', frame2)
         if cv.waitKey(1) == ord('q'):
             break
     

@@ -16,6 +16,7 @@ from flask_restful import Api
 from flask_cors import CORS
 import base64
 import uuid
+from Interface import data_format
 
 app = Flask(__name__)
 CORS(app)
@@ -26,11 +27,6 @@ app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = {}
 Config = {}
-data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
-                'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
-                'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
-                'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
-                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None, 'distance_recul':None }
 
 def get_user_from_api_key(api_key):
     """
@@ -182,11 +178,11 @@ def post_data():
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
-        print(raw_data)
+        
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
-            if len(data_list) == 16:  # Assurez-vous que tous les champs attendus sont présents
+            if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
                     "eui": str(data_list[0]).lower(),
@@ -204,7 +200,9 @@ def post_data():
                     "acceleration_Z": float(data_list[12]),
                     "angle": float(data_list[13]),
                     "azimuth": float(data_list[14]),
-                    "distance_recul": str(data_list[15])
+                    "distance_recul": str(data_list[15]),
+                    "humidite": float(data_list[16]),
+                    "temperature": float(data_list[17])
                 }
                 
                 Q_out.put(data)
@@ -327,14 +325,18 @@ def get_euiList():
 
     cursor.execute(query,(username,))
     result= cursor.fetchall()
+    
     devices=[]
     length = len(result[:])
     if length != None and length > 0:
-        for device in result[:][0]:
+        for device in result:
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
-            cursor.execute(query,(device,))
-            devices.append(cursor.fetchall())
-        return jsonify(devices[0])  
+            cursor.execute(query,(device[0],))
+            res = cursor.fetchall()
+            print(res)
+            devices+=res
+        print(devices)
+        return jsonify(devices)  
     return jsonify([])
 
 

@@ -6,11 +6,31 @@ import cv2
 import depthai as dai
 import numpy as np
 import time
+import serial
 
+class ObjetSpatial:
+    def __init__(self, x, y, z, type_objet):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.type_objet = type_objet
+
+    def __repr__(self):
+        return f"ObjetSpatial(x={self.x}, y={self.y}, z={self.z}, type_objet='{self.type_objet}')"
+    
+    def sendingformat(self):
+        return f"{self.x},{self.y},{self.z},{self.type_objet}"
+
+    
+object_list = []
+    
 '''
 Spatial detection network demo.
     Performs inference on RGB camera and retrieves spatial location coordinates: x,y,z relative to the center of depth map.
 '''
+
+ser = serial.Serial ("/dev/ttyS0", 115200)
+
 
 # Get argument first
 nnBlobPath = str((Path(__file__).parent / Path('../models/mobilenet-ssd_openvino_2021.4_6shave.blob')).resolve().absolute())
@@ -155,8 +175,17 @@ with dai.Device(pipeline) as device:
             cv2.putText(frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
             cv2.putText(frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
 
+            object = ObjetSpatial(x=detection.spatialCoordinates.x, y=detection.spatialCoordinates.y, z=detection.spatialCoordinates.z, type_objet=label)
+            object_list.append(object)
+
             cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), cv2.FONT_HERSHEY_SIMPLEX)
 
+        uartPayload = ""
+        for obj in object_list:
+            uartPayload += obj.sendingformat() + ";"
+        ser.write(uartPayload+"\n")
+        print(uartPayload)
+        object_list = []
         cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))
         cv2.imshow("depth", depthFrameColor)
         cv2.imshow("preview", frame)

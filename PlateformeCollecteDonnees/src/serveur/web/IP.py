@@ -30,7 +30,8 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
-                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None, 'distance_recul':None }
+                'azimut':None, 'distance_recul':None, 'presence':None , 'humidite':None, 
+                'distance_recul':None }
 
 def get_user_from_api_key(api_key):
     """
@@ -186,7 +187,7 @@ def post_data():
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
-            if len(data_list) == 16:  # Assurez-vous que tous les champs attendus sont présents
+            if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
                     "eui": str(data_list[0]).lower(),
@@ -204,9 +205,10 @@ def post_data():
                     "acceleration_Z": float(data_list[12]),
                     "angle": float(data_list[13]),
                     "azimuth": float(data_list[14]),
-                    "distance_recul": str(data_list[15])
+                    "distance_recul": str(data_list[15]),
+                    "humidite": float(data_list[16]),
+                    "temperature": float(data_list[17])
                 }
-                
                 Q_out.put(data)
                 add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200

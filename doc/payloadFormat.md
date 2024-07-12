@@ -29,15 +29,23 @@ ce format permet à l'utilisateur de définir sa propre tramme
 |----|-------|-----------|---------|
 | 1  | 0-15  | oui       | Message |
 
-## Trammes de données
+## Trammes de données LoRa
 
 | ID  | subId | timestamp | Donnée               | Donnée                | Donnée                | Donnée         | Donnée        |  Donnée              |
 |-----|-------|-----------|----------------------|-----------------------|-----------------------|----------------|---------------|----------------------|
 |  2  |  non  | oui       | Latitude             | Longitude             | Altitude              | Angle          | luminosite    | Vitesse Angulaire X  |
 |     |       |           | Vitesse Angulaire Y  | Vitesse Angulaire Z   | Pression              | Accelération X | Accelération Y| Accelération Z       | 
 |     |       |           | Angle                | Azimut                |                       |                |               |                      |
-|  3  |   0   | non       | Distance             |                       |                       |                |               |                      |
+|  3  |   0   | non       | Distance             | Humidite              | Temperature           |                |               |                      |
 
+
+## Trammes de données Raspi -> esp
+
+| x | y | z | label |
+
+ou 
+
+x,y,z,label;x,y,z,label;...;x,y,z,label;
 
 
 # Format des trammes d'envoi de donnnées Bluetooth

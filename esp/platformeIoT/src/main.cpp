@@ -29,6 +29,7 @@ String dataFromBluetooth;
 String dataFromUart;
 String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
 String loraPayload, btPayload;
+String objects;
 long distanceValue = 0;
 float temperature, humidity;
 
@@ -50,7 +51,7 @@ uint32_t delayMS;
 void setup() 
 {
   // Initialisation des communications
-  Serial.begin(9600); //initialisation du port série
+  Serial.begin(115200); //initialisation du port série (qui fait aussi la communication avec la raspi)
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
   
@@ -211,7 +212,7 @@ void traitementReceptionBluetooth()
           char formattedHumidity[6]; // 5 digits + null terminator
           snprintf(formattedHumidity, sizeof(formattedHumidity), "%05.2f", humidity);
 
-          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + "\n";
+          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + objects + "\n";
           SerialBT.print(btPayload);
           Serial.println("btPayload : " + btPayload);
           break;
@@ -226,14 +227,14 @@ void traitementReceptionBluetooth()
 }
 
 /**
- * @brief Traitement de la réception de l'UART
+ * @brief Traitement de la réception de l'UART de la pycom
  * 
  */
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
     dataFromUart = SerialPort.readStringUntil('\n');
-    Serial.print("UART : " + dataFromUart);
+    Serial.print("UART pycom : " + dataFromUart);
     //verifier le premier caractere
     switch (dataFromUart[0])
     {
@@ -249,6 +250,22 @@ void traitementReceptionUart()
       default:
         break;
     }
+    Serial.write(dataFromUart.c_str());
+    SerialBT.print(dataFromUart);
+  }
+}
+
+/**
+ * @brief Traitement de la reception de l'uart avec le raspi
+ * 
+ */
+void traitementReceptionUartRpi()
+{
+  if (SerialPort.available()) {
+    dataFromUart = SerialPort.readStringUntil('\n');
+    Serial.print("UART rpi : " + dataFromUart);
+    objects = dataFromUart;
+    
     Serial.write(dataFromUart.c_str());
     SerialBT.print(dataFromUart);
   }

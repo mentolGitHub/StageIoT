@@ -3,6 +3,7 @@
 -- DROP TABLE IF EXISTS DeviceOwners;
 -- DROP TABLE IF EXISTS Device;
 -- DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Obstacles;
 
 CREATE TABLE IF NOT EXISTS Device (
     `dev-eui` varchar(255) NOT NULL PRIMARY KEY,
@@ -64,10 +65,25 @@ CREATE TABLE IF NOT EXISTS Auth_Token (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
+CREATE TABLE IF NOT EXISTS Obstacles (
+    `id` serial,
+    `timestamp` DATETIME(3) NOT NULL,
+    `gps` POINT NOT NULL SRID 4326,
+    `altitude` float DEFAULT NULL,
+    `vitesse_X` float DEFAULT NULL,
+    `vitesse_Y` float DEFAULT NULL,
+    `vitesse_Z` float DEFAULT NULL,
+    `acceleration_X` float DEFAULT NULL,
+    `acceleration_Y` float DEFAULT NULL,
+    `acceleration_Z` float DEFAULT NULL,
+    `type` varchar(30) DEFAULT NULL,
+    `forme` POLYGON
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
 
 
 INSERT INTO Users (username, password, role) VALUES ('a', '$2b$12$MF83CvvYYxd6QSOb4SPm4.m4PXghwwRncpURAro7sfs2AAkZ6ORuW', 'admin');
-
 -- renvoie les données entre 2 dates d'un device / d'une liste de device
 
 -- Donne la liste des device au alentours (rayon a selectionner)

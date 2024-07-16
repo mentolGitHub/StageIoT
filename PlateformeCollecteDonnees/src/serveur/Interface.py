@@ -28,7 +28,7 @@ def save_DB(data,id=0):
         table = "Data"
         db_cursor.execute("SELECT * FROM "+table+" WHERE timestamp = %(timestamp)s",data)
         
-        if db_cursor.arraysize == 2:
+        if db_cursor.rowcount >= 1:
             utils.print_SQL_response(db_cursor)
             query=""
             match id :
@@ -36,15 +36,23 @@ def save_DB(data,id=0):
                     pass
                 
         else :
-            query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
-                    presence, pression, longitude, latitude, altitude, angle, \
-                    vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
-                    acceleration_X, acceleration_Y,acceleration_Z,\
-                    azimuth, distance_recul, source) \
-                    VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosity)s,\
-                    %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
-                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
-                    %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s, %(eui)s)"
+            match id :
+                case 2 :
+                    
+                    query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
+                            presence, pression, longitude, latitude, altitude, angle, \
+                            vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
+                            acceleration_X, acceleration_Y,acceleration_Z,\
+                            azimuth, distance_recul, source) \
+                            VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosity)s,\
+                            %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
+                            %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
+                            %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s, %(eui)s)"
+                    
+                case 3 :
+                    table = "Obstacles"
+                    query = "INSERT INTO "+ table +" "
+                    
         # print(query,data)
         # print(data)
         db_cursor.execute(query,data)

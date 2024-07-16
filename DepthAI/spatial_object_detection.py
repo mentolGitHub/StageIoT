@@ -184,6 +184,7 @@ with dai.Device(pipeline) as device:
         for obj in object_list:
             uartPayload += obj.sendingformat() + ";"
         ser.write((uartPayload+"\n").encode('utf-8'))
+        ser.flush()
         print(uartPayload)
         object_list = []
         cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))

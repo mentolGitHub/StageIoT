@@ -182,11 +182,11 @@ with dai.Device(pipeline) as device:
 
             # cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), cv2.FONT_HERSHEY_SIMPLEX)
 
-        uartPayload = ""
+        uartPayload = "4"
         for obj in object_list:
             if obj.type_objet in usefull_labels:
                 uartPayload += obj.sendingformat() + ";"
-        if uartPayload != "":
+        if uartPayload != "4":
             ser.write((uartPayload+"\n").encode('utf-8'))
             ser.flush()
             print(uartPayload)

@@ -271,6 +271,7 @@ void traitementReceptionUartRpi()
     objects = dataFromUart;
     
     Serial.write(dataFromUart.c_str());
+    SerialPort.print(dataFromUart);
     SerialBT.print(dataFromUart);
   }
 }

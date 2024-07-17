@@ -236,6 +236,7 @@ void traitementReceptionBluetooth()
 void traitementReceptionUart()
 {
   if (SerialPort.available()) {
+    dataFromUart = "";
     dataFromUart = SerialPort.readStringUntil('\n');
     Serial.print("UART pycom : " + dataFromUart);
     //verifier le premier caractere
@@ -264,8 +265,9 @@ void traitementReceptionUart()
  */
 void traitementReceptionUartRpi()
 {
-  if (SerialPort.available()) {
-    dataFromUart = SerialPort.readStringUntil('\n');
+  if (Serial.available()) {
+    dataFromUart = "";
+    dataFromUart = Serial.readStringUntil('\n');
     Serial.print("UART rpi : " + dataFromUart);
     objects = dataFromUart;
     

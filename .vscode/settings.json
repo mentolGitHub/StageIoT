@@ -8,7 +8,8 @@
         "vector": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp",
-        "sys_app.h": "c"
+        "sys_app.h": "c",
+        "thread": "cpp"
     },
     "python.analysis.extraPaths": [
         "./PlateformeCollecteDonnees/src/serveur"

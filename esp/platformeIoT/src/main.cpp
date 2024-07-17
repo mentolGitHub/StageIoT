@@ -18,7 +18,6 @@ DHT_Unified dht(DHTPIN, DHTTYPE);
 #error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
 #endif
 
-
 /* Déclaration des objets */
 
 //ports séries
@@ -199,7 +198,7 @@ void traitementReceptionBluetooth()
           }
           // envoi des data LoRa
           distanceValue = distance();
-          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "," + String(humidity) + "," + String(temperature) + "\n";
+          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "," + String(humidity) + "," + String(temperature) + "\n4"+ objects + "\n";
           SerialPort.print(loraPayload);
           Serial.println("loraPayload : " + loraPayload);
 
@@ -216,7 +215,7 @@ void traitementReceptionBluetooth()
           char formattedHumidity[6]; // 5 digits + null terminator
           snprintf(formattedHumidity, sizeof(formattedHumidity), "%05.2f", humidity);
 
-          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + objects + "\n";
+          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + "\n4" + objects + "\n";
           SerialBT.print(btPayload);
           Serial.println("btPayload : " + btPayload);
           break;
@@ -272,7 +271,7 @@ void traitementReceptionUartRpi()
     
     Serial.write(dataFromUart.c_str());
     SerialPort.print(dataFromUart);
-    SerialBT.print(dataFromUart);
+    SerialBT.print("data rpi : " + dataFromUart);
   }
 }
 

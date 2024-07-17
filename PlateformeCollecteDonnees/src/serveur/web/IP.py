@@ -182,6 +182,8 @@ def post_data():
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
+            print (data_list)
+            print (len(data_list))
             if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
@@ -209,7 +211,10 @@ def post_data():
                 return jsonify({"status": "success"}), 200
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
+        elif int(raw_data[0]) == 4:
+            print(data_list)
         else:
+            print(data_list)
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
 
 

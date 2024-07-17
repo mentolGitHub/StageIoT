@@ -7,6 +7,7 @@ import Interface
 import MQTT
 import web.IP as IP
 import utils
+import os
 
 Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 
         "APP_username":"stm32lora1@ttn" , "APP_password":"NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA", 
@@ -65,7 +66,8 @@ def init_db():
                         print("Veulliez respecter la syntaxe ", end="")
                         
         # Import tables (if they dont exist yet)
-        path_setup_DB = __file__.rsplit("/",1)[0]+"/"+Config['db_init_file']+".sql"
+        
+        path_setup_DB = os.path.join(__file__.rsplit(os.path.sep, 1)[0], Config['db_init_file']+".sql")
         sql=open(path_setup_DB)
         cursor.execute(sql.read(), multi=True)
         
@@ -86,7 +88,7 @@ def init_config():
     It is not nessecary to enter evey field of the config file as there are default values
     """
 
-    path = __file__.rsplit("/",1)[0]+"/config.conf"
+    path = os.path.join(__file__.rsplit(os.path.sep, 1)[0], "config.conf")
     # print(path)
     conf = open(path)
     

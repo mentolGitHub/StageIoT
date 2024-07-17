@@ -47,6 +47,8 @@ lora.join(activation=LoRa.OTAA, auth=(dev_eui_unhex, app_eui_unhex, app_key_unhe
 while not lora.has_joined():        # Attente de connexion au réseau LoRaWAN
     time.sleep(2.5)
     pycom.rgbled(0x010000)          # Couleur led rouge pour signaler la non connexion
+    uart.write("01"+dev_eui.lower()+"\n") 
+    print("envoi eui")
     print('Not yet joined...')
 
 pycom.rgbled(0x000100)              # Couleur led verte pour signaler la connexion

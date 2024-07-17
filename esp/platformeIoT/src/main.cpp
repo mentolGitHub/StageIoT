@@ -7,6 +7,7 @@
 #include <DHT.h>
 #include <DHT_U.h>
 #include <thread>
+#include <Stream.h>
 
 #define DHTPIN 2     
 #define DHTTYPE DHT11
@@ -55,6 +56,8 @@ void setup()
   Serial.begin(115200); //initialisation du port série (qui fait aussi la communication avec la raspi)
   SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
   SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
+
+
   
   // Initialisation des capteurs
   // capteur de température et d'humidité
@@ -265,15 +268,12 @@ void traitementReceptionUart()
  */
 void traitementReceptionUartRpi()
 {
+  dataFromUart = "";
   if (Serial.available()) {
-    dataFromUart = "";
     dataFromUart = Serial.readStringUntil('\n');
-    Serial.print("UART rpi : " + dataFromUart);
-    objects = dataFromUart;
-    
-    Serial.write(dataFromUart.c_str());
-    SerialPort.print(dataFromUart);
-    SerialBT.print("data rpi : " + dataFromUart);
+    //SerialPort.print(dataFromUart);
+    SerialBT.print(dataFromUart+"\n");
+    SerialBT.flush();
   }
 }
 

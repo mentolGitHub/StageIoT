@@ -19,7 +19,11 @@ class ObjetSpatial:
         return f"ObjetSpatial(x={self.x}, y={self.y}, z={self.z}, type_objet='{self.type_objet}')"
     
     def sendingformat(self):
-        return f"{self.x},{self.y},{self.z},{self.type_objet}"
+        x_formatted = f"{self.x:6}"
+        y_formatted = f"{self.y:6}"
+        z_formatted = f"{self.z:6}"
+        type_objet_formatted = f"{self.type_objet:10}"
+        return f"{x_formatted},{y_formatted},{z_formatted},{type_objet_formatted}"
 
     
 object_list = []

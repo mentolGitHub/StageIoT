@@ -6,6 +6,7 @@
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
 #include <DHT_U.h>
+#include <thread>
 
 #define DHTPIN 2     
 #define DHTTYPE DHT11
@@ -37,6 +38,7 @@ float temperature, humidity;
 
 void traitementReceptionBluetooth();
 void traitementReceptionUart();
+void traitementReceptionUartRpi();
 void dht_mesure(float* temperature, float* humidity);
 const int triggerPin = 5; 
 const int echoPin = 18; 
@@ -79,6 +81,9 @@ void setup()
   Serial.print  (F("Min Value:   ")); Serial.print(sensor.min_value); Serial.println(F("%"));
   Serial.print  (F("Resolution:  ")); Serial.print(sensor.resolution); Serial.println(F("%"));
   Serial.println(F("------------------------------------"));
+
+  std::thread t([&]() { dht_mesure(&temperature, &humidity); });
+  t.detach();
   
   delayMS = sensor.min_delay / 1000;
 
@@ -93,10 +98,9 @@ void setup()
 /* Main loop */
 void loop() 
 {
-  dht_mesure(&temperature, &humidity);
   traitementReceptionBluetooth();
   traitementReceptionUart();
-  delay(delayMS);
+  traitementReceptionUartRpi();
 }
 
 
@@ -303,26 +307,29 @@ float distance(){
  * @return void
  */
 void dht_mesure(float* temperature, float* humidity){
-  sensors_event_t event;
-  dht.temperature().getEvent(&event);
-  if (isnan(event.temperature)) {
-    Serial.println(F("Error reading temperature!"));
-  }
-  else {
-    Serial.print(F("Temperature: "));
-    Serial.print(event.temperature);
-    *temperature = event.temperature;
-    Serial.println(F("°C"));
-  }
-  // Get humidity event and print its value.
-  dht.humidity().getEvent(&event);
-  if (isnan(event.relative_humidity)) {
-    Serial.println(F("Error reading humidity!"));
-  }
-  else {
-    Serial.print(F("Humidity: "));
-    Serial.print(event.relative_humidity);
-    *humidity = event.relative_humidity;
-    Serial.println(F("%"));
+  while (1) {
+    sensors_event_t event;
+    dht.temperature().getEvent(&event);
+    if (isnan(event.temperature)) {
+      Serial.println(F("Error reading temperature!"));
+    }
+    else {
+      Serial.print(F("Temperature: "));
+      Serial.print(event.temperature);
+      *temperature = event.temperature;
+      Serial.println(F("°C"));
+    }
+    // Get humidity event and print its value.
+    dht.humidity().getEvent(&event);
+    if (isnan(event.relative_humidity)) {
+      Serial.println(F("Error reading humidity!"));
+    }
+    else {
+      Serial.print(F("Humidity: "));
+      Serial.print(event.relative_humidity);
+      *humidity = event.relative_humidity;
+      Serial.println(F("%"));
+    }
+    delay(delayMS);
   }
 }

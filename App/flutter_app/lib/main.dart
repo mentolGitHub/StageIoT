@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:light/light.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -37,49 +39,89 @@ class _MainPageState extends State<MainPage> {
   bool _detectObjects = false;
   String _serverIP = '';
   Timer? _sensorTimer;
-  Map<String, dynamic> _sensorData = {};
+  bool _isSendingData = false;
+
+  // Sensor data
+  Position? _position;
+  double _luminosity = 0;
+  GyroscopeEvent? _gyroscope;
+  double _pressure = 0;
+  AccelerometerEvent? _accelerometer;
+  double _angle = 0;
+  double _azimuth = 0;
+
+  // Sensor streams
+  StreamSubscription<Position>? _positionSubscription;
+  StreamSubscription<int>? _luminositySubscription;
+  StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
+  StreamSubscription<double>? _pressureSubscription;
+  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
 
   @override
   void initState() {
     super.initState();
-    _startSensorReading();
+    _initSensors();
   }
 
   @override
   void dispose() {
-    _sensorTimer?.cancel();
+    _stopSensorReading();
     _connection?.dispose();
     super.dispose();
   }
 
-  void _startSensorReading() {
-    _sensorTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      _readSensorData();
+  void _initSensors() async {
+    // Initialize location
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+    _positionSubscription =
+        Geolocator.getPositionStream().listen((Position position) {
+      setState(() {
+        _position = position;
+      });
     });
+
+    // Initialize light sensor
+    Light().lightSensorStream.listen((int luxValue) {
+      setState(() {
+        _luminosity = luxValue.toDouble();
+      });
+    });
+
+    // Initialize gyroscope
+    _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
+      setState(() {
+        _gyroscope = event;
+      });
+    });
+
+    // Initialize accelerometer
+    _accelerometerSubscription =
+        accelerometerEvents.listen((AccelerometerEvent event) {
+      setState(() {
+        _accelerometer = event;
+      });
+    });
+
+    // Note: Angle and Azimuth typically require more complex calculations
+    // You might need to use additional sensors or libraries to get these values accurately
   }
 
-  void _readSensorData() {
-    accelerometerEvents.listen((AccelerometerEvent event) {
-      setState(() {
-        _sensorData['accelerometer'] = {
-          'x': event.x,
-          'y': event.y,
-          'z': event.z,
-        };
-      });
-    });
-
-    gyroscopeEvents.listen((GyroscopeEvent event) {
-      setState(() {
-        _sensorData['gyroscope'] = {
-          'x': event.x,
-          'y': event.y,
-          'z': event.z,
-        };
-      });
-    });
-
-    // Add more sensor readings as needed
+  void _stopSensorReading() {
+    _positionSubscription?.cancel();
+    _luminositySubscription?.cancel();
+    _gyroscopeSubscription?.cancel();
+    _pressureSubscription?.cancel();
+    _accelerometerSubscription?.cancel();
   }
 
   void _selectBT() async {
@@ -125,43 +167,80 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  void _sendData() async {
-    if (_use4G5G) {
-      await _sendDataToServer();
-    } else if (_isConnected) {
-      await _sendDataViaBluetooth();
+  void _toggleSendData() {
+    setState(() {
+      _isSendingData = !_isSendingData;
+    });
+
+    if (_isSendingData) {
+      _startSendingData();
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text('Please connect to a Bluetooth device or enable 4G/5G')),
-      );
+      _stopSendingData();
     }
+  }
+
+  void _startSendingData() {
+    _sensorTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (_use4G5G) {
+        _sendDataToServer();
+      } else if (_isConnected) {
+        _sendDataViaBluetooth();
+      } else {
+        _stopSendingData();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Please connect to a Bluetooth device or enable 4G/5G')),
+        );
+      }
+    });
+  }
+
+  void _stopSendingData() {
+    _sensorTimer?.cancel();
+    _sensorTimer = null;
+  }
+
+  String _formatData() {
+    if (_position == null || _gyroscope == null || _accelerometer == null) {
+      return '';
+    }
+
+    return '2,${DateTime.now().millisecondsSinceEpoch},' +
+        '${_position!.latitude},${_position!.longitude},${_position!.altitude},' +
+        '$_luminosity,' +
+        '${_gyroscope!.x},${_gyroscope!.y},${_gyroscope!.z},' +
+        '$_pressure,' +
+        '${_accelerometer!.x},${_accelerometer!.y},${_accelerometer!.z},' +
+        '$_angle,$_azimuth';
   }
 
   Future<void> _sendDataToServer() async {
     if (_serverIP.isEmpty) {
+      _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Please enter a server IP')),
       );
       return;
     }
 
+    String formattedData = _formatData();
+    if (formattedData.isEmpty) {
+      return; // Not all sensor data is available yet
+    }
+
     try {
       final response = await http.post(
         Uri.parse('http://$_serverIP/post_data'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(_sensorData),
+        headers: {'Content-Type': 'text/plain'},
+        body: formattedData,
       );
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data sent successfully via 4G/5G')),
-        );
-      } else {
+      if (response.statusCode != 200) {
         throw Exception('Failed to send data');
       }
     } catch (e) {
+      _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error sending data: $e')),
       );
@@ -170,21 +249,24 @@ class _MainPageState extends State<MainPage> {
 
   Future<void> _sendDataViaBluetooth() async {
     if (_connection == null || !_connection!.isConnected) {
+      _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Not connected to a Bluetooth device')),
       );
       return;
     }
 
+    String formattedData = _formatData();
+    if (formattedData.isEmpty) {
+      return; // Not all sensor data is available yet
+    }
+
     try {
-      String jsonData = json.encode(_sensorData);
-      Uint8List bytes = Uint8List.fromList(utf8.encode(jsonData));
+      Uint8List bytes = Uint8List.fromList(utf8.encode(formattedData));
       _connection!.output.add(bytes);
       await _connection!.output.allSent;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Data sent successfully via Bluetooth')),
-      );
     } catch (e) {
+      _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error sending data via Bluetooth: $e')),
       );
@@ -193,7 +275,8 @@ class _MainPageState extends State<MainPage> {
 
   void _exportData() {
     // Implement data export functionality
-    print('Exporting data: $_sensorData');
+    String formattedData = _formatData();
+    print('Exporting data: $formattedData');
   }
 
   void _validateParameters() {
@@ -231,8 +314,8 @@ class _MainPageState extends State<MainPage> {
             Text(_isConnected ? 'Connecté' : 'Déconnecté'),
             SizedBox(height: 10),
             ElevatedButton(
-              onPressed: _sendData,
-              child: Text('Send_data'),
+              onPressed: _toggleSendData,
+              child: Text(_isSendingData ? 'Stop Sending' : 'Send_data'),
             ),
             SizedBox(height: 10),
             Row(

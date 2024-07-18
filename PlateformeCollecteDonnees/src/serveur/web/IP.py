@@ -177,6 +177,7 @@ def post_data():
     """
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
+        print(raw_data)
         raw_data= raw_data.removesuffix("\n")
         
         data_list = raw_data[1:].split(',')

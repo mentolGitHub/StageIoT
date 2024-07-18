@@ -39,6 +39,10 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_bluetooth_serial: ^0.4.0
+  sensors_plus: ^5.0.1
+  webview_flutter: ^4.8.0
+  http: ^0.13.4
   
 
   # The "flutter_lints" package below contains a set of recommended lints to

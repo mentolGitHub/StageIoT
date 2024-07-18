@@ -214,7 +214,7 @@ def post_data():
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 4:
             print(data_list)
-            return jsonify({"status": "error", "message": "Message ID not implemented yet"}), 400
+            return jsonify({"status": "success", "message": "Objects not implemented yet"}), 200
         else:
             print(data_list)
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400

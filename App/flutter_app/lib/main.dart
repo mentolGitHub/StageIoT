@@ -214,7 +214,7 @@ class _MainPageState extends State<MainPage> {
       return '';
     }
 
-    return '2,${DateTime.now().millisecondsSinceEpoch},' +
+    return '21111111111111111,${DateTime.now().millisecondsSinceEpoch},' +
         '${_position!.latitude},${_position!.longitude},${_position!.altitude},' +
         '$_luminosity,' +
         '${_gyroscope!.x},${_gyroscope!.y},${_gyroscope!.z},' +

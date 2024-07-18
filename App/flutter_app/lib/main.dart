@@ -3,7 +3,6 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:light/light.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -49,18 +48,17 @@ class _MainPageState extends State<MainPage> {
   AccelerometerEvent? _accelerometer;
   double _angle = 0;
   double _azimuth = 0;
+
+  // External sensor data
   double _distance = 0;
   double _externalHumidity = 0;
   double _externalTemperature = 0;
-
-  //objects detected
-  List<Map<String, dynamic>> _detectedObjects = [];
+  String _objectDetectionData = '';
 
   // Sensor streams
   StreamSubscription<Position>? _positionSubscription;
   StreamSubscription<int>? _luminositySubscription;
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
-  StreamSubscription<double>? _pressureSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
 
   @override
@@ -77,7 +75,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _initSensors() async {
-    // Initialize location
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       return Future.error('Location services are disabled.');
@@ -96,21 +93,18 @@ class _MainPageState extends State<MainPage> {
       });
     });
 
-    // Initialize light sensor
     Light().lightSensorStream.listen((int luxValue) {
       setState(() {
         _luminosity = luxValue.toDouble();
       });
     });
 
-    // Initialize gyroscope
     _gyroscopeSubscription = gyroscopeEvents.listen((GyroscopeEvent event) {
       setState(() {
         _gyroscope = event;
       });
     });
 
-    // Initialize accelerometer
     _accelerometerSubscription =
         accelerometerEvents.listen((AccelerometerEvent event) {
       setState(() {
@@ -118,7 +112,7 @@ class _MainPageState extends State<MainPage> {
       });
     });
 
-    // Note: Angle and Azimuth typically require more complex calculations
+    // Note: Angle, Azimuth, and Pressure typically require more complex calculations
     // You might need to use additional sensors or libraries to get these values accurately
   }
 
@@ -126,7 +120,6 @@ class _MainPageState extends State<MainPage> {
     _positionSubscription?.cancel();
     _luminositySubscription?.cancel();
     _gyroscopeSubscription?.cancel();
-    _pressureSubscription?.cancel();
     _accelerometerSubscription?.cancel();
   }
 
@@ -163,6 +156,15 @@ class _MainPageState extends State<MainPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Connected to ${_selectedDevice!.name}')),
       );
+
+      _connection!.input!.listen(_processIncomingBluetoothData).onDone(() {
+        setState(() {
+          _isConnected = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Disconnected from ${_selectedDevice!.name}')),
+        );
+      });
     } catch (e) {
       setState(() {
         _isConnected = false;
@@ -222,18 +224,6 @@ class _MainPageState extends State<MainPage> {
         '$_distance,$_externalHumidity,$_externalTemperature';
   }
 
-  String _formatObjectDetectionData() {
-    if (_detectedObjects.isEmpty) {
-      return '';
-    }
-
-    List<String> objectStrings = _detectedObjects.map((obj) {
-      return '${obj['x']},${obj['y']},${obj['z']},${obj['label']}';
-    }).toList();
-
-    return '4 ${objectStrings.join(';')}';
-  }
-
   Future<void> _sendDataToServer() async {
     if (_serverIP.isEmpty) {
       _stopSendingData();
@@ -260,12 +250,11 @@ class _MainPageState extends State<MainPage> {
       }
 
       // Send object detection data if available
-      String objectData = _formatObjectDetectionData();
-      if (objectData.isNotEmpty) {
+      if (_objectDetectionData.isNotEmpty) {
         final objectResponse = await http.post(
           Uri.parse('http://$_serverIP/post_data'),
           headers: {'Content-Type': 'text/plain'},
-          body: objectData,
+          body: '4 $_objectDetectionData',
         );
 
         if (objectResponse.statusCode != 200) {
@@ -298,14 +287,6 @@ class _MainPageState extends State<MainPage> {
       Uint8List bytes = Uint8List.fromList(utf8.encode(formattedData));
       _connection!.output.add(bytes);
       await _connection!.output.allSent;
-
-      // Send object detection data if available
-      String objectData = _formatObjectDetectionData();
-      if (objectData.isNotEmpty) {
-        Uint8List objectBytes = Uint8List.fromList(utf8.encode(objectData));
-        _connection!.output.add(objectBytes);
-        await _connection!.output.allSent;
-      }
     } catch (e) {
       _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
@@ -327,25 +308,11 @@ class _MainPageState extends State<MainPage> {
         });
       }
     } else if (message.startsWith('4')) {
-      List<String> objects = message.substring(2).split(';');
+      // Object detection data
       setState(() {
-        _detectedObjects = objects.map((obj) {
-          List<String> parts = obj.split(',');
-          return {
-            'x': double.parse(parts[0]),
-            'y': double.parse(parts[1]),
-            'z': double.parse(parts[2]),
-            'label': parts[3],
-          };
-        }).toList();
+        _objectDetectionData = message.substring(2); // Store the raw data
       });
     }
-  }
-
-  void _exportData() {
-    // Implement data export functionality
-    String formattedData = _formatData();
-    print('Exporting data: $formattedData');
   }
 
   void _validateParameters() {
@@ -377,20 +344,21 @@ class _MainPageState extends State<MainPage> {
           children: [
             ElevatedButton(
               onPressed: _selectBT,
-              child: Text('selectionner BT'),
+              child: Text('Select Bluetooth Device'),
             ),
             SizedBox(height: 10),
-            Text(_isConnected ? 'Connecté' : 'Déconnecté'),
+            Text(_isConnected ? 'Connected' : 'Disconnected'),
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: _toggleSendData,
-              child: Text(_isSendingData ? 'Stop Sending' : 'Send_data'),
+              child:
+                  Text(_isSendingData ? 'Stop Sending' : 'Start Sending Data'),
             ),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('4g/5g'),
+                Text('Use 4G/5G'),
                 Switch(
                   value: _use4G5G,
                   onChanged: (value) {
@@ -404,7 +372,7 @@ class _MainPageState extends State<MainPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('detection d\'objet'),
+                Text('Detect Objects'),
                 Switch(
                   value: _detectObjects,
                   onChanged: (value) {
@@ -416,13 +384,8 @@ class _MainPageState extends State<MainPage> {
               ],
             ),
             SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: _exportData,
-              child: Text('export data'),
-            ),
-            SizedBox(height: 10),
             TextField(
-              decoration: InputDecoration(labelText: 'IP serveur'),
+              decoration: InputDecoration(labelText: 'Server IP'),
               onChanged: (value) {
                 setState(() {
                   _serverIP = value;
@@ -432,7 +395,7 @@ class _MainPageState extends State<MainPage> {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _validateParameters,
-              child: Text('valider les parametres'),
+              child: Text('Validate Parameters'),
             ),
             SizedBox(height: 20),
             Text('External Sensors:'),
@@ -440,20 +403,10 @@ class _MainPageState extends State<MainPage> {
             Text('Humidity: $_externalHumidity'),
             Text('Temperature: $_externalTemperature'),
             SizedBox(height: 20),
-            Text('Detected Objects:'),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _detectedObjects.length,
-                itemBuilder: (context, index) {
-                  var obj = _detectedObjects[index];
-                  return ListTile(
-                    title: Text('Object ${index + 1}'),
-                    subtitle: Text(
-                        'X: ${obj['x']}, Y: ${obj['y']}, Z: ${obj['z']}, Label: ${obj['label']}'),
-                  );
-                },
-              ),
-            ),
+            Text('Received Object Detection Data:'),
+            Text(_objectDetectionData.isNotEmpty
+                ? _objectDetectionData
+                : 'No object detection data received'),
           ],
         ),
       ),

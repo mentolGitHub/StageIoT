@@ -49,6 +49,12 @@ class _MainPageState extends State<MainPage> {
   AccelerometerEvent? _accelerometer;
   double _angle = 0;
   double _azimuth = 0;
+  double _distance = 0;
+  double _externalHumidity = 0;
+  double _externalTemperature = 0;
+
+  //objects detected
+  List<Map<String, dynamic>> _detectedObjects = [];
 
   // Sensor streams
   StreamSubscription<Position>? _positionSubscription;
@@ -212,7 +218,20 @@ class _MainPageState extends State<MainPage> {
         '${_gyroscope!.x},${_gyroscope!.y},${_gyroscope!.z},' +
         '$_pressure,' +
         '${_accelerometer!.x},${_accelerometer!.y},${_accelerometer!.z},' +
-        '$_angle,$_azimuth';
+        '$_angle,$_azimuth,' +
+        '$_distance,$_externalHumidity,$_externalTemperature';
+  }
+
+  String _formatObjectDetectionData() {
+    if (_detectedObjects.isEmpty) {
+      return '';
+    }
+
+    List<String> objectStrings = _detectedObjects.map((obj) {
+      return '${obj['x']},${obj['y']},${obj['z']},${obj['label']}';
+    }).toList();
+
+    return '4 ${objectStrings.join(';')}';
   }
 
   Future<void> _sendDataToServer() async {
@@ -238,6 +257,20 @@ class _MainPageState extends State<MainPage> {
 
       if (response.statusCode != 200) {
         throw Exception('Failed to send data');
+      }
+
+      // Send object detection data if available
+      String objectData = _formatObjectDetectionData();
+      if (objectData.isNotEmpty) {
+        final objectResponse = await http.post(
+          Uri.parse('http://$_serverIP/post_data'),
+          headers: {'Content-Type': 'text/plain'},
+          body: objectData,
+        );
+
+        if (objectResponse.statusCode != 200) {
+          throw Exception('Failed to send object detection data');
+        }
       }
     } catch (e) {
       _stopSendingData();
@@ -265,11 +298,47 @@ class _MainPageState extends State<MainPage> {
       Uint8List bytes = Uint8List.fromList(utf8.encode(formattedData));
       _connection!.output.add(bytes);
       await _connection!.output.allSent;
+
+      // Send object detection data if available
+      String objectData = _formatObjectDetectionData();
+      if (objectData.isNotEmpty) {
+        Uint8List objectBytes = Uint8List.fromList(utf8.encode(objectData));
+        _connection!.output.add(objectBytes);
+        await _connection!.output.allSent;
+      }
     } catch (e) {
       _stopSendingData();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error sending data via Bluetooth: $e')),
       );
+    }
+  }
+
+  void _processIncomingBluetoothData(Uint8List data) {
+    String message = utf8.decode(data);
+    if (message.startsWith('3')) {
+      // External sensor data
+      List<String> parts = message.substring(1).split(',');
+      if (parts.length == 3) {
+        setState(() {
+          _distance = double.parse(parts[0]);
+          _externalHumidity = double.parse(parts[1]);
+          _externalTemperature = double.parse(parts[2]);
+        });
+      }
+    } else if (message.startsWith('4')) {
+      List<String> objects = message.substring(2).split(';');
+      setState(() {
+        _detectedObjects = objects.map((obj) {
+          List<String> parts = obj.split(',');
+          return {
+            'x': double.parse(parts[0]),
+            'y': double.parse(parts[1]),
+            'z': double.parse(parts[2]),
+            'label': parts[3],
+          };
+        }).toList();
+      });
     }
   }
 
@@ -364,6 +433,26 @@ class _MainPageState extends State<MainPage> {
             ElevatedButton(
               onPressed: _validateParameters,
               child: Text('valider les parametres'),
+            ),
+            SizedBox(height: 20),
+            Text('External Sensors:'),
+            Text('Distance: $_distance'),
+            Text('Humidity: $_externalHumidity'),
+            Text('Temperature: $_externalTemperature'),
+            SizedBox(height: 20),
+            Text('Detected Objects:'),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _detectedObjects.length,
+                itemBuilder: (context, index) {
+                  var obj = _detectedObjects[index];
+                  return ListTile(
+                    title: Text('Object ${index + 1}'),
+                    subtitle: Text(
+                        'X: ${obj['x']}, Y: ${obj['y']}, Z: ${obj['z']}, Label: ${obj['label']}'),
+                  );
+                },
+              ),
             ),
           ],
         ),

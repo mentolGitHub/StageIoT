@@ -5,6 +5,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
+import 'dart:typed_data';
 
 void main() {
   runApp(MyApp());
@@ -30,6 +31,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   BluetoothDevice? _selectedDevice;
+  BluetoothConnection? _connection;
   bool _isConnected = false;
   bool _use4G5G = false;
   bool _detectObjects = false;
@@ -46,11 +48,12 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     _sensorTimer?.cancel();
+    _connection?.dispose();
     super.dispose();
   }
 
   void _startSensorReading() {
-    _sensorTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _sensorTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       _readSensorData();
     });
   }
@@ -91,18 +94,47 @@ class _MainPageState extends State<MainPage> {
       setState(() {
         _selectedDevice = selectedDevice;
       });
+      _connectToBluetooth();
+    }
+  }
+
+  void _connectToBluetooth() async {
+    if (_selectedDevice == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('No device selected')),
+      );
+      return;
+    }
+
+    try {
+      _connection =
+          await BluetoothConnection.toAddress(_selectedDevice!.address);
+      setState(() {
+        _isConnected = true;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Connected to ${_selectedDevice!.name}')),
+      );
+    } catch (e) {
+      setState(() {
+        _isConnected = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error connecting to device: $e')),
+      );
     }
   }
 
   void _sendData() async {
     if (_use4G5G) {
       await _sendDataToServer();
-    } else if (_selectedDevice != null) {
+    } else if (_isConnected) {
       await _sendDataViaBluetooth();
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text('Please select a Bluetooth device or enable 4G/5G')),
+            content:
+                Text('Please connect to a Bluetooth device or enable 4G/5G')),
       );
     }
   }
@@ -117,14 +149,14 @@ class _MainPageState extends State<MainPage> {
 
     try {
       final response = await http.post(
-        Uri.parse('http://$_serverIP/data'),
+        Uri.parse('http://$_serverIP/post_data'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(_sensorData),
       );
 
       if (response.statusCode == 200) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Data sent successfully')),
+          SnackBar(content: Text('Data sent successfully via 4G/5G')),
         );
       } else {
         throw Exception('Failed to send data');
@@ -137,9 +169,26 @@ class _MainPageState extends State<MainPage> {
   }
 
   Future<void> _sendDataViaBluetooth() async {
-    // Implement Bluetooth data sending
-    // This is a placeholder and needs to be implemented based on your Bluetooth setup
-    print('Sending data via Bluetooth to ${_selectedDevice?.name}');
+    if (_connection == null || !_connection!.isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Not connected to a Bluetooth device')),
+      );
+      return;
+    }
+
+    try {
+      String jsonData = json.encode(_sensorData);
+      Uint8List bytes = Uint8List.fromList(utf8.encode(jsonData));
+      _connection!.output.add(bytes);
+      await _connection!.output.allSent;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Data sent successfully via Bluetooth')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error sending data via Bluetooth: $e')),
+      );
+    }
   }
 
   void _exportData() {
@@ -148,9 +197,18 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _validateParameters() {
-    if (_serverIP.isEmpty) {
+    if (_use4G5G && _serverIP.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please enter a server IP')),
+        SnackBar(content: Text('Please enter a server IP for 4G/5G mode')),
+      );
+      return;
+    }
+
+    if (!_use4G5G && !_isConnected) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                'Please connect to a Bluetooth device for Bluetooth mode')),
       );
       return;
     }
@@ -170,12 +228,12 @@ class _MainPageState extends State<MainPage> {
               child: Text('selectionner BT'),
             ),
             SizedBox(height: 10),
+            Text(_isConnected ? 'Connecté' : 'Déconnecté'),
+            SizedBox(height: 10),
             ElevatedButton(
               onPressed: _sendData,
               child: Text('Send_data'),
             ),
-            SizedBox(height: 10),
-            Text('Déconnecté n\'envoie pas'),
             SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

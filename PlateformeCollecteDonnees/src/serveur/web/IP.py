@@ -191,14 +191,11 @@ def post_data():
     
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
-        print(raw_data)
         raw_data= raw_data.removesuffix("\n")
         
         data_list = raw_data[1:].split(',')
         
         if int(raw_data[0]) == 2:
-            print (data_list)
-            print (len(data_list))
             if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
@@ -221,6 +218,7 @@ def post_data():
                     "humidite": float(data_list[16]),
                     "temperature": float(data_list[17])
                 }
+                print (data)
                 Q_out.put(data)
                 add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200
@@ -228,27 +226,20 @@ def post_data():
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 4:
             objects = raw_data[1:].split(';')
-            print (objects)
             for i in objects:
                 obj = i.split(',')
                 if len(obj) == 6:
                     eui = obj[0].removesuffix("\n")
                     timestamp = obj[1]
                     date = datetime.fromtimestamp(int(timestamp)/1000)
-                    print (date)
-                    print(obj)
-                    print(Objet(obj[2], obj[3], obj[4], obj[5]))
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
                     cursor.execute(query, (date, eui, obj[2], obj[3], obj[4], obj[5]))
                     db.commit()
                 elif obj != ['']:
-                    print("=================================")
-                    print (obj)
                     return jsonify({"status": "error", "message": "Invalid object format"}), 400
             
             return jsonify({"status": "success", "message": "Objets not implemented yet"}), 200
         else:
-            print(data_list)
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
 
 

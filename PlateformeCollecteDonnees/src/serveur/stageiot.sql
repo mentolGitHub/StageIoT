@@ -82,10 +82,13 @@ CREATE TABLE IF NOT EXISTS Obstacles (
 
 CREATE TABLE IF NOT EXISTS Objets (
     `ìd` serial,
+    `timestamp` DATETIME(3) NOT NULL,
+    `eui` varchar(255) NOT NULL,
     `x` float NOT NULL,
     `y` float NOT NULL,
     `z` float NOT NULL,
-    `label` varchar(255) NOT NULL
+    `label` varchar(255) NOT NULL,
+    FOREIGN KEY (`eui`) REFERENCES Device (`dev-eui`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 

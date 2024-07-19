@@ -227,7 +227,6 @@ void traitementReceptionBluetooth()
           Serial.println("inconnu0 : " + token[0]);
           break;
       }
-      
     }
   }
 }
@@ -249,7 +248,7 @@ void traitementReceptionUart()
         switch (dataFromUart[1])
         {
           case '1': //envoi du dev eui
-            SerialBT.print(dataFromUart);
+            SerialBT.print(dataFromUart + "\n");
             break;
         }
         break;
@@ -258,7 +257,6 @@ void traitementReceptionUart()
         break;
     }
     Serial.write(dataFromUart.c_str());
-    SerialBT.print(dataFromUart);
   }
 }
 

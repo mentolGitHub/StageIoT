@@ -252,10 +252,11 @@ class _MainPageState extends State<MainPage> {
 
       // Send object detection data if available
       if (_objectDetectionData.isNotEmpty) {
+        final timestamp = DateTime.now().millisecondsSinceEpoch;
         final objectResponse = await http.post(
           Uri.parse('http://$_serverIP/post_data'),
           headers: {'Content-Type': 'text/plain'},
-          body: '4 $_objectDetectionData',
+          body: '4$_eui,$timestamp,$_objectDetectionData',
         );
 
         if (objectResponse.statusCode != 200) {

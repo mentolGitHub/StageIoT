@@ -202,8 +202,8 @@ def post_data():
             if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
-                    "eui": str(data_list[0]).lower(),
-                    "timestamp": int(data_list[1])/1000,
+                    "eui": str(data_list[0]).lower().removesuffix("\n"),
+                    "timestamp": int(data_list[1]),
                     "latitude": float(data_list[2]),
                     "longitude": float(data_list[3]),
                     "altitude": float(data_list[4]),
@@ -231,11 +231,15 @@ def post_data():
             print (objects)
             for i in objects:
                 obj = i.split(',')
-                if len(obj) == 4:
+                if len(obj) == 6:
+                    eui = obj[0].removesuffix("\n")
+                    timestamp = obj[1]
+                    date = datetime.fromtimestamp(int(timestamp)/1000)
+                    print (date)
                     print(obj)
-                    print(Objet(obj[0], obj[1], obj[2], obj[3]))
-                    query = "INSERT INTO Objets (x, y, z, label) VALUES (%s, %s, %s, %s)"
-                    cursor.execute(query, (obj[0], obj[1], obj[2], obj[3]))
+                    print(Objet(obj[2], obj[3], obj[4], obj[5]))
+                    query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
+                    cursor.execute(query, (date, eui, obj[2], obj[3], obj[4], obj[5]))
                     db.commit()
                 elif obj != ['']:
                     print("=================================")

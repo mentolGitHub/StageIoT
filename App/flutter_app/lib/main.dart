@@ -39,6 +39,7 @@ class _MainPageState extends State<MainPage> {
   String _serverIP = '';
   Timer? _sensorTimer;
   bool _isSendingData = false;
+  String _eui = '1111111111111111';
 
   // Sensor data
   Position? _position;
@@ -214,7 +215,7 @@ class _MainPageState extends State<MainPage> {
       return '';
     }
 
-    return '21111111111111111,${DateTime.now().millisecondsSinceEpoch},' +
+    return '2$_eui,${DateTime.now().millisecondsSinceEpoch},' +
         '${_position!.latitude},${_position!.longitude},${_position!.altitude},' +
         '$_luminosity,' +
         '${_gyroscope!.x},${_gyroscope!.y},${_gyroscope!.z},' +
@@ -297,9 +298,14 @@ class _MainPageState extends State<MainPage> {
 
   void _processIncomingBluetoothData(Uint8List data) {
     String message = utf8.decode(data);
+    if (message.startsWith('0')) {
+      if (message[1] == '1') {
+        _eui = message.substring(2);
+      }
+    }
     if (message.startsWith('3')) {
       // External sensor data
-      List<String> parts = message.substring(1).split(',');
+      List<String> parts = message.substring(2).split(',');
       if (parts.length == 3) {
         setState(() {
           _distance = double.parse(parts[0]);

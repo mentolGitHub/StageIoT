@@ -18,6 +18,16 @@ import base64
 import uuid
 from Interface import data_format
 
+class Objet:
+    def __init__(self, x, y, z, label):
+        self.x = x
+        self.y = y
+        self.z = z
+        self.label = label
+
+    def __repr__(self):
+        return f"Objet(x={self.x}, y={self.y}, z={self.z}, label='{self.label}')"
+
 app = Flask(__name__)
 CORS(app)
 api = Api(app)
@@ -175,6 +185,10 @@ def post_data():
     Returns:
         JSON response: A JSON response indicating the status of the request.
     """
+    
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
+    cursor = db.cursor()
+    
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         print(raw_data)
@@ -189,7 +203,7 @@ def post_data():
                 
                 data = {
                     "eui": str(data_list[0]).lower(),
-                    "timestamp": int(data_list[1]),
+                    "timestamp": int(data_list[1])/1000,
                     "latitude": float(data_list[2]),
                     "longitude": float(data_list[3]),
                     "altitude": float(data_list[4]),
@@ -213,8 +227,22 @@ def post_data():
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 4:
-            print(data_list)
-            return jsonify({"status": "success", "message": "Objects not implemented yet"}), 200
+            objects = raw_data[1:].split(';')
+            print (objects)
+            for i in objects:
+                obj = i.split(',')
+                if len(obj) == 4:
+                    print(obj)
+                    print(Objet(obj[0], obj[1], obj[2], obj[3]))
+                    query = "INSERT INTO Objets (x, y, z, label) VALUES (%s, %s, %s, %s)"
+                    cursor.execute(query, (obj[0], obj[1], obj[2], obj[3]))
+                    db.commit()
+                elif obj != ['']:
+                    print("=================================")
+                    print (obj)
+                    return jsonify({"status": "error", "message": "Invalid object format"}), 400
+            
+            return jsonify({"status": "success", "message": "Objets not implemented yet"}), 200
         else:
             print(data_list)
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400

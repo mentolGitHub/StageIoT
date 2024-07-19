@@ -80,6 +80,14 @@ CREATE TABLE IF NOT EXISTS Obstacles (
     `forme` POLYGON
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS Objets (
+    `ìd` serial,
+    `x` float NOT NULL,
+    `y` float NOT NULL,
+    `z` float NOT NULL,
+    `label` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 
 

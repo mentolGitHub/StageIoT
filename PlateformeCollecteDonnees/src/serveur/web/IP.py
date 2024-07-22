@@ -219,6 +219,7 @@ def post_data():
                     "temperature": float(data_list[17])
                 }
                 print (data)
+                query = "INSERT INTO Data (timestamp, temperature, humidity, luminosity, presence, pression, longitude, latitude, altitude, angle, , label) VALUES (%s, %s, %s, %s, %s, %s)"
                 Q_out.put(data)
                 add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200

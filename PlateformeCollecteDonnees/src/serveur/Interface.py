@@ -113,7 +113,7 @@ def IP_msg_handler(msg):
     res = cursor.fetchall()
     # print(res)
     if len(res)!=0:
-        save_DB(data)
+        save_DB(data, 2)
     else:
         print("device "+device+" not registered")
     

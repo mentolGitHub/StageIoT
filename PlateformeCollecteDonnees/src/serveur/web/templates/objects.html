@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisation des Objets Détectés</title>
+    <link rel="stylesheet" href="style.css"> <!-- Si vous avez un fichier CSS -->
+</head>
+<body>
+    <h1>Objets Détectés</h1>
+    <div id="objectsContainer"></div> 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchObjects();
+            setInterval(fetchObjects, 500); // Mettre à jour la liste toutes les 5 secondes
+        });
+
+        function fetchObjects() {
+            fetch('/get_objects') 
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                updateObjectsDisplay(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        function updateObjectsDisplay(objects) {
+            const container = document.getElementById('objectsContainer');
+            container.innerHTML = ''; // Clear existing content
+            Object.keys(objects).forEach(eui => { // Iterate over each 'eui'
+                objects[eui].forEach(obj => { // Iterate over each object in the array
+                    const div = document.createElement('div');
+                    div.className = 'object';
+                    // Adjusted to use 'lat' and 'long' instead of 'x', 'y', 'z'
+                    div.textContent = `Objet: ${obj.label.trim()}, Position: (${obj.lat}, ${obj.long})`;
+                    container.appendChild(div);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

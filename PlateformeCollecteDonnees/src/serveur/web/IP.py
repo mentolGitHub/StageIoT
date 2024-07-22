@@ -17,16 +17,8 @@ from flask_cors import CORS
 import base64
 import uuid
 from Interface import data_format
+import math
 
-class Objet:
-    def __init__(self, x, y, z, label):
-        self.x = x
-        self.y = y
-        self.z = z
-        self.label = label
-
-    def __repr__(self):
-        return f"Objet(x={self.x}, y={self.y}, z={self.z}, label='{self.label}')"
 
 app = Flask(__name__)
 CORS(app)
@@ -36,6 +28,7 @@ app._static_folder = './static/'
 app.secret_key = 'your_secret_key'
 Q_out: Queue
 data_storage = {}
+objects_storage = {}
 Config = {}
 
 def get_user_from_api_key(api_key):
@@ -90,8 +83,6 @@ def check_password(hashed_password, user_password):
         bool: True if the user password matches the hashed password, False otherwise.
     """
     password_bytes = user_password.encode('utf-8')
-    print ("password_bytes : ", password_bytes)
-    print ("hashed_password", hashed_password)
     return bcrypt.checkpw(password_bytes, hashed_password)
 
 
@@ -175,7 +166,24 @@ def accueil():
         username = check_user_token()
     return render_template('index.html', is_authenticated=is_authenticated, username=username)
 
+@app.route('/objects', methods=['GET', 'POST'])
+def objects():
+    return render_template('objects.html')
 
+# Fonction pour calculer les nouvelles coordonnées
+def calculate_object_coordinates(emetteur_lat, emetteur_long, object_dist, object_x):
+    EARTH_RADIUS = 6371000  # Rayon moyen de la Terre en mètres
+    METERS_PER_DEGREE = EARTH_RADIUS * (2 * math.pi) / 360  # Nombre approximatif de mètres par degré
+
+    # Convertir les distances de mm en degrés
+    delta_lat = object_dist / 1000 / METERS_PER_DEGREE
+    delta_long = object_x / 1000 / (METERS_PER_DEGREE * math.cos(math.radians(emetteur_lat)))
+    
+    # Calculer les nouvelles coordonnées
+    object_lat = float(emetteur_lat) + int(delta_lat)
+    object_long = float(emetteur_long) + int(delta_long)
+    
+    return object_lat, object_long
 
 @app.route('/post_data', methods=['POST'])
 def post_data():
@@ -218,7 +226,6 @@ def post_data():
                     "humidite": float(data_list[16]),
                     "temperature": float(data_list[17])
                 }
-                print (data)
                 query = "INSERT INTO Data (timestamp, temperature, humidity, luminosity, presence, pression, longitude, latitude, altitude, angle, , label) VALUES (%s, %s, %s, %s, %s, %s)"
                 Q_out.put(data)
                 add_data_to_cache(data)      
@@ -227,15 +234,38 @@ def post_data():
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 4:
             objects = raw_data[1:].split(';')
+            eui = objects[0].split(',')[0].removesuffix("\n")
+            if eui == "":
+                eui = "unknown"
+            objects_storage[eui] = []
             for i in objects:
                 obj = i.split(',')
                 if len(obj) == 6:
-                    eui = obj[0].removesuffix("\n")
                     timestamp = obj[1]
+                    
+                    object_x = obj[2]
+                    object_dist = obj[4]
+                    
+                    object = {}
+                    
+                    emetteur_lat = data_storage[eui][-1]['latitude']
+                    emetteur_long = data_storage[eui][-1]['longitude']
+                    
+                    # Calcul de la position de l'objet
+                    object_lat, object_long = calculate_object_coordinates(emetteur_lat, emetteur_long, float(object_dist), float(object_x))
+                    
+                    object['lat'] = object_lat
+                    object['long'] = object_long
+                    object['label'] = obj[5] 
+                        
+                    
+                    
+                
                     date = datetime.fromtimestamp(int(timestamp)/1000)
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
                     cursor.execute(query, (date, eui, obj[2], obj[3], obj[4], obj[5]))
                     db.commit()
+                    objects_storage[eui].append(object)
                 elif obj != ['']:
                     return jsonify({"status": "error", "message": "Invalid object format"}), 400
             
@@ -337,6 +367,11 @@ def data_labels_to_json(data,table):
             mesure[label[i]]=d[i]
         result.append(mesure)
     return result
+
+@app.route('/get_objects', methods=['GET'])
+@auth.login_required
+def get_objects():
+    return jsonify(objects_storage)
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
 @auth.login_required
@@ -860,7 +895,6 @@ def edit_dev(deveui,name,password,description):
         data['password']= password.decode("utf-8")
 
     data['description'] = description
-    print(password)
     fields = ""
     values=[]
     for d in data:
@@ -869,7 +903,6 @@ def edit_dev(deveui,name,password,description):
     fields=fields[:-2]
     query = "UPDATE Device SET "+ fields +" WHERE `dev-eui` = %s"
     values.append(deveui)
-    print(query)
     cursor.execute(query, values)
     db.commit()
 

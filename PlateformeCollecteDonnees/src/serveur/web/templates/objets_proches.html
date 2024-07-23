@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Objects List</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #objectsList {
+            list-style-type: none;
+            padding: 0;
+        }
+        #objectsList li {
+            background-color: #f0f0f0;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Nearby Objects List</h1>
+    <input type="text" id="deviceEui" placeholder="Enter Device EUI">
+    <button onclick="getNearbyObjects()">Get Nearby Objects</button>
+    <ul id="objectsList"></ul>
+
+    <script>
+        const apiKey = "WYWe0TXUR1epGePhmm9ZfVFqhiv6n0krj/SD5jAgfZ4=";
+        const baseUrl = "http://localhost:5000/api";
+
+        async function getNearbyObjects() {
+            const deviceEui = document.getElementById('deviceEui').value;
+            const objectsList = document.getElementById('objectsList');
+            objectsList.innerHTML = ''; // Clear previous results
+
+            try {
+                // Get neighbour list
+                const neighbourResponse = await axios.get(`${baseUrl}/neighbourList/${deviceEui}`, {
+                    params: { key: apiKey, size: 0.002 }
+                });
+
+                // For each neighbour, get object details
+                for (const neighbour of neighbourResponse.data) {
+                    const objectResponse = await axios.get(`${baseUrl}/getObject/${neighbour['dev-eui']}`, {
+                        params: { key: apiKey }
+                    });
+
+                    const objectInfo = objectResponse.data;
+                    const listItem = document.createElement('li');
+                    listItem.textContent = `Name: ${objectInfo.name}, EUI: ${objectInfo['dev-eui']}`;
+                    objectsList.appendChild(listItem);
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                objectsList.innerHTML = '<li>Error fetching data. Please try again.</li>';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -970,8 +970,16 @@ def profile():
     if 'token' in session :
         username = check_user_token()
 
-
     return render_template('profile.html', username=username)
+
+
+@app.route('/objets_proches', methods=['GET'])
+@auth.login_required
+def objets_proches():
+    username=''
+    if 'token' in session :
+        username = check_user_token()
+    return render_template('objets_proches.html', username=username)
 
 @app.route('/getApiKey', methods=['GET'])
 @auth.login_required

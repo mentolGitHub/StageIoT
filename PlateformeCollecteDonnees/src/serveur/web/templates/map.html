@@ -65,7 +65,7 @@
                             markers[eui].setLatLng([latitude, longitude]);
                         } else {
                             markers[eui] = L.marker([latitude, longitude]).addTo(map);
-                            fetch('/api/get_object/'+eui)
+                            fetch('/api/getObject/'+eui)
                                 .then(response => response.json())
                                 .then(data => {
                                     const additionalInfo = data.map(obj => `${obj.label.trim()}, ${(obj.distance)/1000} m`).join('<br>');

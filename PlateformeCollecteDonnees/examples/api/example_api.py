@@ -97,25 +97,48 @@ apiKey = "WYWe0TXUR1epGePhmm9ZfVFqhiv6n0krj/SD5jAgfZ4="#"E3QPvPWeRfON8JAyQOuDtRn
 #     print()
 #     print("Erreur:",response.json()['message'],'-',response.status_code)
 
+
 #######################################
-#      deleteDevice example         #
+#        deleteDevice example         #
 #######################################
 
 
-apiField = "deleteDevice"
-deveui = "70b3d57ed0068a5l"
+# apiField = "deleteDevice"
+# deveui = "70b3d57ed0068a5l"
+
+# params = {
+#     "deveui": deveui,
+#     "name" : "device",
+#     "pwd" : "coucou",
+#     "key": apiKey
+# }
+
+# response = requests.post(url+apiField, params=params)
+
+# if response.status_code == 200:
+#     print(response.json()['status'])
+# else:
+#     print()
+#     print("Erreur:",response.json()['message'],'-',response.status_code)
+
+
+#######################################
+#          getObjects example         #
+#######################################
+
+apiField = "getObject"
+target_eui = "70b3d57ed0068a6e"
 
 params = {
-    "deveui": deveui,
-    "name" : "device",
-    "pwd" : "coucou",
     "key": apiKey
 }
 
-response = requests.post(url+apiField, params=params)
+response = requests.get(url+apiField+"/"+target_eui)
 
 if response.status_code == 200:
-    print(response.json()['status'])
+    print(response.json())
 else:
-    print()
-    print("Erreur:",response.json()['message'],'-',response.status_code)
+    print("Erreur:", response.status_code)
+
+# Expected output:
+#[{'dev-eui': 'device_eui', 'name': 'device_name'}, {'dev-eui': 'device_eui_2', 'name': 'device_name_2'}]

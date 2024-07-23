@@ -1295,7 +1295,7 @@ def apiNeighbourList(deveui):
     
     return jsonify(neighbours)
 
-@app.route('/api/get_object/<deveui>', methods=['GET'])
+@app.route('/api/getObject/<deveui>', methods=['GET'])
 def apiGetObjects(deveui):
     if deveui in objects_storage:
         print (objects_storage[deveui])

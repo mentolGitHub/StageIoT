@@ -235,16 +235,17 @@ def post_data():
         elif int(raw_data[0]) == 4:
             objects = raw_data[1:].split(';')
             eui = objects[0].split(',')[0].removesuffix("\n")
+            timestamp = objects[0].split(',')[1]
             if eui == "":
                 eui = "unknown"
             objects_storage[eui] = []
             for i in objects:
                 obj = i.split(',')
                 if len(obj) == 6:
-                    timestamp = obj[1]
-                    
-                    object_x = obj[2]
-                    object_dist = obj[4]
+                    obj = obj[2:]
+                if len(obj) == 4:
+                    object_x = obj[0]
+                    object_dist = obj[2]
                     
                     object = {}
                     
@@ -256,21 +257,20 @@ def post_data():
                     
                     object['lat'] = object_lat
                     object['long'] = object_long
-                    object['label'] = obj[5] 
+                    object['label'] = obj[3] 
                         
-                    
-                    
-                
                     date = datetime.fromtimestamp(int(timestamp)/1000)
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(query, (date, eui, obj[2], obj[3], obj[4], obj[5]))
+                    cursor.execute(query, (date, eui, obj[0], obj[1], obj[2], obj[3]))
                     db.commit()
                     objects_storage[eui].append(object)
                 elif obj != ['']:
+                    print (obj)
                     return jsonify({"status": "error", "message": "Invalid object format"}), 400
             
             return jsonify({"status": "success", "message": "Objets not implemented yet"}), 200
         else:
+            print (raw_data)
             return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
 
 
@@ -371,6 +371,7 @@ def data_labels_to_json(data,table):
 @app.route('/get_objects', methods=['GET'])
 @auth.login_required
 def get_objects():
+    print (objects_storage)
     return jsonify(objects_storage)
 
 @app.route('/get_euiList', methods=['GET', 'POST'])

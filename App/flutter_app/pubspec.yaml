@@ -41,10 +41,10 @@ dev_dependencies:
     sdk: flutter
   flutter_bluetooth_serial: ^0.4.0
   sensors_plus: ^5.0.1
-  webview_flutter: ^4.8.0
   http: ^0.13.4
   geolocator: ^7.0.0
   light: ^2.0.0
+  webview_flutter: ^4.8.0
   
 
   # The "flutter_lints" package below contains a set of recommended lints to

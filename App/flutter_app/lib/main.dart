@@ -7,6 +7,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:webview_flutter/webview_flutter.dart';
+
+String _serverIP = '';
 
 void main() {
   runApp(MyApp());
@@ -36,7 +39,6 @@ class _MainPageState extends State<MainPage> {
   bool _isConnected = false;
   bool _use4G5G = false;
   bool _detectObjects = false;
-  String _serverIP = '';
   Timer? _sensorTimer;
   bool _isSendingData = false;
   String _eui = '1111111111111111';
@@ -338,6 +340,12 @@ class _MainPageState extends State<MainPage> {
       );
       return;
     }
+    // Navigate to the WebViewPage
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => WebViewPage(),
+      ),
+    );
   }
 
   @override
@@ -416,6 +424,51 @@ class _MainPageState extends State<MainPage> {
                 : 'No object detection data received'),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class WebViewPage extends StatefulWidget {
+  @override
+  _WebViewPageState createState() => _WebViewPageState();
+}
+
+class _WebViewPageState extends State<WebViewPage> {
+  late final WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onProgress: (int progress) {
+            // Update loading bar.
+          },
+          onPageStarted: (String url) {},
+          onPageFinished: (String url) {},
+          onWebResourceError: (WebResourceError error) {},
+        ),
+      )
+      ..loadRequest(Uri.parse('http://' + _serverIP));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Column(
+        children: [
+          Expanded(
+            child: WebViewWidget(controller: controller),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Return to Main Menu'),
+          ),
+        ],
       ),
     );
   }

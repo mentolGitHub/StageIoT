@@ -258,6 +258,7 @@ def post_data():
                     object['lat'] = object_lat
                     object['long'] = object_long
                     object['label'] = obj[3] 
+                    object['distance'] = object_dist
                         
                     date = datetime.fromtimestamp(int(timestamp)/1000)
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
@@ -1293,6 +1294,14 @@ def apiNeighbourList(deveui):
 
     
     return jsonify(neighbours)
+
+@app.route('/api/get_object/<deveui>', methods=['GET'])
+def apiGetObjects(deveui):
+    if deveui in objects_storage:
+        print (objects_storage[deveui])
+        return jsonify(objects_storage[deveui]), 200
+    else:
+        return jsonify({"error": "Object not found"}), 404
 
 
 

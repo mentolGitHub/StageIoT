@@ -969,13 +969,50 @@ def profile():
     return render_template('profile.html', username=username)
 
 
-@app.route('/objets_proches', methods=['GET'])
+@app.route('/objets_proches/<deveui>', methods=['GET'])
 @auth.login_required
-def objets_proches():
-    username=''
-    if 'token' in session :
-        username = check_user_token()
-    return render_template('objets_proches.html', username=username)
+def objets_proches(deveui):
+    # recuperer la liste des appareils proches
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
+    size = 0.001
+
+    neighbours=[]
+    query = """
+        SELECT latitude, longitude
+        FROM Data
+        WHERE source = %s
+        ORDER BY timestamp DESC
+        LIMIT 1;
+    """
+    cursor.execute(query, (deveui,))
+    device_location = cursor.fetchone()
+    latitude, longitude = device_location
+
+    query = """
+        SELECT DISTINCT Device.`dev-eui`
+        FROM Data
+        JOIN Device ON Data.source = Device.`dev-eui`
+        JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+        AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
+        AND Data.timestamp > %s;
+    """
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15)))
+    neighbours = cursor.fetchall()
+
+    print(neighbours)
+
+    # recuperer les objets vus par ces appareils
+    objects = {}
+    for neighbour in neighbours:
+        if neighbour[0] in objects_storage:
+            objects[neighbour[0]] = objects_storage[neighbour[0]]
+
+    print(objects)
+    print(objects_storage)
+
+    return render_template('objets_proches.html', objects=objects)
 
 @app.route('/getApiKey', methods=['GET'])
 @auth.login_required

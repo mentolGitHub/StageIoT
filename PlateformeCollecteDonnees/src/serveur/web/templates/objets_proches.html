@@ -40,6 +40,15 @@
         ul li a:hover {
             color: #000; /* Couleur du texte au survol */
         }
+
+        #objectsContainer {
+            padding: 8px 16px;
+            margin-bottom: 4px;
+            background-color: #79797917;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background-color 0.3s ease;
+        }
     </style>
     <script>
         function speakObjects() {
@@ -65,7 +74,14 @@
     {% if objects %}
         <ul>
         {% for neighbour, details in objects.items() %}
-            <li>Voisin: {{ neighbour }}, Détails: {{ details }}</li>
+            <li> {{ neighbour }} </li>
+            <div id="objectsContainer">
+                <ul>
+                {% for detail in details %}
+                    <li>{{ detail.label }} : {{ detail.distance }} </li>
+                {% endfor %}
+                </ul>
+            </div>
         {% endfor %}
         </ul>
         <button class="btn btn-primary " onclick="speakObjects()">Énoncer les Objets</button>

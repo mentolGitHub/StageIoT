@@ -372,7 +372,12 @@ def data_labels_to_json(data,table):
 @app.route('/get_objects', methods=['GET'])
 @auth.login_required
 def get_objects():
-    print (objects_storage)
+    """
+    Retrieves and returns the objects stored in the objects_storage.
+
+    Returns:
+        A JSON response containing the objects stored in the objects_storage.
+    """
     return jsonify(objects_storage)
 
 @app.route('/get_euiList', methods=['GET', 'POST'])
@@ -536,9 +541,6 @@ class DeviceEditForm(FlaskForm):
     submit = SubmitField('Edit Device')
     
         
-        
-
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
@@ -726,6 +728,19 @@ def register_device():
     return render_template('register_device.html', form_associate=form_associate, form=form)
 
 def check_device_DB(deveui,password=None):
+    """
+    Check the device in the database.
+
+    Args:
+        deveui (str): The device EUI.
+        password (str, optional): The device password. Defaults to None.
+
+    Returns:
+        int: Returns 1 if the device is found and the password is correct,
+             -1 if the device is found but the password is incorrect,
+             the number of devices found if no password is provided,
+             or 0 if the device is not found in the database.
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
     if password != None:
@@ -749,6 +764,17 @@ def check_device_DB(deveui,password=None):
         return 0
 
 def check_link_device(deveui, username):
+    """
+    Check if a device is linked to a specific user.
+
+    Args:
+        deveui (str): The device EUI.
+        username (str): The username of the user.
+
+    Returns:
+        int: The number of rows returned by the query.
+
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
     query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
@@ -756,15 +782,37 @@ def check_link_device(deveui, username):
     return len(cursor.fetchall())
 
 def add_device_DB(deveui, name, hashed_password):
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
-    cursor= db.cursor()
+    """
+    Add a device to the database.
+
+    Args:
+        deveui (str): The device EUI.
+        name (str): The name of the device.
+        hashed_password (str): The hashed password of the device.
+
+    Returns:
+        None
+    """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "INSERT INTO Device (`dev-eui`, name, password) VALUES (%s, %s, %s)"
     cursor.execute(query, (deveui, name, hashed_password))  # Ensure password is hashed
     db.commit()
 
 def add_device_user_DB(deveui, username, superowner=0):
-    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
-    cursor= db.cursor()
+    """
+    Add a device user to the database.
+
+    Args:
+        deveui (str): The device EUI.
+        username (str): The username of the device owner.
+        superowner (int, optional): The super-owner flag. Defaults to 0.
+
+    Returns:
+        None
+    """
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
     query = "INSERT INTO DeviceOwners (device, owner, `super-owner`) VALUES (%s, %s, %s)"
     cursor.execute(query, (deveui, username, superowner))
     db.commit()
@@ -822,19 +870,13 @@ def edit_device(deveui):
     username = check_user_token()
 
     if username:
-        
-
         form = DeviceEditForm()
         
-        
-
         db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
         cursor = db.cursor()
         query = "SELECT name, description FROM Device WHERE `dev-eui` = %s"
         cursor.execute(query,(deveui,))
         res = cursor.fetchall()
-        
-        
         
         if form.is_submitted():
             name = form.name.data
@@ -905,7 +947,17 @@ def edit_dev(deveui,name,password,description):
     db.commit()
 
 
-def check_superowner(deveui,username):
+def check_superowner(deveui, username):
+    """
+    Check if the given device and owner combination has super-owner privileges.
+
+    Args:
+        deveui (str): The device identifier.
+        username (str): The owner's username.
+
+    Returns:
+        bool: True if the device and owner combination has super-owner privileges, False otherwise.
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
     query = "SELECT `super-owner` FROM DeviceOwners WHERE device = %s AND owner=%s"
@@ -972,7 +1024,16 @@ def profile():
 @app.route('/objets_proches/<deveui>', methods=['GET'])
 @auth.login_required
 def objets_proches(deveui):
-    # recuperer la liste des appareils proches
+    """
+    Retrieve nearby objects based on the given device ID.
+
+    Args:
+        deveui (str): The device ID.
+
+    Returns:
+        A rendered HTML template with the nearby objects.
+
+    """
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
@@ -1001,16 +1062,11 @@ def objets_proches(deveui):
     cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15)))
     neighbours = cursor.fetchall()
 
-    print(neighbours)
-
     # recuperer les objets vus par ces appareils
     objects = {}
     for neighbour in neighbours:
         if neighbour[0] in objects_storage:
             objects[neighbour[0]] = objects_storage[neighbour[0]]
-
-    print(objects)
-    print(objects_storage)
 
     return render_template('objets_proches.html', objects=objects)
 
@@ -1266,8 +1322,16 @@ def apiRegisterDevice():
 
 @app.route('/api/deleteDevice', methods=['POST'])
 def apiDeleteDevice():
-    
+    """
+    API endpoint for deleting a device.
 
+    Parameters:
+    - deveui (str): The device EUI.
+    - key (str): The API key.
+
+    Returns:
+    - JSON response: A JSON response indicating the status of the deletion operation.
+    """
     deveui = request.args.get('deveui')
     
     key = request.args.get('key')
@@ -1338,8 +1402,18 @@ def apiNeighbourList(deveui):
 
 @app.route('/api/getObject/<deveui>', methods=['GET'])
 def apiGetObjects(deveui):
+    """
+    Retrieve an object from the objects_storage based on the given deveui.
+
+    Args:
+        deveui (str): The deveui of the object to retrieve.
+
+    Returns:
+        tuple: A tuple containing the JSON response and the HTTP status code.
+            The JSON response contains the object if found, otherwise an error message.
+            The HTTP status code is 200 if the object is found, otherwise 404.
+    """
     if deveui in objects_storage:
-        print (objects_storage[deveui])
         return jsonify(objects_storage[deveui]), 200
     else:
         return jsonify({"error": "Object not found"}), 404

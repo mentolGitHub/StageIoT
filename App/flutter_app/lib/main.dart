@@ -77,6 +77,8 @@ class _MainPageState extends State<MainPage> {
     super.dispose();
   }
 
+  /// Initialisation des capteurs
+  /// @return void
   void _initSensors() async {
     bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -119,6 +121,8 @@ class _MainPageState extends State<MainPage> {
     // You might need to use additional sensors or libraries to get these values accurately
   }
 
+  /// Arrêt de la lecture des capteurs
+  /// @return void
   void _stopSensorReading() {
     _positionSubscription?.cancel();
     _luminositySubscription?.cancel();
@@ -126,6 +130,8 @@ class _MainPageState extends State<MainPage> {
     _accelerometerSubscription?.cancel();
   }
 
+  /// Sélection du périphérique Bluetooth
+  /// @return void
   void _selectBT() async {
     final BluetoothDevice? selectedDevice =
         await Navigator.of(context).push(MaterialPageRoute(
@@ -142,6 +148,8 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  /// Connexion au périphérique Bluetooth
+  /// @return void
   void _connectToBluetooth() async {
     if (_selectedDevice == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -178,6 +186,8 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  /// Gestion du bouton d'envoi des données
+  /// @return void
   void _toggleSendData() {
     setState(() {
       _isSendingData = !_isSendingData;
@@ -190,6 +200,13 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+
+  /// Starts sending data.
+  ///
+  /// This method is responsible for initiating the process of sending data.
+  /// It performs the necessary actions to start sending data to a destination.
+  /// Make sure to call this method when you want to begin sending data.
+  /// @return void
   void _startSendingData() {
     _sensorTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       if (_use4G5G) {
@@ -207,11 +224,15 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
+  /// Stops sending data.
+  /// @return void
   void _stopSendingData() {
     _sensorTimer?.cancel();
     _sensorTimer = null;
   }
 
+  /// Formats the sensor data into a string.
+  /// @return String
   String _formatData() {
     if (_position == null || _gyroscope == null || _accelerometer == null) {
       return '';
@@ -227,6 +248,8 @@ class _MainPageState extends State<MainPage> {
         '$_distance,$_externalHumidity,$_externalTemperature';
   }
 
+  /// Sends the sensor data to the server.
+  /// @return Future<void>
   Future<void> _sendDataToServer() async {
     if (_serverIP.isEmpty) {
       _stopSendingData();
@@ -273,6 +296,8 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  /// Sends the sensor data via Bluetooth.
+  /// @return Future<void>
   Future<void> _sendDataViaBluetooth() async {
     if (_connection == null || !_connection!.isConnected) {
       _stopSendingData();
@@ -324,6 +349,8 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
+  /// Validate the parameters before navigating to the WebViewPage.
+  /// @return void
   void _validateParameters() {
     if (_use4G5G && _serverIP.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -348,6 +375,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
+  /// Build the main page.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -429,14 +457,20 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
+/// WebViewPage
+/// Displays the WebView widget to show the web application.
 class WebViewPage extends StatefulWidget {
   @override
   _WebViewPageState createState() => _WebViewPageState();
 }
 
+/// WebViewPage State
+/// Manages the WebView controller and navigation events.
 class _WebViewPageState extends State<WebViewPage> {
   late final WebViewController controller;
 
+  /// Initialises the WebView controller.
+  /// @return void
   @override
   void initState() {
     super.initState();
@@ -456,6 +490,8 @@ class _WebViewPageState extends State<WebViewPage> {
       ..loadRequest(Uri.parse('http://' + _serverIP));
   }
 
+  /// Builds the WebViewPage.
+  /// @return Widget
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -474,12 +510,17 @@ class _WebViewPageState extends State<WebViewPage> {
   }
 }
 
+
+/// A page for selecting bonded devices.
+/// This page displays a list of bonded devices and allows the user to select one.
+/// @param checkAvailability A boolean value indicating whether to check the availability of the device.
 class SelectBondedDevicePage extends StatelessWidget {
   final bool checkAvailability;
 
   const SelectBondedDevicePage({Key? key, this.checkAvailability = true})
       : super(key: key);
 
+  /// Builds the SelectBondedDevicePage.
   @override
   Widget build(BuildContext context) {
     return Scaffold(

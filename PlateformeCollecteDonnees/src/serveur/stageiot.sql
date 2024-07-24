@@ -3,7 +3,7 @@
 -- DROP TABLE IF EXISTS DeviceOwners;
 -- DROP TABLE IF EXISTS Device;
 -- DROP TABLE IF EXISTS Users;
-DROP TABLE IF EXISTS Obstacles;
+-- DROP TABLE IF EXISTS Obstacles;
 
 CREATE TABLE IF NOT EXISTS Device (
     `dev-eui` varchar(255) NOT NULL PRIMARY KEY,

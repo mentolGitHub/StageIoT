@@ -122,8 +122,10 @@ void traitementReceptionBluetooth()
     dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
     char *token = strtok(buffer, ",");
     int i = 0;
+    // traitement des données recues par bluetooth selon le format attendu
     if (token != NULL) {
       switch (token[0]) {
+        // message systeme
         case '0':
           if(token[1] == '2'){
             switch (token[2])
@@ -146,6 +148,7 @@ void traitementReceptionBluetooth()
           break;
         case '1':
           break;
+        // message de données
         case 's':
           while (token != NULL) {
             switch (i) {
@@ -207,6 +210,7 @@ void traitementReceptionBluetooth()
 
           break;
 
+        // Demande d'envoi de données bluetooth
         case '.':
           distanceValue = distance();
           char formattedDistance[6]; // 5 digits + null terminator
@@ -223,7 +227,9 @@ void traitementReceptionBluetooth()
           Serial.println("btPayload : " + btPayload);
           break;
 
+        // cas de message inconnu
         default:
+          //attention, le serial est utilisé pour la communication avec la raspi/jetson
           Serial.println("inconnu0 : " + token[0]);
           break;
       }

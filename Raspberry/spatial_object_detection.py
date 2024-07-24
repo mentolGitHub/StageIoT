@@ -150,41 +150,14 @@ with dai.Device(pipeline) as device:
         depthFrameColor = cv2.applyColorMap(depthFrameColor, cv2.COLORMAP_HOT)
 
         detections = inDet.detections
-
-        # If the frame is available, draw bounding boxes on it and show the frame
-        height = frame.shape[0]
-        width  = frame.shape[1]
         for detection in detections:
-            # roiData = detection.boundingBoxMapping
-            # roi = roiData.roi
-            # roi = roi.denormalize(depthFrameColor.shape[1], depthFrameColor.shape[0])
-            # topLeft = roi.topLeft()
-            # bottomRight = roi.bottomRight()
-            # xmin = int(topLeft.x)
-            # ymin = int(topLeft.y)
-            # xmax = int(bottomRight.x)
-            # ymax = int(bottomRight.y)
-            # cv2.rectangle(depthFrameColor, (xmin, ymin), (xmax, ymax), color, 1)
-
-            # Denormalize bounding box
-            # x1 = int(detection.xmin * width)
-            # x2 = int(detection.xmax * width)
-            # y1 = int(detection.ymin * height)
-            # y2 = int(detection.ymax * height)
             try:
                 label = labelMap[detection.label]
             except:
                 label = detection.label
-            # cv2.putText(frame, str(label), (x1 + 10, y1 + 20), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-            # cv2.putText(frame, "{:.2f}".format(detection.confidence*100), (x1 + 10, y1 + 35), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-            # cv2.putText(frame, f"X: {int(detection.spatialCoordinates.x)} mm", (x1 + 10, y1 + 50), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-            # cv2.putText(frame, f"Y: {int(detection.spatialCoordinates.y)} mm", (x1 + 10, y1 + 65), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
-            # cv2.putText(frame, f"Z: {int(detection.spatialCoordinates.z)} mm", (x1 + 10, y1 + 80), cv2.FONT_HERSHEY_TRIPLEX, 0.5, 255)
 
             object = ObjetSpatial(x=detection.spatialCoordinates.x, y=detection.spatialCoordinates.y, z=detection.spatialCoordinates.z, type_objet=label)
             object_list.append(object)
-
-            # cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), cv2.FONT_HERSHEY_SIMPLEX)
 
         uartPayload = "4"
         for obj in object_list:
@@ -195,9 +168,6 @@ with dai.Device(pipeline) as device:
             ser.flush()
             print(uartPayload)
         object_list = []
-        cv2.putText(frame, "NN fps: {:.2f}".format(fps), (2, frame.shape[0] - 4), cv2.FONT_HERSHEY_TRIPLEX, 0.4, (255,255,255))
-        cv2.imshow("depth", depthFrameColor)
-        cv2.imshow("preview", frame)
 
         if cv2.waitKey(1) == ord('q'):
             break

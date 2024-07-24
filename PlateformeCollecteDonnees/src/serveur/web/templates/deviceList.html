@@ -48,6 +48,7 @@
                     
                 {% endif %}
                 <a href="/delete_device/{{ devices[i] }}" onclick="return confirm('Attention, l\'appareil sera supprimé de votre compte');">Supprimer</a>
+                <a href="/objets_proches/{{ devices[i] }}">Objets Proches</a>
             </td>
         </tr>
         {% endfor %}

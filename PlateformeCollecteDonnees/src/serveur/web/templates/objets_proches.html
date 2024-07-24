@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Objets Proches</title>
+    <script>
+        function speakObjects() {
+            const synth = window.speechSynthesis;
+            let objectsText = '';
+            {% for neighbour, details in objects.items() %}
+                {% for detail in details %}
+                    objectsText += '{{ detail.label[0:-1] }}';
+                {% endfor %}
+            {% endfor %}
+            console.log(objectsText);
+            const utterThis = new SpeechSynthesisUtterance(objectsText);
+            synth.speak(utterThis);
+        }
+    </script>
 </head>
 <body>
     <h1>Objets Proches</h1>
@@ -12,6 +26,7 @@
             <li>Voisin: {{ neighbour }}, Détails: {{ details }}</li>
         {% endfor %}
         </ul>
+        <button onclick="speakObjects()">Énoncer les Objets</button>
     {% else %}
         <p>Aucun objet proche trouvé.</p>
     {% endif %}

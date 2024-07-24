@@ -679,10 +679,6 @@ def register_device():
         if check_device_DB(deveui,password)>0:
             username = check_user_token()
             if username:
-                
-                if len(cursor.fetchall())>0:
-                    flash('Device already linked to account', 'danger')
-                    return redirect(url_for('register_device'))
                 add_device_user_DB(deveui,username) 
                 flash('Device added successfully', 'success')
                 return redirect(url_for('register_device'))

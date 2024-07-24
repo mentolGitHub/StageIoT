@@ -3,6 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Objets Proches</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/styles.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/deviceList.css') }}">
+    <style>
+        ul {
+            list-style-type: none; /* Supprime les puces par défaut */
+            padding: 0;
+            margin: 0;
+        }
+
+        ul li {
+            padding: 8px 16px; /* Ajoute un peu d'espacement autour du texte */
+            margin-bottom: 4px; /* Espacement entre les éléments de la liste */
+            background-color: #79797917; /* Couleur de fond pour chaque élément de la liste */
+            border-radius: 4px; /* Bords arrondis pour les éléments de la liste */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Ombre subtile pour un effet de profondeur */
+            transition: background-color 0.3s ease; /* Transition douce pour l'interaction */
+        }
+
+        ul li:hover {
+            background-color: #2c2c2c17; /* Changement de couleur au survol */
+        }
+
+        ul li:not(:last-child) {
+            margin-bottom: 8px; /* Ajoute plus d'espacement entre les éléments sauf le dernier */
+        }
+
+        ul li a {
+            text-decoration: none; /* Supprime le soulignement des liens */
+            color: #333; /* Couleur du texte pour les liens */
+            display: block; /* Fait en sorte que le lien remplisse tout l'espace de l'élément li */
+        }
+
+        ul li a:hover {
+            color: #000; /* Couleur du texte au survol */
+        }
+    </style>
     <script>
         function speakObjects() {
             const synth = window.speechSynthesis;
@@ -18,7 +56,11 @@
         }
     </script>
 </head>
-<body>
+<body class="light-theme">
+    <div>
+        <button id="themeToggle" class="btn btn-secondary ">Toggle Dark Mode</button>
+        <button class="btn btn-primary " onclick="window.location.href='/'">Home</button>
+    </div>  
     <h1>Objets Proches</h1>
     {% if objects %}
         <ul>
@@ -26,9 +68,11 @@
             <li>Voisin: {{ neighbour }}, Détails: {{ details }}</li>
         {% endfor %}
         </ul>
-        <button onclick="speakObjects()">Énoncer les Objets</button>
+        <button class="btn btn-primary " onclick="speakObjects()">Énoncer les Objets</button>
     {% else %}
         <p>Aucun objet proche trouvé.</p>
     {% endif %}
+
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 </body>
 </html>

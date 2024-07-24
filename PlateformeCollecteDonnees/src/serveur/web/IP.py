@@ -352,6 +352,17 @@ def get_data():
                         data[device]+=data_storage[device]
     return jsonify(data) 
 
+@app.route('/get_recent_data', methods=['GET'])
+@auth.login_required
+def get_recent_data():
+    """
+    Retrieves the most recent data from the data storage.
+
+    Returns:
+        A JSON response containing the most recent data from the data storage.
+    """
+    return jsonify(data_storage)
+
 def data_labels_to_json(data,table):
     result = []
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
@@ -652,6 +663,7 @@ def map_view():
     Returns:
         The rendered map.html template.
     """
+    
     return render_template('map.html')
 
 

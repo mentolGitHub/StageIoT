@@ -55,7 +55,7 @@
         const markers = {};
 
         function updateUserPositions() {
-                fetch('/get_data')
+                fetch('/get_recent_data')
                 .then(response => response.json())
                 .then(data => {
                     for(device in data){

@@ -33,7 +33,7 @@ lora = LoRa(mode=LoRa.LORAWAN, region=LoRa.EU868) # Initialise LoRa en mode LORA
 
 app_eui = '7532159875321598'
 app_key = '11CBA1678ECF54273F5834C41D82E57F'
-dev_eui = '70B3D57ED0068A6E'
+dev_eui = '70B3D57ED0068A6F'
 
 app_eui_unhex = ubinascii.unhexlify(app_eui)
 app_key_unhex = ubinascii.unhexlify(app_key)

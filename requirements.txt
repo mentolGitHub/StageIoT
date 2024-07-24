@@ -1,0 +1,9 @@
+mysql-connector-python
+requests
+paho-mqtt
+flask
+flask-wtf
+bcrypt
+flask-httpauth
+flask-restful
+flask-cors

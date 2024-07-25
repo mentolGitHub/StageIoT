@@ -1049,7 +1049,7 @@ def objets_proches(deveui):
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
-    size = 0.001
+    size = 0.0001 
 
     neighbours=[]
     query = """
@@ -1062,6 +1062,8 @@ def objets_proches(deveui):
     cursor.execute(query, (deveui,))
     device_location = cursor.fetchone()
     latitude, longitude = device_location
+    print (latitude, longitude)
+    latitude += 0.009
     print (latitude, longitude)
 
     query = """

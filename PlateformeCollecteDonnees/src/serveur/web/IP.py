@@ -1062,6 +1062,7 @@ def objets_proches(deveui):
     cursor.execute(query, (deveui,))
     device_location = cursor.fetchone()
     latitude, longitude = device_location
+    print (latitude, longitude)
 
     query = """
         SELECT DISTINCT Device.`dev-eui`

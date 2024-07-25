@@ -62,6 +62,18 @@ button {
     background-color: #444;
 }
 
+.dark-theme a {
+    color: #f5f5f5;
+}
+
+.dark-theme a:hover {
+    color: #e6e6e6;
+}
+
+.dark-theme a:visited {
+    color: #f5f5f5;
+}
+
 /* Additional styles for buttons */
 .btn {
     margin: 10px 0;
@@ -85,15 +97,16 @@ button {
 }
 
 a {
-    color: white; /* Set link color to white */
+    color: rgb(0, 0, 0); /* Set link color to white */
     text-decoration: none; /* No underline */
 }
 
 a:hover {
-    color: #eee;
+    color: #383838;
     text-decoration: underline; /* Underline on hover */
 }
 
 a:visited {
-    color: white; /* Keep visited links white */
+    color: rgb(0, 0, 0); /* Keep visited links white */
 }
+

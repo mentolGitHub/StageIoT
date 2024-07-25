@@ -1032,6 +1032,38 @@ def profile():
 
     return render_template('profile.html', username=username)
 
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """
+    Calcule la distance entre deux points sur la Terre spécifiés par leurs latitudes et longitudes.
+    Utilise la formule de Haversine pour calculer la distance en kilomètres.
+    
+    :param lat1: Latitude du premier point
+    :param lon1: Longitude du premier point
+    :param lat2: Latitude du deuxième point
+    :param lon2: Longitude du deuxième point
+    :return: Distance entre les deux points en mètres
+    """
+    # Rayon de la Terre en kilomètres
+    R = 6371000
+
+    # Convertir les degrés en radians
+    lat1_rad = math.radians(lat1)
+    lon1_rad = math.radians(lon1)
+    lat2_rad = math.radians(lat2)
+    lon2_rad = math.radians(lon2)
+
+    # Différences des coordonnées
+    dlat = lat2_rad - lat1_rad
+    dlon = lon2_rad - lon1_rad
+
+    # Formule de Haversine
+    a = math.sin(dlat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(dlon / 2)**2
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+    # Distance en mètres
+    distance = R * c
+
+    return distance
 
 @app.route('/objets_proches/<deveui>', methods=['GET'])
 @auth.login_required
@@ -1062,9 +1094,6 @@ def objets_proches(deveui):
     cursor.execute(query, (deveui,))
     device_location = cursor.fetchone()
     latitude, longitude = device_location
-    print (latitude, longitude)
-    latitude += 0.009
-    print (latitude, longitude)
 
     query = """
         SELECT DISTINCT Device.`dev-eui`
@@ -1079,11 +1108,15 @@ def objets_proches(deveui):
 
     # recuperer les objets vus par ces appareils
     objects = {}
+    distances = {}
     for neighbour in neighbours:
         if neighbour[0] in objects_storage:
+            distance = calculate_distance(latitude, longitude, objects_storage[neighbour[0]][0]['lat'], objects_storage[neighbour[0]][0]['long'])
             objects[neighbour[0]] = objects_storage[neighbour[0]]
-
-    return render_template('objets_proches.html', objects=objects)
+            distances[neighbour[0]] = distance
+    print (objects)
+    print (distances)
+    return render_template('objets_proches.html', objects=objects, distances=distances)
 
 @app.route('/getApiKey', methods=['GET'])
 @auth.login_required

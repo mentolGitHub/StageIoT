@@ -74,11 +74,14 @@
     {% if objects %}
         <ul>
         {% for neighbour, details in objects.items() %}
+            console.log(neighbour);
+            {% set distance = distances[neighbour] %}
             <li> {{ neighbour }} </li>
             <div id="objectsContainer">
                 <ul>
                 {% for detail in details %}
-                    <li>{{ detail.label }} : {{ detail.distance }} </li>
+                    console.log(detail);
+                    <li>{{ detail.label }} : {{ detail.distance }}, distance : {{distance}} </li>
                 {% endfor %}
                 </ul>
             </div>

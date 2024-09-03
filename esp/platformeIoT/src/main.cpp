@@ -99,7 +99,7 @@ void setup()
 void loop() 
 {
   traitementReceptionBluetooth();
-  traitementReceptionUart();
+  traitementReceptionUartLoPy();
   donneesCapteurs();
   traitementReceptionUartJetson();
 }
@@ -164,7 +164,7 @@ void donneesCapteurs()
     data = "c" + String(distanceValue) + "," + String(temperature) + "," + String(humidity) + "\n";
 
     // envoi des données
-    Serial.write(data);
+    Serial.write(data.c_str());
 }
 
 

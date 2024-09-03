@@ -154,6 +154,7 @@ void traitementReceptionUartJetson()
   dataFromUart = "";
   if (Serial.available()) {
     dataFromUart = Serial.readStringUntil('\n');
+    // choisir si l'on envoit en LoRa ou via la connection du téléphone
     if (is_ip_allowed) {
       SerialBT.write(dataFromUart.c_str());
     }

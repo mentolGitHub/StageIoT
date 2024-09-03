@@ -1,6 +1,8 @@
 from queue import Queue
 import sys
 
+import MiddlewareUnit
+
 data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
@@ -8,18 +10,15 @@ data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None
                 'azimuth':None, 'distance_recul':None, 'presence':None , 'humidite':None,  'distance_recul':None}
 LTE_connection = 0
 
-def SendLoRa(message):
-    #TODO:
+def SendLoRa(Data):
     # Send through STM (UART/USB)
+    MiddlewareUnit.UartWriteLoRa(Data)
 
-    pass
 
-def SendLTE(message):
-    #TODO:
+def SendLTE(Data):
     # Send through ESP (UART/USB)
+    MiddlewareUnit.UartWriteLTE(Data)
 
-
-    pass
 
 
 def Sendnode(Q_input : Queue, network_state : Queue, Config):

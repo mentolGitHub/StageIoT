@@ -70,13 +70,14 @@ def init_client():
 
 def run_client():
 
-    listeQ_info = {"position": Queue(), "vitesse":Queue(), "vehicules":Queue(), "pietons":Queue()}#...
+    Q_info = Queue()
     Q_send = Queue()
     Q_output = Queue()
-    
-    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[listeQ_info,Config])
-    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[listeQ_info,Q_output,Q_send,Config, db, db_cursor])
-    threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Config])
+    Q_ns= Queue(1)
+
+    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_info,Config])
+    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_info,Q_output,Q_send,Config, db, db_cursor])
+    threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Q_ns,Config])
 
     try:
         threadMiddleware.start()

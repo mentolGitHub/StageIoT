@@ -14,7 +14,7 @@ data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None
                 'azimuth':None, 'distance_recul':None, 'presence':None , 'humidite':None,  'distance_recul':None}
 
 def save_DB(data):
-    #TODO:
+    
     try :
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
         
@@ -37,7 +37,8 @@ def save_DB(data):
                             %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
                             %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
                             %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s, %(eui)s)"
-        
+            case 3 :
+                pass
         db_cursor.execute(query,data)
         #print(db_cursor)
         db.commit()

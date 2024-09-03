@@ -51,9 +51,9 @@ float distance();
 void setup() 
 {
   // Initialisation des communications
-  Serial.begin(115200); //initialisation du port série (qui fait aussi la communication avec la raspi)
-  SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17
-  SerialBT.begin("Plateforme iot"); //initialisation du bluetooth
+  Serial.begin(115200); //initialisation du port série (qui fait aussi la communication avec la jetson)
+  SerialPort.begin(115200, SERIAL_8N1, 16, 17);  //initialisation de l'uart rx : 16 et tx : 17 (pour l'emetteur LoRa)
+  SerialBT.begin("Plateforme iot"); //initialisation du bluetooth (pour la communicaiton avec le téléphone)
 
 
   
@@ -115,7 +115,21 @@ void traitementReceptionBluetooth()
 {
   if (SerialBT.available()) {
     dataFromBluetooth = SerialBT.readString();
-    Serial.write(dataFromBluetooth.c_str());
+    char buffer[dataFromBluetooth.length() + 1];
+    dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
+    char *token = strtok(buffer, ",");
+    int i = 0;
+    if (token != NULL) {
+      if (token[0] = '0') {
+        if(token[1] == '2') {
+          is_ip_allowed = true;
+        }
+        else if(token[1] == '3') {
+          is_ip_allowed = false;
+        }
+      }
+      Serial.write(dataFromBluetooth.c_str());
+    }
   }
 }
 
@@ -140,9 +154,12 @@ void traitementReceptionUartJetson()
   dataFromUart = "";
   if (Serial.available()) {
     dataFromUart = Serial.readStringUntil('\n');
-    //SerialPort.print(dataFromUart);
-    SerialBT.print(dataFromUart+"\n");
-    SerialBT.flush();
+    if (is_ip_allowed) {
+      SerialBT.write(dataFromUart.c_str());
+    }
+    else {
+      SerialPort.write(dataFromUart.c_str());
+    }
   }
 }
 

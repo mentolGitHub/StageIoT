@@ -28,26 +28,24 @@ HardwareSerial SerialPort(2);
 //variables de réception
 String dataFromBluetooth;
 String dataFromUart;
-String timestamp, latitude, longitude, altitude, luminosite, vitesseAngulaireX, vitesseAngulaireY, vitesseAngulaireZ, pression, accelerationX, accelerationY, accelerationZ, angle, azimut;
-String loraPayload, btPayload;
-String objects;
 long distanceValue = 0;
 float temperature, humidity;
+
+const int triggerPin = 5; 
+const int echoPin = 18; 
+uint32_t delayMS;
+
+bool is_ip_allowed = false;
 
 /* Déclaration des fonctions */
 
 void traitementReceptionBluetooth();
-void traitementReceptionUart();
-void traitementReceptionUartRpi();
+void traitementReceptionUartLoPy();
+void traitementReceptionUartJetson();
+void donneesCapteurs();
 void dht_mesure(float* temperature, float* humidity);
-const int triggerPin = 5; 
-const int echoPin = 18; 
-
-
 float distance();
-bool is_ip_allowed = false;
 
-uint32_t delayMS;
 
 /* Initialisation */
 void setup() 
@@ -102,175 +100,42 @@ void loop()
 {
   traitementReceptionBluetooth();
   traitementReceptionUart();
-  traitementReceptionUartRpi();
+  donneesCapteurs();
+  traitementReceptionUartJetson();
 }
 
 
 /* Fonctions */
 
 /**
- * @brief Traitement de la réception du bluetooth
+ * @brief Forward des données bluetooth vers la Jetson
  * 
  */
 void traitementReceptionBluetooth()
 {
   if (SerialBT.available()) {
     dataFromBluetooth = SerialBT.readString();
-    Serial.println(dataFromBluetooth);
-    
-    char buffer[dataFromBluetooth.length() + 1];
-    dataFromBluetooth.toCharArray(buffer, sizeof(buffer));
-    char *token = strtok(buffer, ",");
-    int i = 0;
-    // traitement des données recues par bluetooth selon le format attendu
-    if (token != NULL) {
-      switch (token[0]) {
-        // message systeme
-        case '0':
-          if(token[1] == '2'){
-            switch (token[2])
-            {
-              case '1':
-                is_ip_allowed = true;
-                Serial.println("IP is allowed");
-                break;
-
-              case '0':
-                is_ip_allowed = false;
-                Serial.println("IP is not allowed");
-                break;
-            
-              default:
-                Serial.println("inconnu2 : " + token[2]);
-                break;
-            }
-          }
-          break;
-        case '1':
-          break;
-        // message de données
-        case 's':
-          while (token != NULL) {
-            switch (i) {
-              case 0:
-                break;
-              case 1:
-                timestamp = token;
-                break;
-              case 2:
-                latitude = token;
-                break;
-              case 3:
-                longitude = token;
-                break;
-              case 4:
-                altitude = token;
-                break;
-              case 5:
-                luminosite = token;
-                break;
-              case 6:
-                vitesseAngulaireX = token;
-                break;
-              case 7:
-                vitesseAngulaireY = token;
-                break;
-              case 8:
-                vitesseAngulaireZ = token;
-                break;
-              case 9:
-                pression = token;
-                break;
-              case 10:
-                accelerationX = token;
-                break;
-              case 11:
-                accelerationY = token;
-                break;
-              case 12:
-                accelerationZ = token;
-                break;
-              case 13:
-                angle = token;
-                break;
-              case 14:
-                azimut = token;
-                break;
-              default:
-                break;
-            }
-            token = strtok(NULL, ",");
-            i++;
-          }
-          // envoi des data LoRa
-          distanceValue = distance();
-          loraPayload = "2" + timestamp + "," + latitude + "," + longitude + "," + altitude + "," + luminosite + "," + vitesseAngulaireX + "," + vitesseAngulaireY + "," + vitesseAngulaireZ + "," + pression + "," + accelerationX + "," + accelerationY + "," + accelerationZ + "," + angle + "," + azimut + "," + distanceValue + "," + String(humidity) + "," + String(temperature) + "\n4"+ objects + "\n";
-          SerialPort.print(loraPayload);
-          Serial.println("loraPayload : " + loraPayload);
-
-          break;
-
-        // Demande d'envoi de données bluetooth
-        case '.':
-          distanceValue = distance();
-          char formattedDistance[6]; // 5 digits + null terminator
-          snprintf(formattedDistance, sizeof(formattedDistance), "%05d", distanceValue);
-
-          char formattedTemperature[6]; // 5 digits + null terminator
-          snprintf(formattedTemperature, sizeof(formattedTemperature), "%05.2f", temperature);
-
-          char formattedHumidity[6]; // 5 digits + null terminator
-          snprintf(formattedHumidity, sizeof(formattedHumidity), "%05.2f", humidity);
-
-          btPayload = "30" + String(formattedDistance) + "," + String(formattedTemperature) + "," + String(formattedHumidity) + "\n4" + objects + "\n";
-          SerialBT.print(btPayload);
-          Serial.println("btPayload : " + btPayload);
-          break;
-
-        // cas de message inconnu
-        default:
-          //attention, le serial est utilisé pour la communication avec la raspi/jetson
-          Serial.println("inconnu0 : " + token[0]);
-          break;
-      }
-    }
+    Serial.write(dataFromBluetooth.c_str());
   }
 }
 
 /**
- * @brief Traitement de la réception de l'UART de la pycom
+ * @brief Forward des données de la LoPy vers la Jetson
  * 
  */
-void traitementReceptionUart()
+void traitementReceptionUartLoPy()
 {
   if (SerialPort.available()) {
-    dataFromUart = "";
-    dataFromUart = SerialPort.readStringUntil('\n');
-    Serial.print("UART pycom : " + dataFromUart);
-    //verifier le premier caractere
-    switch (dataFromUart[0])
-    {
-      case '0':
-        switch (dataFromUart[1])
-        {
-          case '1': //envoi du dev eui
-            SerialBT.print(dataFromUart + "\n");
-            break;
-        }
-        break;
-      
-      default:
-        break;
-    }
+    dataFromUart = SerialPort.readStringUntil('\n');    
     Serial.write(dataFromUart.c_str());
   }
 }
 
 /**
- * @brief Traitement de la reception de l'uart avec le raspi
+ * @brief Traitement de la reception de l'uart de la Jetson
  * 
  */
-void traitementReceptionUartRpi()
+void traitementReceptionUartJetson()
 {
   dataFromUart = "";
   if (Serial.available()) {
@@ -280,6 +145,34 @@ void traitementReceptionUartRpi()
     SerialBT.flush();
   }
 }
+
+/**
+ * @brief forward des données des capteurs vers la Jetson
+ * 
+ */
+
+void donneesCapteurs()
+{
+    String data = "";
+
+    // mesure de la distance
+    distanceValue = distance();
+
+    // mseure de la température et de l'humidité
+    dht_mesure(&temperature, &humidity);
+
+    data = "c" + String(distanceValue) + "," + String(temperature) + "," + String(humidity) + "\n";
+
+    // envoi des données
+    Serial.write(data);
+}
+
+
+
+
+/****************************************************/
+/*      Fonctions de traitement des capteurs        */
+/****************************************************/
 
 /**
  * @brief Mesure la distance
@@ -299,8 +192,6 @@ float distance(){
 
   duration = pulseIn(echoPin, HIGH);
   distance = (duration / 2) * 340/1000/10; 
-  Serial.print("Distance: ");
-  Serial.println(distance);
   return distance;
 }
 
@@ -320,10 +211,7 @@ void dht_mesure(float* temperature, float* humidity){
       Serial.println(F("Error reading temperature!"));
     }
     else {
-      Serial.print(F("Temperature: "));
-      Serial.print(event.temperature);
       *temperature = event.temperature;
-      Serial.println(F("°C"));
     }
     // Get humidity event and print its value.
     dht.humidity().getEvent(&event);
@@ -331,10 +219,7 @@ void dht_mesure(float* temperature, float* humidity){
       Serial.println(F("Error reading humidity!"));
     }
     else {
-      Serial.print(F("Humidity: "));
-      Serial.print(event.relative_humidity);
       *humidity = event.relative_humidity;
-      Serial.println(F("%"));
     }
     delay(delayMS);
   }

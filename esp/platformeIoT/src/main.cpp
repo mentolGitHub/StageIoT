@@ -100,7 +100,6 @@ void loop()
 {
   traitementReceptionBluetooth();
   traitementReceptionUartLoPy();
-  donneesCapteurs();
   traitementReceptionUartJetson();
 }
 
@@ -120,16 +119,20 @@ void traitementReceptionBluetooth()
     char *token = strtok(buffer, ",");
     int i = 0;
     if (token != NULL) {
-      if (token[0] = '0') {
+      if (token[0] == '0') { 
         if(token[1] == '2') {
-          is_ip_allowed = true;
-        }
-        else if(token[1] == '3') {
-          is_ip_allowed = false;
+          if(token[2] == '1'){
+            is_ip_allowed = true;
+          }
+          else if(token[2] == '0'){
+            is_ip_allowed = false;
+          }
+          Serial.println("is ip allowed : " + is_ip_allowed);
         }
       }
-      Serial.write(dataFromBluetooth.c_str());
     }
+
+    Serial.write((dataFromBluetooth + "\n").c_str());
   }
 }
 
@@ -156,10 +159,10 @@ void traitementReceptionUartJetson()
     dataFromUart = Serial.readStringUntil('\n');
     // choisir si l'on envoit en LoRa ou via la connection du téléphone
     if (is_ip_allowed) {
-      SerialBT.write(dataFromUart.c_str());
+      SerialBT.print(dataFromUart);
     }
     else {
-      SerialPort.write(dataFromUart.c_str());
+      SerialPort.print(dataFromUart);
     }
   }
 }
@@ -175,8 +178,10 @@ void donneesCapteurs()
 
     // mesure de la distance
     distanceValue = distance();
+    Serial.print("Distance: ");
+    Serial.println(distanceValue);
 
-    // mseure de la température et de l'humidité
+    // mesure de la température et de l'humidité
     dht_mesure(&temperature, &humidity);
 
     data = "c" + String(distanceValue) + "," + String(temperature) + "," + String(humidity) + "\n";
@@ -184,7 +189,6 @@ void donneesCapteurs()
     // envoi des données
     Serial.write(data.c_str());
 }
-
 
 
 
@@ -226,7 +230,7 @@ void dht_mesure(float* temperature, float* humidity){
     sensors_event_t event;
     dht.temperature().getEvent(&event);
     if (isnan(event.temperature)) {
-      Serial.println(F("Error reading temperature!"));
+      // Serial.println(F("Error reading temperature!"));
     }
     else {
       *temperature = event.temperature;
@@ -234,7 +238,7 @@ void dht_mesure(float* temperature, float* humidity){
     // Get humidity event and print its value.
     dht.humidity().getEvent(&event);
     if (isnan(event.relative_humidity)) {
-      Serial.println(F("Error reading humidity!"));
+      // Serial.println(F("Error reading humidity!"));
     }
     else {
       *humidity = event.relative_humidity;

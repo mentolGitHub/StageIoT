@@ -59,7 +59,6 @@ def init_db():
     
     
     # Seaching for DB
-    print(Config['db_name'])
     cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{Config['db_name']}`")
     
 

@@ -13,6 +13,11 @@ data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None
 
 
 def DataToMsg(Data):
+
+    """
+    Takes the Data and puts it in a string format for Uart and LoRa (also LTE But wouldnt have been necessary)
+    """
+
     messages = []
     if Data["timestamp"] != "" : 
         messages.append("2"+Data["timestamp"]+","+Data["latitude"]+","+Data["longitude"]+","+Data["altitude"]+"," \
@@ -25,12 +30,22 @@ def DataToMsg(Data):
     return messages
 
 def UartWriteLoRa(Data):
+
+    """
+    Writes the Data packet on the LoRa Uart to send it on the LoRa network
+    """
+
     messages = DataToMsg(Data)
     for msg in messages:
         uartLoRa.write(msg)
     
 
 def UartWriteLTE(Data):
+
+    """
+    Writes the Data packet on the LTE Uart to send it online
+    """
+
     messages = DataToMsg(Data)
     for msg in messages:
         uartLTE.write(msg)
@@ -38,13 +53,19 @@ def UartWriteLTE(Data):
 
 
 def Middlewarenode(Q_capteurs, Config):
+
+    """
+    This is the Middleware node, it sets the right uart interface through the config file and retrives all data comming through the sensor Uart.
+    """
+
+
     global uartLoRa, uartLTE
     uartLoRa= serial.Serial("/dev/tty"+Config["LoRaUartIF"])
     uartLTE= serial.Serial("/dev/tty"+Config["LTEUartIF"])
-    uartCapteur= serial.Serial("/dev/tty"+Config["CapUartIF"])
+    uartSensor= serial.Serial("/dev/tty"+Config["CapUartIF"])
     try:
         while True:
-            msg = uartCapteur.readline()
+            msg = uartSensor.readline()
             print(msg)
                 
             

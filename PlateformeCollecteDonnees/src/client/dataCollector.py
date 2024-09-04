@@ -14,6 +14,10 @@ data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None
                 'azimuth':None, 'distance_recul':None, 'presence':None , 'humidite':None,  'distance_recul':None}
 
 def save_DB(data):
+
+    """
+    Saves the Data in the local DB with format relative to the msg ID
+    """
     
     try :
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
@@ -47,6 +51,11 @@ def save_DB(data):
 
 
 def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, conf, db_, cursor):
+
+    """
+    This is the DataCollector node, it retrives all Data from sensors, saves it localy and sends it to the network unit.
+    """
+
     # setup DB locale
     global Config, db, db_cursor
     Config = conf
@@ -54,7 +63,6 @@ def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, co
     db_cursor=cursor
     try:
         while True:
-            #TODO:
 
             data = {}
             while Q_input.empty() :
@@ -67,7 +75,6 @@ def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, co
                 Q_send_serv.put(data)
                 #Q_output.put(data) #optional output
 
-            pass
     except KeyboardInterrupt :
         sys.exit(0)
     

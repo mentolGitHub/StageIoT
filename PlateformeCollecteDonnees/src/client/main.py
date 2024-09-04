@@ -46,6 +46,12 @@ def init_config():
     print(Config)
 
 def init_db():
+
+    """
+    Initialise the program local Database
+    Select the db for the data collection plateform.
+    """
+
     global db, db_cursor
     mydb = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
     db = mydb
@@ -63,6 +69,10 @@ def init_db():
   
 
 def init_client():
+
+    """
+    Initialise the server config and database.
+    """
     
     init_config()
     init_db()
@@ -71,10 +81,15 @@ def init_client():
 
 def run_client():
 
-    Q_info = Queue()
-    Q_send = Queue()
-    Q_output = Queue()
-    Q_ns= Queue(1)
+    """
+    Run the client nodes. A node is a thread with a functionality (it may create other threads that fulfill the same goal.).
+    We link the diferents threads with Queues. Thoses represent the channels and we can determine the form of the data with it.
+    """
+
+    Q_info = Queue() # Queue for the data for devices
+    Q_send = Queue() # Queue of the data to send (through the NetworkUnit)
+    Q_output = Queue() # Queue of the data output (same thing you send to the serer but you get an access for yourself in local)
+    Q_ns= Queue(1) # Queue to update the network state
 
     threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_info,Config])
     threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_info,Q_output,Q_send,Config, db, db_cursor])

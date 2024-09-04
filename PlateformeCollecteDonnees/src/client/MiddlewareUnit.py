@@ -1,11 +1,13 @@
+import datetime
 import sys
 import time
 import serial
 
 uartLoRa = serial.Serial()
 uartLTE = serial.Serial()
+LoRa_eui = ""
 
-data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
+data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
@@ -17,17 +19,51 @@ def DataToMsg(Data):
     """
     Takes the Data and puts it in a string format for Uart and LoRa (also LTE But wouldnt have been necessary)
     """
-
     messages = []
     if Data["timestamp"] != "" : 
-        messages.append("2"+Data["timestamp"]+","+Data["latitude"]+","+Data["longitude"]+","+Data["altitude"]+"," \
+        date = str(datetime.datetime.timestamp(Data["timestamp"]))
+        messages.append("2"+date+","+Data["latitude"]+","+Data["longitude"]+","+Data["altitude"]+"," \
                     +Data["luminosity"]+","+Data["vitesse_angulaire_X"]+","+Data["vitesse_angulaire_Y"]+","+Data["vitesse_angulaire_Z"]\
                     +","+Data["pression"]+","+Data["acceleration_X"]+","+Data["acceleration_Y"]+","+Data["acceleration_Z"]\
                     +","+Data["angle"]+","+","+Data["azimuth"]+ ","+Data["distance_recul"]+","+Data["humidite"]+","+Data["temperature"])
-    if Data["Object"] != None :
+    if "Objects" in Data:
         for obj in Data["Object"]:
             messages.append("3"+obj["X"]+","+Data["Y"]+","+Data["Z"]+","+Data["objetLabel"])#....
     return messages
+
+def MsgToData(msg):
+    """
+    Takes the msg and puts it in a Data format
+    """
+
+
+    msg = msg.decode('utf-8').strip("\n").split(",")
+    
+    Data = data_format
+    if msg[0] == "s":
+        Data["timestamp"] = msg[1]
+        Data["latitude"] = msg[2]
+        Data["longitude"] = msg[3]
+        Data["altitude"] = msg[4]
+        Data["luminosity"] = msg[5]
+        Data["vitesse_angulaire_X"] = msg[6]
+        Data["vitesse_angulaire_Y"] = msg[7]
+        Data["vitesse_angulaire_Z"] = msg[8]
+        Data["pression"] = msg[9]
+        Data["acceleration_X"] = msg[10]
+        Data["acceleration_Y"] = msg[11]
+        Data["acceleration_Z"] = msg[12]
+        Data["angle"] = msg[13]
+        Data["azimuth"] = msg[14]
+        Data["distance_recul"] = "0"
+        Data["humidite"] = "0"
+        Data["temperature"] = "0"
+    if msg[0] == "3":
+        Data["Object"] = []
+        for i in range(1,len(msg)):
+            obj = {"X":msg[i],"Y":msg[i+1],"Z":msg[i+2],"objetLabel":msg[i+3]}
+            Data["Object"].append(obj)
+    return Data
 
 def UartWriteLoRa(Data):
 
@@ -37,7 +73,7 @@ def UartWriteLoRa(Data):
 
     messages = DataToMsg(Data)
     for msg in messages:
-        uartLoRa.write(msg)
+        uartLoRa.write(msg.encode('utf-8'))
     
 
 def UartWriteLTE(Data):
@@ -60,14 +96,22 @@ def Middlewarenode(Q_capteurs, Config):
 
 
     global uartLoRa, uartLTE
-    uartLoRa= serial.Serial("/dev/tty"+Config["LoRaUartIF"])
-    uartLTE= serial.Serial("/dev/tty"+Config["LTEUartIF"])
-    uartSensor= serial.Serial("/dev/tty"+Config["CapUartIF"])
+    uartLoRa= serial.Serial("/dev/tty"+Config["LoRaUartIF"],115200)
+    uartLTE= serial.Serial("/dev/tty"+Config["LTEUartIF"],115200)
+    uartSensor= serial.Serial("/dev/tty"+Config["CapUartIF"], 115200)
     try:
         while True:
             msg = uartSensor.readline()
-            print(msg)
+            if (msg.decode('utf-8')[:4] == "LoRa"):
+                print("LoRa : " + msg.decode('utf-8')[4:])
+                LoRa_eui = msg.decode('utf-8')[4:]
+            else :            
+                data = MsgToData(msg)
+                
+                Q_capteurs.put(data)
+            
                 
             
     except KeyboardInterrupt :
+        print("Middleware Stopped")
         sys.exit(0)

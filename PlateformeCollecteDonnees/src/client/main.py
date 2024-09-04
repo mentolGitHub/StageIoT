@@ -9,7 +9,7 @@ import NetworkUnit
 import MiddlewareUnit
 
 
-Config={"db_name":"plateformeIot","SQL_username":"root","db_init_file":"stageiot", 
+Config={"db_name":"plateformeIoT","SQL_username":"n7","db_init_file":"stageiot", 
         "APP_username":"stm32lora1@ttn" , "APP_password":"NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA", 
         "APP_hostname":"eu1.cloud.thethings.network", "APP_port":"8883",
         "server_host":'0.0.0.0',"server_port":'5000',
@@ -59,7 +59,7 @@ def init_db():
     
     
     # Seaching for DB
-    cursor.execute("CREATE DATABASE IF NOT EXISTS %s", (Config["db_name"],))
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{Config['db_name']}`")
     
 
     

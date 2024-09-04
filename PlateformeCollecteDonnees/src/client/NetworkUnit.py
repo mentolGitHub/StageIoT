@@ -3,7 +3,7 @@ import sys
 
 import MiddlewareUnit
 
-data_format = { 'eui' : None, 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
+data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature':None,
                 'longitude':None, 'latitude':None, 'altitude':None, 'angle':None, 
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,

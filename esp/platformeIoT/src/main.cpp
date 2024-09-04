@@ -127,7 +127,6 @@ void traitementReceptionBluetooth()
           else if(token[2] == '0'){
             is_ip_allowed = false;
           }
-          Serial.println("is ip allowed : " + is_ip_allowed);
         }
       }
     }
@@ -144,7 +143,7 @@ void traitementReceptionUartLoPy()
 {
   if (SerialPort.available()) {
     dataFromUart = SerialPort.readStringUntil('\n');    
-    Serial.write(dataFromUart.c_str());
+    Serial.write(("LoRa"+dataFromUart+"\n").c_str());
   }
 }
 

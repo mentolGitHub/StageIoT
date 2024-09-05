@@ -36,11 +36,10 @@ def MsgToData(msg):
     Takes the msg and puts it in a Data format
     """
 
-
-    msg = msg.decode('utf-8').strip("\n").split(",")
     
     Data = data_format
     if msg[0] == "s":
+        msg = msg.decode('utf-8').strip("\n").split(",")
         Data["timestamp"] = msg[1]
         Data["latitude"] = msg[2]
         Data["longitude"] = msg[3]
@@ -59,10 +58,14 @@ def MsgToData(msg):
         Data["humidite"] = "0"
         Data["temperature"] = "0"
     if msg[0] == "3":
+        objects = msg.strip("\n").split(";")[:-1]
+        print (objects)
         Data["Object"] = []
-        for i in range(1,len(msg)):
-            obj = {"X":msg[i],"Y":msg[i+1],"Z":msg[i+2],"objetLabel":msg[i+3]}
+        for i in objects:
+            i = i.split(",")
+            obj = {"X":i[0],"Y":i[1],"Z":i[2],"objetLabel":i[3]}
             Data["Object"].append(obj)
+            print(obj)
     return Data
 
 def UartWriteLoRa(Data):
@@ -71,9 +74,13 @@ def UartWriteLoRa(Data):
     Writes the Data packet on the LoRa Uart to send it on the LoRa network
     """
 
-    messages = DataToMsg(Data)
-    for msg in messages:
-        uartLoRa.write(msg.encode('utf-8'))
+    print(Data)
+    if (Data[:3] == "obj"):
+        uartLoRa.write(Data.encode('utf-8'))
+    else:
+        messages = DataToMsg(Data)
+        for msg in messages:
+            uartLoRa.write(msg.encode('utf-8'))
     
 
 def UartWriteLTE(Data):
@@ -114,4 +121,4 @@ def Middlewarenode(Q_capteurs, Config):
             
     except KeyboardInterrupt :
         print("Middleware Stopped")
-        sys.exit(0)
+        sys.exit(0) 

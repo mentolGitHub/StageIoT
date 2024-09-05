@@ -7,6 +7,7 @@ import mysql.connector.abstracts
 import dataCollector
 import NetworkUnit
 import MiddlewareUnit
+import spatial_object_detection
 
 
 Config={"db_name":"plateformeIoT","SQL_username":"n7","db_init_file":"stageiot", 
@@ -94,11 +95,13 @@ def run_client():
     threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_info,Config])
     threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_info,Q_output,Q_send,Config, db, db_cursor])
     threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Q_ns,Config])
+    threadObjectDetection = threading.Thread(target=spatial_object_detection.ObjectDetection,args=[Q_send])
 
     try:
         threadMiddleware.start()
         threadDataCollecter.start()
         threadSend.start()
+        threadObjectDetection.start()
 
         while threading.active_count()>1:
             time.sleep(1)

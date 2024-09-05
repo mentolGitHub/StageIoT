@@ -85,7 +85,7 @@ The main loop consists of three primary functions:
 - Processes system messages and forwards relevant data
 
 ### `traitementReceptionUartRpi()`
-- Manages communication with Raspberry Pi
+- Manages communication with Raspberry Pi / Jetson
 - Forwards received data to Bluetooth
 
 ### `distance()`

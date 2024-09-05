@@ -88,14 +88,15 @@ def run_client():
     """
 
     Q_data = Queue() # Queue for the data for devices
+    Q_data_objects = Queue() # Queue for the objects data
     Q_send = Queue() # Queue of the data to send (through the NetworkUnit)
     Q_output = Queue() # Queue of the data output (same thing you send to the serer but you get an access for yourself in local)
     Q_ns= Queue(1) # Queue to update the network state
 
     threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_data,Config])
-    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_data,Q_output,Q_send,Config, db, db_cursor])
+    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_data, Q_data_objects, Q_output,Q_send,Config, db, db_cursor])
     threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Q_ns,Config])
-    threadObjectDetection = threading.Thread(target=spatial_object_detection.ObjectDetection,args=[Q_send])
+    threadObjectDetection = threading.Thread(target=spatial_object_detection.ObjectDetection,args=[Q_data_objects])
 
     try:
         threadMiddleware.start()

@@ -4,6 +4,8 @@ import time
 import mysql.connector
 import mysql.connector.abstracts
 import sys
+import uuid
+from MiddlewareUnit import MsgToData
 
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
@@ -50,8 +52,29 @@ def save_DB(data):
     except ValueError as e :
         print(e)
 
+def save_object_DB(data):
 
-def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, conf, db_, cursor):
+    """
+    Save objects into the database
+    """
+    try :
+        #timestamp d'aujourd'hui
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+        data = data['Object']
+        for i in data :
+            i['timestamp']=timestamp
+            print(i)
+            table = "Objets"
+            query = "INSERT INTO "+ table +" (timestamp, X, Y, Z, label) \
+                    VALUES (%(timestamp)s, %(X)s, %(Y)s, %(Z)s, %(objetLabel)s)"
+            db_cursor.execute(query,i)
+            print(db_cursor)
+            db.commit()
+        
+    except ValueError as e :
+        print(e)
+
+def dataCollectornode(Q_input : Queue, Q_input_objects : Queue, Q_output : Queue, Q_send_serv : Queue, conf, db_, cursor):
 
     """
     This is the DataCollector node, it retrives all Data from sensors, saves it localy and sends it to the network unit.
@@ -68,7 +91,7 @@ def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, co
         while True:
 
             data = {}
-            while Q_input.empty() :
+            while Q_input.empty() and Q_input_objects.empty():
                 time.sleep(0.002)
             if not Q_input.empty():
                 data = Q_input.get()
@@ -77,6 +100,11 @@ def dataCollectornode(Q_input : Queue, Q_output : Queue, Q_send_serv : Queue, co
                 save_DB(data)
                 Q_send_serv.put(data)
                 #Q_output.put(data) #optional output
+            if not Q_input_objects.empty():
+                data = Q_input_objects.get()
+                save_object_DB(MsgToData(data))
+                Q_send_serv.put(data)
+                #Q_output.put(data) #optional
 
     except KeyboardInterrupt :
         sys.exit(0)

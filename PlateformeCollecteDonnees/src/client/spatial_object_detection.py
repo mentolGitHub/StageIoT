@@ -28,7 +28,7 @@ class ObjetSpatial:
     def getType(self):
         return f"{self.type_objet}"
 
-def ObjectDetection(Q_send):
+def ObjectDetection(Q_data):
     import sys
         
     object_list = []
@@ -197,9 +197,8 @@ def ObjectDetection(Q_send):
                     if (obj.getType() in importantLabels):
                         uartPayload += obj.sendingformat() + ";"
             if uartPayload != "3":
-                print(uartPayload)
-                uartPayload = MsgToData(uartPayload)
-                Q_send.put(uartPayload)
+                #uartPayload = MsgToData(uartPayload)
+                Q_data.put(uartPayload)
             time.sleep(0.1)
             old_time = time.time()
             object_list = []

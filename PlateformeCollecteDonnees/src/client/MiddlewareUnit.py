@@ -62,7 +62,7 @@ def MsgToData(msg):
         print (objects)
         Data["Object"] = []
         for i in objects:
-            i = i.split(",")
+            i = i[1:].split(",")
             obj = {"X":i[0],"Y":i[1],"Z":i[2],"objetLabel":i[3]}
             Data["Object"].append(obj)
             print(obj)
@@ -74,13 +74,13 @@ def UartWriteLoRa(Data):
     Writes the Data packet on the LoRa Uart to send it on the LoRa network
     """
 
-    print(Data)
-    if (Data[:3] == "obj"):
-        uartLoRa.write(Data.encode('utf-8'))
-    else:
-        messages = DataToMsg(Data)
-        for msg in messages:
-            uartLoRa.write(msg.encode('utf-8'))
+    if (len(Data) > 0):
+        if (Data[0] == "3"):
+            uartLoRa.write(Data.encode('utf-8'))
+        else:
+            messages = DataToMsg(Data)
+            for msg in messages:
+                uartLoRa.write(msg.encode('utf-8'))
     
 
 def UartWriteLTE(Data):
@@ -105,7 +105,7 @@ def Middlewarenode(Q_capteurs, Config):
     global uartLoRa, uartLTE
     uartLoRa= serial.Serial("/dev/tty"+Config["LoRaUartIF"],115200)
     uartLTE= serial.Serial("/dev/tty"+Config["LTEUartIF"],115200)
-    uartSensor= serial.Serial("/dev/tty"+Config["CapUartIF"], 115200)
+    uartSensor= serial.Serial("/dev/tty"+Config["SensorUartIF"], 115200)
     try:
         while True:
             msg = uartSensor.readline()

@@ -26,7 +26,6 @@ CREATE TABLE IF NOT EXISTS Data (
 CREATE TABLE IF NOT EXISTS Objets (
     `ìd` serial,
     `timestamp` DATETIME(3) NOT NULL,
-    `eui` varchar(255) NOT NULL,
     `x` float NOT NULL,
     `y` float NOT NULL,
     `z` float NOT NULL,

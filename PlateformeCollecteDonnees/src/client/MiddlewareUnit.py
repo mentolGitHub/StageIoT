@@ -26,9 +26,9 @@ def DataToMsg(Data):
                     +Data["luminosity"]+","+Data["vitesse_angulaire_X"]+","+Data["vitesse_angulaire_Y"]+","+Data["vitesse_angulaire_Z"]\
                     +","+Data["pression"]+","+Data["acceleration_X"]+","+Data["acceleration_Y"]+","+Data["acceleration_Z"]\
                     +","+Data["angle"]+","+","+Data["azimuth"]+ ","+Data["distance_recul"]+","+Data["humidite"]+","+Data["temperature"])
-    if "Objects" in Data:
+    if "Object" in Data:
         for obj in Data["Object"]:
-            messages.append("3"+obj["X"]+","+Data["Y"]+","+Data["Z"]+","+Data["objetLabel"])#....
+            messages.append("3"+obj["X"]+","+obj["Y"]+","+obj["Z"]+","+obj["objetLabel"])
     return messages
 
 def MsgToData(msg):
@@ -38,34 +38,34 @@ def MsgToData(msg):
 
     
     Data = data_format
-    if msg[0] == "s":
-        msg = msg.decode('utf-8').strip("\n").split(",")
-        Data["timestamp"] = msg[1]
-        Data["latitude"] = msg[2]
-        Data["longitude"] = msg[3]
-        Data["altitude"] = msg[4]
-        Data["luminosity"] = msg[5]
-        Data["vitesse_angulaire_X"] = msg[6]
-        Data["vitesse_angulaire_Y"] = msg[7]
-        Data["vitesse_angulaire_Z"] = msg[8]
-        Data["pression"] = msg[9]
-        Data["acceleration_X"] = msg[10]
-        Data["acceleration_Y"] = msg[11]
-        Data["acceleration_Z"] = msg[12]
-        Data["angle"] = msg[13]
-        Data["azimuth"] = msg[14]
-        Data["distance_recul"] = "0"
-        Data["humidite"] = "0"
-        Data["temperature"] = "0"
     if msg[0] == "3":
         objects = msg.strip("\n").split(";")[:-1]
-        print (objects)
         Data["Object"] = []
         for i in objects:
             i = i[1:].split(",")
             obj = {"X":i[0],"Y":i[1],"Z":i[2],"objetLabel":i[3]}
             Data["Object"].append(obj)
-            print(obj)
+    else :
+        msg = msg.decode('utf-8').strip("\n").split(",")
+        if msg[0] == "s":
+            Data["timestamp"] = msg[1]
+            Data["latitude"] = msg[2]
+            Data["longitude"] = msg[3]
+            Data["altitude"] = msg[4]
+            Data["luminosity"] = msg[5]
+            Data["vitesse_angulaire_X"] = msg[6]
+            Data["vitesse_angulaire_Y"] = msg[7]
+            Data["vitesse_angulaire_Z"] = msg[8]
+            Data["pression"] = msg[9]
+            Data["acceleration_X"] = msg[10]
+            Data["acceleration_Y"] = msg[11]
+            Data["acceleration_Z"] = msg[12]
+            Data["angle"] = msg[13]
+            Data["azimuth"] = msg[14]
+            Data["distance_recul"] = "0"
+            Data["humidite"] = "0"
+            Data["temperature"] = "0"
+    
     return Data
 
 def UartWriteLoRa(Data):
@@ -74,13 +74,16 @@ def UartWriteLoRa(Data):
     Writes the Data packet on the LoRa Uart to send it on the LoRa network
     """
 
-    if (len(Data) > 0):
-        if (Data[0] == "3"):
-            uartLoRa.write(Data.encode('utf-8'))
-        else:
-            messages = DataToMsg(Data)
-            for msg in messages:
-                uartLoRa.write(msg.encode('utf-8'))
+    messages = DataToMsg(Data)
+    if isinstance(Data, dict) and "Object" in Data:
+        for msg in messages:
+            uartLoRa.write(("3"+msg).encode('utf-8'))
+            print("3"+msg)
+        
+    else:
+        for msg in messages:
+            uartLoRa.write(msg.encode('utf-8'))
+            print(msg)
     
 
 def UartWriteLTE(Data):

@@ -14,7 +14,7 @@ Config={"db_name":"plateformeIoT","SQL_username":"n7","db_init_file":"stageiot",
         "APP_username":"stm32lora1@ttn" , "APP_password":"NNSXS.U6KN7IY6K2MWWA54MKJVCON3BFH2B4GNBVYC7VY.F33QNU3IFQ63X7XOBVHS7AU4O2DA4MPPC6M3EXXTEZHKGSZAUALA", 
         "APP_hostname":"eu1.cloud.thethings.network", "APP_port":"8883",
         "server_host":'0.0.0.0',"server_port":'5000',
-        "LoRaUartIF":None,"LTEUartIF":None,"CapUartIF":None
+        "LoRaUartIF":None,"LTEUartIF":None,"SensorUartIF":None
         }
 db : mysql.connector.MySQLConnection
 db_cursor : mysql.connector.abstracts.MySQLCursorAbstract
@@ -87,13 +87,13 @@ def run_client():
     We link the diferents threads with Queues. Thoses represent the channels and we can determine the form of the data with it.
     """
 
-    Q_info = Queue() # Queue for the data for devices
+    Q_data = Queue() # Queue for the data for devices
     Q_send = Queue() # Queue of the data to send (through the NetworkUnit)
     Q_output = Queue() # Queue of the data output (same thing you send to the serer but you get an access for yourself in local)
     Q_ns= Queue(1) # Queue to update the network state
 
-    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_info,Config])
-    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_info,Q_output,Q_send,Config, db, db_cursor])
+    threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_data,Config])
+    threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_data,Q_output,Q_send,Config, db, db_cursor])
     threadSend = threading.Thread(target=NetworkUnit.Sendnode,args=[Q_send,Q_ns,Config])
     threadObjectDetection = threading.Thread(target=spatial_object_detection.ObjectDetection,args=[Q_send])
 

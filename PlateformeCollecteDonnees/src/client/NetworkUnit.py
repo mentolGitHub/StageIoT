@@ -8,7 +8,7 @@ data_format = { 'timestamp':"", 'luminosity':None, 'pression':None, 'temperature
                 'vitesse_angulaire_X':None, 'vitesse_angulaire_Y':None, 'vitesse_angulaire_Z':None,
                 'acceleration_X':None, 'acceleration_Y':None, 'acceleration_Z':None,
                 'azimuth':None, 'distance_recul':None, 'presence':None , 'humidite':None,  'distance_recul':None}
-LTE_connection = 0
+LTE_connection = 1
 
 def SendLoRa(Data):
     # Send through STM (UART/USB)

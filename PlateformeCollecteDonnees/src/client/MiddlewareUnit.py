@@ -75,15 +75,9 @@ def UartWriteLoRa(Data):
     """
 
     messages = DataToMsg(Data)
-    if isinstance(Data, dict) and "Object" in Data:
-        for msg in messages:
-            uartLoRa.write(("3"+msg).encode('utf-8'))
-            print("3"+msg)
-        
-    else:
-        for msg in messages:
-            uartLoRa.write(msg.encode('utf-8'))
-            print(msg)
+    for msg in messages:
+        uartLoRa.write((msg+"\n").encode('utf-8'))
+        print(msg)
     
 
 def UartWriteLTE(Data):
@@ -94,8 +88,8 @@ def UartWriteLTE(Data):
 
     messages = DataToMsg(Data)
     for msg in messages:
-        uartLTE.write(msg)
-
+        uartLTE.write((msg+"\n").encode('utf-8'))
+        print(msg)
 
 
 def Middlewarenode(Q_capteurs, Config):

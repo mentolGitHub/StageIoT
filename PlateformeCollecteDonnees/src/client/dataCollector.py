@@ -35,7 +35,6 @@ def save_DB(data):
                 %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
                 %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
                 %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s)"
-        print (data)
         if 'Object' in data:
             data.pop('Object')
         db_cursor.execute(query,data)

@@ -144,6 +144,7 @@ void traitementReceptionUartLoPy()
   if (SerialPort.available()) {
     dataFromUart = SerialPort.readStringUntil('\n');    
     Serial.write(("LoRa"+dataFromUart+"\n").c_str());
+    SerialBT.print(dataFromUart);
   }
 }
 

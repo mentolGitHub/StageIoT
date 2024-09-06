@@ -208,31 +208,42 @@ def post_data():
                 
                 data = {
                     "eui": str(data_list[0]).lower().removesuffix("\n"),
-                    "timestamp": int(data_list[1]),
-                    "latitude": float(data_list[2]),
-                    "longitude": float(data_list[3]),
-                    "altitude": float(data_list[4]),
-                    "luminosity": float(data_list[5]),
-                    "vitesse_angulaire_X": float(data_list[6]),
-                    "vitesse_angulaire_Y": float(data_list[7]),
-                    "vitesse_angulaire_Z": float(data_list[8]),
-                    "pressure": float(data_list[9]),
-                    "acceleration_X": float(data_list[10]),
-                    "acceleration_Y": float(data_list[11]),
-                    "acceleration_Z": float(data_list[12]),
-                    "angle": float(data_list[13]),
-                    "azimuth": float(data_list[14]),
-                    "distance_recul": str(data_list[15]),
-                    "humidite": float(data_list[16]),
-                    "temperature": float(data_list[17])
+                    "timestamp": int(data_list[1])
                 }
-                query = "INSERT INTO Data (timestamp, temperature, humidity, luminosity, presence, pression, longitude, latitude, altitude, angle, , label) VALUES (%s, %s, %s, %s, %s, %s)"
+                
+                fields = [
+                    ("latitude", 2),
+                    ("longitude", 3),
+                    ("altitude", 4),
+                    ("luminosity", 5),
+                    ("vitesse_angulaire_X", 6),
+                    ("vitesse_angulaire_Y", 7),
+                    ("vitesse_angulaire_Z", 8),
+                    ("pressure", 9),
+                    ("acceleration_X", 10),
+                    ("acceleration_Y", 11),
+                    ("acceleration_Z", 12),
+                    ("angle", 13),
+                    ("azimuth", 14),
+                    ("distance_recul", 15),
+                    ("humidite", 16),
+                    ("temperature", 17)
+                ]
+                
+                for field, index, *type_cast in fields:
+                    try:
+                        data[field] = (type_cast[0] if type_cast else float)(data_list[index])
+                    except ValueError:
+                        data[field] = None
+
+                print(data)
                 Q_out.put(data)
                 add_data_to_cache(data)      
                 return jsonify({"status": "success"}), 200
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 4:
+            print (raw_data)
             objects = raw_data[1:].split(';')
             eui = objects[0].split(',')[0].removesuffix("\n")
             timestamp = objects[0].split(',')[1]

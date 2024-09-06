@@ -50,6 +50,8 @@ def save_DB(data,id=0):
                     
         # print(query,data)
         # print(data)
+        print (query)
+        print (data)
         db_cursor.execute(query,data)
         #print(db_cursor)
         db.commit()

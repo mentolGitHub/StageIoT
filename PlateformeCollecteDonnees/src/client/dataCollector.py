@@ -23,22 +23,23 @@ def save_DB(data):
     """
     
     try :
-        data['timestamp']=datetime.datetime.fromtimestamp(int(data['timestamp'])/1000)
+        if not isinstance(data['timestamp'], datetime.datetime):
+            data['timestamp'] = datetime.datetime.fromtimestamp(int(data['timestamp']) / 1000)
 
-        table = "Data"
-        query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
-                presence, pression, longitude, latitude, altitude, angle, \
-                vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
-                acceleration_X, acceleration_Y,acceleration_Z,\
-                azimuth, distance_recul) \
-                VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosity)s,\
-                %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
-                %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
-                %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s)"
-        if 'Object' in data:
-            data.pop('Object')
-        db_cursor.execute(query,data)
-        db.commit()
+            table = "Data"
+            query = "INSERT INTO "+ table +" (timestamp, temperature, humidity, luminosity,\
+                    presence, pression, longitude, latitude, altitude, angle, \
+                    vitesse_angulaire_X, vitesse_angulaire_Y, vitesse_angulaire_Z,\
+                    acceleration_X, acceleration_Y,acceleration_Z,\
+                    azimuth, distance_recul) \
+                    VALUES (%(timestamp)s, %(temperature)s, %(humidite)s, %(luminosity)s,\
+                    %(presence)s, %(pression)s, %(longitude)s, %(latitude)s, %(altitude)s, %(angle)s,\
+                    %(vitesse_angulaire_X)s, %(vitesse_angulaire_Y)s, %(vitesse_angulaire_Z)s,%(acceleration_X)s,\
+                    %(acceleration_Y)s,%(acceleration_Z)s, %(azimuth)s, %(distance_recul)s)"
+            if 'Object' in data:
+                data.pop('Object')
+            db_cursor.execute(query,data)
+            db.commit()
         
     except ValueError as e :
         print(e)

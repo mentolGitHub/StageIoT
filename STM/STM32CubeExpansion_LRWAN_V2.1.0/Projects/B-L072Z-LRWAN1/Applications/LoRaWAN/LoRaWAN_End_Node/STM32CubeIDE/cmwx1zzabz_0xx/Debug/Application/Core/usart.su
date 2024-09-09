@@ -1,3 +1,0 @@
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/LoRaWAN/LoRaWAN_End_Node/Core/Src/usart.c:33:6:MX_USART2_UART_Init	8	static
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/LoRaWAN/LoRaWAN_End_Node/Core/Src/usart.c:61:6:HAL_UART_MspInit	96	static
-/home/local/Documents/StageIoT/STM/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/LoRaWAN/LoRaWAN_End_Node/Core/Src/usart.c:149:6:HAL_UART_MspDeInit	8	static

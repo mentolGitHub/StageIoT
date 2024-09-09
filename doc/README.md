@@ -12,9 +12,9 @@ doc\
 ├── [cablage.drawio.svg](cablage.drawio.svg)\
 ├── database\
 │   └── serveur\
-│       ├── [DB.png](DB.png)\
+│   │   ├── [DB.png](DB.png)\
 │   │   |```Schéma de la base de donnée du serveur```\
-│       └── [DB.svg](DB.svg)\
+│   │   └── [DB.svg](DB.svg)\
 ├── esp32\
 │   ├── [esp32-documentation_fr.md](esp32/esp32-documentation_fr.md) \
 │   │ ```Documentation de l'esp32 en Français```\
@@ -40,6 +40,10 @@ doc\
 │   ├── [documentation-flask-fr.md](server/documentation-flask-fr.md)\
 │   │ ```Documentation du serveur flask en Français```\
 │   └── [flask-app-documentation.md](server/flask-app-documentation.md)\
-│   │ ```Documentation du serveur flask en Anglais```
+│   │ ```Documentation du serveur flask en Anglais```\
+│   ├── [DB.png](server/DB.png)\
+│   │ ```Schéma de la base de donnée du serveur```\
+│   └── [DB.svg](server/DB.svg)\
+├── esp32\
 
 [retour à l'arborescnece globale](../arborescence-fichiers-projet.md)

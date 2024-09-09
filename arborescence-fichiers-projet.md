@@ -27,7 +27,7 @@
 │   └── [server/](doc/server/README.md)\
 │       ├── documentation-flask-fr.md\
 │       └── flask-app-documentation.md\
-├── [esp/](esp/README.md)\
+├── [esp32/](client/esp32/README.md)\
 │   └── [platformeIoT/](esp/platformeIoT/README.md)\
 │       ├── include\
 │       │   └── README\
@@ -106,3 +106,7 @@
 │       └── pymakr.conf\
 ├── README.md\
 └── requirements.txt
+
+
+
+ 

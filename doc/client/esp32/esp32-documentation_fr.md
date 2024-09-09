@@ -1,4 +1,4 @@
-[retour à l'arborescence de la doc](../README.md)
+[retour à l'arborescence de la doc](../../README.md)
 # Documentation de la Plateforme IoT ESP32
 
 ## Table des matières

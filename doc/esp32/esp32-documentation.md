@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # ESP32 IoT Platform Documentation
 
 ## Table of Contents
@@ -98,3 +99,5 @@ The main loop consists of three primary functions:
 - Runs in a separate thread
 
 This documentation provides an overview of the main components and functionalities of the ESP32 IoT platform. For more detailed information on each function or component, refer to the inline comments in the source code.
+
+[retour à l'arborescence de la doc](../README.md)

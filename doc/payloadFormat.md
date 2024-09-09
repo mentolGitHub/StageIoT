@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # Format des trammes d'envoi de donnnées LoRa
 
 ## Table des id de trammes
@@ -53,6 +54,8 @@ x,y,z,label;x,y,z,label;...;x,y,z,label;
 s, timestamp, latitude, longitude, altitude, luminosité, vitesse angulaire X, vitesse angulaire Y, vitesse angulaire Z, pression, accélérationX, accélérationY, accélérationZ, angle, azimut
 o, objet1, objet2, ...
 
-020\n desactivation 4g
-021\n activation 4g
-30 distance\n envoi de la distance
+`020\n` desactivation 4g\
+`021\n` activation 4g\
+`30'distance'\n` envoi de la distance\
+
+[retour à l'arborescence de la doc](../README.md)

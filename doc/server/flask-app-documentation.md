@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # Flask Application Documentation
 
 ## Table of Contents
@@ -107,3 +108,5 @@ For more information see API documentation
 - `add_data_to_cache(data)`: Add data to in-memory cache
 
 This documentation provides an overview of the main components and functionalities of the Flask application. For more detailed information on each function or route, refer to the inline comments in the source code.
+
+[retour à l'arborescence de la doc](../README.md)

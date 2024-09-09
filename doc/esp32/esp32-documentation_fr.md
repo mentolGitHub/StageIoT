@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # Documentation de la Plateforme IoT ESP32
 
 ## Table des matières
@@ -118,3 +119,5 @@ La boucle principale se compose de trois fonctions principales :
 * Fonctionne dans un thread séparé
 
 Cette documentation fournit un aperçu des principaux composants et fonctionnalités de la plateforme IoT ESP32. Pour des informations plus détaillées sur chaque fonction ou composant, veuillez consulter les commentaires dans le code source.
+
+[retour à l'arborescence de la doc](../README.md)

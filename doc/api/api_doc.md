@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # API Documentation
 
 This document outlines the usage of various endpoints in the API.
@@ -214,3 +215,4 @@ else:
     print("Error:", response.status_code)
     print("Message:", response.json().get('message', 'No message provided'))
 ```
+[retour à l'arborescence de la doc](../README.md)

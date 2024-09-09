@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # Documentation de l'API
 
 Ce document décrit l'utilisation des différents points de terminaison de l'API.
@@ -214,3 +215,4 @@ else:
     print("Erreur:", response.status_code)
     print("Message:", response.json().get('message', 'Aucun message fourni'))
 ```
+[retour à l'arborescence de la doc](../README.md)

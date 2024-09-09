@@ -1,3 +1,4 @@
+[retour à l'arborescence de la doc](../README.md)
 # Documentation des programmes de la Jetson Orin Nano
 
 ## Table des matières 
@@ -54,3 +55,5 @@ Pour lancer le programme :
 - **spatial-object-detection.py** : Detecte les objets ainsi que leur emplacement dans l'espace et renvoie le type d'objet ainsi que les coordonnées dans l'espace de l'objet par rapport au centre de la camera (voir la doc dédiée).
 
 Cette documentation fournit un aperçu des composants principaux et des fonctionnalités du programme de détection d'objets spatiaux. Pour plus d'informations détaillées sur chaque fonction ou composant, référez-vous aux commentaires intégrés dans le code source.
+
+[retour à l'arborescence de la doc](../README.md)

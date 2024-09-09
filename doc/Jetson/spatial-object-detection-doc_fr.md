@@ -12,6 +12,8 @@
   - Traitement des données
   - Sortie
   - Fonctions et classes
+  - Format des données
+  - Informations supplémentaires
 
 ## Introduction 
 
@@ -124,5 +126,13 @@ Classe : `ObjetSpatial`
   - Détection d'objets
 
   - Formatage et transmission des données
+
+## Format des données
+ 
+  X, Y, Z, Label
+
+  Envoyé via une queue a l'applicaiton main
+
+## Informations supplémentaires
 
 Cette documentation fournit un aperçu des composants principaux et des fonctionnalités du programme de détection d'objets spatiaux. Pour plus d'informations détaillées sur chaque fonction ou composant, référez-vous aux commentaires intégrés dans le code source.

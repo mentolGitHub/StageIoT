@@ -162,7 +162,7 @@ void traitementReceptionUartJetson()
       SerialBT.print(dataFromUart);
     }
     else {
-      SerialPort.print(dataFromUart);
+      SerialPort.print(dataFromUart+"\n");
     }
   }
 }

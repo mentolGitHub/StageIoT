@@ -106,16 +106,19 @@ def Middlewarenode(Q_capteurs, Config):
     try:
         while True:
             msg = uartSensor.readline()
-            if (msg.decode('utf-8')[:4] == "LoRa"):
-                try :
-                    uartLoRa.write((msg.decode('utf-8')+"\n").encode('utf-8'))
-                except Exception as e:
-                    print(e)
-                LoRa_eui = msg.decode('utf-8')[4:]
-            else :            
-                data = MsgToData(msg)
-                
-                Q_capteurs.put(data)
+            try :
+                if (msg.decode('utf-8')[:4] == "LoRa"):
+                    try :
+                        uartLoRa.write((msg.decode('utf-8')+"\n").encode('utf-8'))
+                    except Exception as e:
+                        print(e)
+                    LoRa_eui = msg.decode('utf-8')[4:]
+                else :            
+                    data = MsgToData(msg)
+                    
+                    Q_capteurs.put(data)
+            except Exception as e:
+                print(e)
             
     except KeyboardInterrupt :
         print("Middleware Stopped")

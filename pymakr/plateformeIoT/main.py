@@ -59,32 +59,30 @@ s = socket.socket(socket.AF_LORA, socket.SOCK_RAW)
 
 s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5) # fixer le débit de données LoRaWAN
 
-s.setblocking(True) # rendre le socket non bloquant
+s.setblocking(True)
 
 ####### Programme principal #######
 while 1 :
     #uart.write('test')
     #dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
-    while uart.any() != 0:
-        dataFromUart = uart.readline().decode('utf-8')          # Lecture des données UART
+    dataFromUart = ""
+    char= ''
+    if uart.any() == 0:
+        while uart.any() == 0:
+            pass
+    while uart.any() != 0 and char !='\n':
+        char = uart.read().decode('utf-8')
+        dataFromUart+= char
+        print(char)
 
-    if dataFromUart != "":
-        data = dataFromUart.strip().split(',')
-        for i in range(len(data)):
-            if data[i].isdigit():
-                sendBuffer += struct.pack('i', int(data[i]))
-            elif isfloat(data[i]):
-                sendBuffer += struct.pack('f', float(data[i]))
-            else :
-                sendBuffer += data[i].encode('utf-8')
+    if char == '\n':
+        print("rrrrrrrrrrrrrrrrr")
 
-        
-#struct.pack('%sf' % len(floatlist), *floatlist)
-        print(dataFromUart)
-        s.send(dataFromUart)                  # Envoi des données UART par LoRa (max 256 caractères)
-        dataFromUart = ""
-    if (time.time() > oldTimer + 20):
-        uart.write("01"+dev_eui.lower()+"\n") 
+    
+    s.send(dataFromUart[:230])                  # Envoi des données UART par LoRa (max 256 caractères)
+    
+
+    if (time.time() > oldTimer + 60):
+        uart.write("01"+dev_eui.lower()+"\n")
         oldTimer = time.time()
     sendBuffer = struct.pack('i', idTramme)
-    

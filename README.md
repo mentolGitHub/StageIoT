@@ -49,146 +49,164 @@ lancer l'application mobile et se connecter a la plateforme en bluetooth
 
 ### Dossiers
 
-.\
-├── doc\
-│   ├── api\
-│   ├── database\
-│   │   └── serveur\
-│   ├── esp32\
-│   ├── Jetson\
-│   ├── PyCom\
-│   └── server\
-├── esp\
-│    └── platformeIoT\
-│       ├── include\
-│       ├── lib\
-│       ├── src\
-│       └── test\
-├── PlateformeCollecteDonnees\
-│   ├── examples\
-│   │   └── api\
-│   ├── img\
-│   └── src\
-│       ├── client\
-│       │   └── __pycache__\
-│       └── serveur\
-│           └── web\
-│               ├── static\
-│               │   ├── img\
-│               │   └── styles\
-│               └── templates\
-└── pymakr\
-    └── plateformeIoT
+```
+📦StageIoT
+ ┣ 📂doc
+ ┃ ┣ 📂api
+ ┃ ┣ 📂client
+ ┃ ┃ ┣ 📂esp32
+ ┃ ┃ ┣ 📂Jetson
+ ┃ ┃ ┗ 📂PyCom
+ ┃ ┗ 📂server
+ ┣ 📂esp
+ ┃ ┗ 📂platformeIoT
+ ┃   ┣ 📂.vscode
+ ┃   ┣ 📂include
+ ┃   ┣ 📂lib
+ ┃   ┣ 📂src
+ ┃   ┗ 📂test
+ ┣ 📂PlateformeCollecteDonnees
+ ┃ ┣ 📂examples
+ ┃ ┃ ┗ 📂api
+ ┃ ┣ 📂img
+ ┃ ┗ 📂src
+ ┃   ┣ 📂client
+ ┃   ┗ 📂serveur
+ ┃     ┣ 📂web
+ ┃     ┃ ┣ 📂static
+ ┃     ┃ ┃ ┣ 📂img
+ ┃     ┃ ┃ ┗ 📂styles
+ ┃     ┃ ┣ 📂templates
+ ┃     ┃ ┗ 📂__pycache__
+ ┃     ┗ 📂__pycache__
+ ┗ 📂pymakr
+   ┗ 📂plateformeIoT
+
+ ```
 
 ### Dossiers + fichiers
 
-.\
-├── doc\
-│   ├── api\
-│   │   ├── api_doc.md\
-│   │   ├── documentation-api-fr.md\
-│   │   └── example_api.py\
-│   ├── cablage.drawio.png\
-│   ├── cablage.drawio.svg\
-│   ├── database\
-│   │   └── serveur\
-│   │       ├── DB.png\
-│   │       └── DB.svg\
-│   ├── esp32\
-│   │   ├── esp32-documentation_fr.md\
-│   │   └── esp32-documentation.md\
-│   ├── Jetson\
-│   │   ├── BDD_client.drawio.png\
-│   │   ├── BDD_client.drawio.svg\
-│   │   ├── doc_jetson_fr.md\
-│   │   ├── spatial-object-detection-doc_fr.md\
-│   │   └── spatial-object-detection-doc.md\
-│   ├── payloadFormat.md\
-│   ├── PyCom\
-│   │   ├── documentation-pycom-fr.md\
-│   │   └── PyCom-documentation.md\
-│   └── server\
-│       ├── documentation-flask-fr.md\
-│       └── flask-app-documentation.md\
-├── esp\
-│   └── platformeIoT\
-│       ├── include\
-│       │   └── README\
-│       ├── lib\
-│       │   └── README\
-│       ├── platformio.ini\
-│       ├── src\
-│       │   └── main.cpp\
-│       └── test\
-│           └── README\
-├── lauch.sh\
-├── PlateformeCollecteDonnees\
-│   ├── examples\
-│   │   ├── api\
-│   │   │   ├── api_doc.md\
-│   │   │   ├── example_api.py\
-│   │   │   └── Readme.md\
-│   │   └── share_neighbour_data.py\
-│   ├── img\
-│   │   ├── DiagClient.svg\
-│   │   ├── Diagramme Client (Jetson).png\
-│   │   ├── Diagramme sans nom.drawio\
-│   │   └── schema_bdd.png\
-│   ├── Readme.md\
-│   └── src\
-│       ├── client\
-│       │   ├── config.conf\
-│       │   ├── dataCollector.py\
-│       │   ├── main.py\
-│       │   ├── MiddlewareUnit.py\
-│       │   ├── mobilenet-ssd_openvino_2021.4_6shave.blob\
-│       │   ├── NetworkUnit.py\
-│       │   ├── __pycache__\
-│       │   │   ├── dataCollector.cpython-310.pyc\
-│       │   │   ├── MiddlewareUnit.cpython-310.pyc\
-│       │   │   ├── NetworkUnit.cpython-310.pyc\
-│       │   │   └── spatial_object_detection.cpython-310.pyc\
-│       │   ├── Readme.md\
-│       │   ├── spatial_object_detection.py\
-│       │   ├── stageiot.sql\
-│       │   └── test.py\
-│       └── serveur\
-│           ├── config.conf\
-│           ├── Interface.py\
-│           ├── main.py\
-│           ├── MQTT.py\
-│           ├── stageiot.sql\
-│           ├── utils.py\
-│           └── web\
-│               ├── IP.py\
-│               ├── static\
-│               │   ├── favicon.ico\
-│               │   ├── img\
-│               │   │   └── iotcar.png\
-│               │   ├── index.js\
-│               │   └── styles\
-│               │       ├── deviceList.css\
-│               │       └── styles.css\
-│               └── templates\
-│                   ├── deviceList.html\
-│                   ├── download.html\
-│                   ├── edit_device.html\
-│                   ├── index.html\
-│                   ├── login.html\
-│                   ├── map.html\
-│                   ├── objects.html\
-│                   ├── objets_proches.html\
-│                   ├── profile.html\
-│                   ├── register_device.html\
-│                   ├── register.html\
-│                   └── visualize.html\
-├── pymakr\
-│   └── plateformeIoT\
-│       ├── boot.py\
-│       ├── main.py\
-│       └── pymakr.conf\
-├── README.md\
-└── requirements.txt
-
+```
+📦StageIoT
+ ┣ 📂doc
+ ┃ ┣ 📂api
+ ┃ ┃ ┣ 📜api_doc.md
+ ┃ ┃ ┣ 📜documentation-api-fr.md
+ ┃ ┃ ┣ 📜example_api.py
+ ┃ ┃ ┗ 📜README.md
+ ┃ ┣ 📂client
+ ┃ ┃ ┣ 📂esp32
+ ┃ ┃ ┃ ┣ 📜esp32-documentation.md
+ ┃ ┃ ┃ ┣ 📜esp32-documentation_fr.md
+ ┃ ┃ ┃ ┗ 📜README.md
+ ┃ ┃ ┣ 📂Jetson
+ ┃ ┃ ┃ ┣ 📜BDD_client.drawio.png
+ ┃ ┃ ┃ ┣ 📜BDD_client.drawio.svg
+ ┃ ┃ ┃ ┣ 📜doc_jetson_fr.md
+ ┃ ┃ ┃ ┣ 📜README.md
+ ┃ ┃ ┃ ┣ 📜spatial-object-detection-doc.md
+ ┃ ┃ ┃ ┗ 📜spatial-object-detection-doc_fr.md
+ ┃ ┃ ┣ 📂PyCom
+ ┃ ┃ ┃ ┣ 📜documentation-pycom-fr.md
+ ┃ ┃ ┃ ┣ 📜PyCom-documentation.md
+ ┃ ┃ ┃ ┗ 📜README.md
+ ┃ ┃ ┣ 📜cablage.drawio.png
+ ┃ ┃ ┣ 📜cablage.drawio.svg
+ ┃ ┃ ┗ 📜README.md
+ ┃ ┣ 📂server
+ ┃ ┃ ┣ 📜DB.png
+ ┃ ┃ ┣ 📜DB.svg
+ ┃ ┃ ┣ 📜flask-app-documentation.md
+ ┃ ┃ ┗ 📜README.md
+ ┃ ┣ 📜File_tree.md
+ ┃ ┣ 📜payloadFormat.md
+ ┃ ┗ 📜README.md
+ ┣ 📂esp
+ ┃ ┗ 📂platformeIoT
+ ┃   ┣ 📂.vscode
+ ┃   ┃ ┣ 📜extensions.json
+ ┃   ┃ ┗ 📜settings.json
+ ┃   ┃ ┣ 📂include
+ ┃   ┃ ┗ 📜README
+ ┃   ┣ 📂lib
+ ┃   ┃ ┗ 📜README
+ ┃   ┣ 📂src
+ ┃   ┃ ┗ 📜main.cpp
+ ┃   ┣ 📂test
+ ┃   ┃ ┗ 📜README
+ ┃   ┣ 📜.gitignore
+ ┃   ┗ 📜platformio.ini
+ ┣ 📂PlateformeCollecteDonnees
+ ┃ ┣ 📂examples
+ ┃ ┃ ┣ 📂api
+ ┃ ┃ ┃ ┣ 📜api_doc.md
+ ┃ ┃ ┃ ┣ 📜example_api.py
+ ┃ ┃ ┃ ┗ 📜Readme.md
+ ┃ ┃ ┗ 📜share_neighbour_data.py
+ ┃ ┣ 📂img
+ ┃ ┃ ┣ 📜DiagClient.svg
+ ┃ ┃ ┣ 📜Diagramme Client (Jetson).png
+ ┃ ┃ ┣ 📜Diagramme sans nom.drawio
+ ┃ ┃ ┗ 📜schema_bdd.png
+ ┃ ┣ 📂src
+ ┃ ┃ ┣ 📂client
+ ┃ ┃ ┃ ┣ 📜config.conf
+ ┃ ┃ ┃ ┣ 📜dataCollector.py
+ ┃ ┃ ┃ ┣ 📜main.py
+ ┃ ┃ ┃ ┣ 📜MiddlewareUnit.py
+ ┃ ┃ ┃ ┣ 📜mobilenet-ssd_openvino_2021.4_6shave.blob
+ ┃ ┃ ┃ ┣ 📜NetworkUnit.py
+ ┃ ┃ ┃ ┣ 📜Readme.md
+ ┃ ┃ ┃ ┣ 📜spatial_object_detection.py
+ ┃ ┃ ┃ ┣ 📜stageiot.sql
+ ┃ ┃ ┃ ┗ 📜test.py
+ ┃ ┃ ┗ 📂serveur
+ ┃ ┃   ┃ ┣ 📂web
+ ┃ ┃   ┃ ┣ 📂static
+ ┃ ┃   ┃ ┃ ┣ 📂img
+ ┃ ┃   ┃ ┃ ┃ ┗ 📜iotcar.png
+ ┃ ┃   ┃ ┃ ┣ 📂styles
+ ┃ ┃   ┃ ┃ ┃ ┣ 📜deviceList.css
+ ┃ ┃   ┃ ┃ ┃ ┗ 📜styles.css
+ ┃ ┃   ┃ ┃ ┣ 📜favicon.ico
+ ┃ ┃   ┃ ┃ ┗ 📜index.js
+ ┃ ┃   ┃ ┣ 📂templates
+ ┃ ┃   ┃ ┃ ┣ 📜deviceList.html
+ ┃ ┃   ┃ ┃ ┣ 📜download.html
+ ┃ ┃   ┃ ┃ ┣ 📜edit_device.html
+ ┃ ┃   ┃ ┃ ┣ 📜index.html
+ ┃ ┃   ┃ ┃ ┣ 📜login.html
+ ┃ ┃   ┃ ┃ ┣ 📜map.html
+ ┃ ┃   ┃ ┃ ┣ 📜objects.html
+ ┃ ┃   ┃ ┃ ┣ 📜objets_proches.html
+ ┃ ┃   ┃ ┃ ┣ 📜profile.html
+ ┃ ┃   ┃ ┃ ┣ 📜register.html
+ ┃ ┃   ┃ ┃ ┣ 📜register_device.html
+ ┃ ┃   ┃ ┃ ┗ 📜visualize.html
+ ┃ ┃   ┃ ┣ 📂__pycache__
+ ┃ ┃   ┃ ┃ ┗ 📜IP.cpython-312.pyc
+ ┃ ┃   ┃ ┗ 📜IP.py
+ ┃ ┃   ┣ 📂__pycache__
+ ┃ ┃   ┃ ┣ 📜Interface.cpython-312.pyc
+ ┃ ┃   ┃ ┣ 📜MQTT.cpython-312.pyc
+ ┃ ┃   ┃ ┗ 📜utils.cpython-312.pyc
+ ┃ ┃   ┣ 📜config.conf
+ ┃ ┃   ┣ 📜Interface.py
+ ┃ ┃   ┣ 📜main.py
+ ┃ ┃   ┣ 📜MQTT.py
+ ┃ ┃   ┣ 📜stageiot.sql
+ ┃ ┃   ┗ 📜utils.py
+ ┃ ┗ 📜Readme.md
+ ┣ 📂pymakr
+ ┃ ┗ 📂plateformeIoT
+ ┃   ┣ 📜boot.py
+ ┃   ┣ 📜main.py
+ ┃   ┗ 📜pymakr.conf
+ ┣ 📜.gitignore
+ ┣ 📜arborescence-fichiers-projet.md
+ ┣ 📜lauch.sh
+ ┣ 📜README.md
+ ┗ 📜requirements.txt
+ ```
 
 

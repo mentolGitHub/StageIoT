@@ -1,3 +1,3 @@
 📂PyCom\
- ┣ [📜PyCom-documentation.md](client/PyCom/PyCom-documentation.md)\
- ┗ [📜documentation-pycom-fr.md](client/PyCom/documentation-pycom-fr.md)
+ ┣ [📜PyCom-documentation.md](PyCom-documentation.md)\
+ ┗ [📜documentation-pycom-fr.md](documentation-pycom-fr.md)

@@ -108,10 +108,6 @@ def Middlewarenode(Q_capteurs, Config):
             msg = uartSensor.readline()
             try :
                 if (msg.decode('utf-8')[:4] == "LoRa"):
-                    try :
-                        uartLoRa.write((msg.decode('utf-8')+"\n").encode('utf-8'))
-                    except Exception as e:
-                        print(e)
                     LoRa_eui = msg.decode('utf-8')[4:]
                 else :            
                     data = MsgToData(msg)

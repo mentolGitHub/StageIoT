@@ -4,6 +4,7 @@
 
 - [Arborescence des dossiers simple](#arborescence-des-dossiers-simple)
 - [Arborescence avec description des dossiers](#arborescence-avec-description-des-dossiers)
+- [Arborescence avec description des dossiers et fichiers](#arborescence-avec-description-des-dossiers-et-fichiers)
 
 ## Arborescence des dossiers simple
 

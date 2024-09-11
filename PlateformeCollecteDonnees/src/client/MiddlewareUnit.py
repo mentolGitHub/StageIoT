@@ -32,7 +32,7 @@ def DataToMsg(Data):
     if "Object" in Data:
         date = str(datetime.datetime.timestamp(datetime.datetime.now()))
         messages = []
-        msg = "3"+date+","
+        msg = "3"+date+";"
         for obj in Data["Object"]:
             msg += obj["X"]+","+obj["Y"]+","+obj["Z"]+","+obj["objetLabel"]+";"
         messages.append(msg)

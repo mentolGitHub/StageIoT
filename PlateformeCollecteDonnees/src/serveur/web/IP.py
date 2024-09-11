@@ -204,6 +204,7 @@ def post_data():
         data_list = raw_data[1:].split(',')
         # print(data_list)
         if int(raw_data[0]) == 2:
+            data_list = raw_data[1:].split(',')
             if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
@@ -243,17 +244,14 @@ def post_data():
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
         elif int(raw_data[0]) == 3:
-            print (raw_data)
             objects = raw_data[1:].split(';')
-            eui = objects[0].split(',')[0].removesuffix("\n")
+            eui = objects[0].split(',')[0]
             timestamp = objects[0].split(',')[1]
             if eui == "":
                 eui = "unknown"
             objects_storage[eui] = []
-            for i in objects:
+            for i in objects[1:]:
                 obj = i.split(',')
-                if len(obj) == 6:
-                    obj = obj[2:]
                 if len(obj) == 4:
                     object_x = obj[0]
                     object_dist = obj[2]

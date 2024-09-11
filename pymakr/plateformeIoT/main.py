@@ -1,3 +1,4 @@
+from queue import Queue
 from machine import UART
 from network import LoRa
 import pycom
@@ -5,6 +6,7 @@ import time
 import socket
 import ubinascii
 import struct
+import _thread
 
 def isfloat(num):
     try:
@@ -61,28 +63,44 @@ s.setsockopt(socket.SOL_LORA, socket.SO_DR, 5) # fixer le débit de données LoR
 
 s.setblocking(True)
 
+def send(Q_out : Queue):
+    while True:
+        if not Q_out.empty():
+            data = Q_out.get()
+            # print("data sent")
+            # print(len(data))
+            s.send(data)
+
+Q_out = Queue(2)
+_thread.start_new_thread(send, (Q_out,))
 ####### Programme principal #######
 while 1 :
     #uart.write('test')
     #dataFromLoRa = s.recv(64)                   # Lecture des données LoRa
     dataFromUart = ""
-    char= ''
-    if uart.any() == 0:
-        while uart.any() == 0:
-            pass
-    while uart.any() != 0 and char !='\n':
-        char = uart.read().decode('utf-8')
-        dataFromUart+= char
-        print(char)
-
-    if char == '\n':
-        print("rrrrrrrrrrrrrrrrr")
-
     
-    s.send(dataFromUart[:230])                  # Envoi des données UART par LoRa (max 256 caractères)
-    
+    # if uart.any() == 0:
+    #     while uart.any() == 0:
+    #         pass
+    # while uart.any() != 0 and char !='\n':
+    #     char = uart.read().decode('utf-8')
+    #     dataFromUart+= char
+    #     print(char)
+    while uart.any() != 0:
+        time.sleep(0.1)
+        dataFromUart = uart.read(uart.any()).decode('utf-8').strip('\n')
+        dataFromUart = dataFromUart.split(';')
+        # print(dataFromUart)
+        for msg in dataFromUart:
+            if len(msg)>2:
+                if Q_out.full():
+                    Q_out.get()
+                Q_out.put(msg)
+        
 
     if (time.time() > oldTimer + 60):
         uart.write("01"+dev_eui.lower()+"\n")
         oldTimer = time.time()
     sendBuffer = struct.pack('i', idTramme)
+
+

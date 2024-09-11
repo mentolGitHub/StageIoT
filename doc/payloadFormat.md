@@ -37,7 +37,7 @@ ce format permet à l'utilisateur de définir sa propre tramme
 |  2  |  non  | oui       | Latitude             | Longitude             | Altitude              | luminosite     | Vitesse Angulaire X  | Vitesse Angulaire Y  |
 |     |       |           | Vitesse Angulaire Z  | Pression              | Accelération X        | Accelération Y | Accelération Z       |                      |
 |     |       |           | Angle                | Azimut                | Distance              | Humidite       | Temperature          |                      |
-|  3  |  non  | non       | X                    | Y                     | Z                     | objetLabel     | ...                  |                      |
+|  3  |  non  | oui       | X                    | Y                     | Z                     | objetLabel     | ...                  |                      |
 
 
 ## Trammes de données Raspi -> esp

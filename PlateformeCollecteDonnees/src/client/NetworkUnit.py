@@ -37,6 +37,5 @@ def Sendnode(Q_input : Queue, network_state : Queue, Config):
                     while not Q_input.empty():
                         message = Q_input.get()
                     SendLoRa(message)
-
     except KeyboardInterrupt :
         sys.exit(0)

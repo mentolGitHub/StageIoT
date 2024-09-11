@@ -21,14 +21,21 @@ def DataToMsg(Data):
     """
     messages = []
     if Data["timestamp"] != "" : 
-        date = str(datetime.datetime.timestamp(Data["timestamp"]))
+        try :
+            date = str(datetime.datetime.timestamp(Data["timestamp"]))
+        except:
+            date = str(datetime.datetime.timestamp(datetime.datetime.now()))
         messages.append("2"+date+","+Data["latitude"]+","+Data["longitude"]+","+Data["altitude"]+"," \
                     +Data["luminosity"]+","+Data["vitesse_angulaire_X"]+","+Data["vitesse_angulaire_Y"]+","+Data["vitesse_angulaire_Z"]\
                     +","+Data["pression"]+","+Data["acceleration_X"]+","+Data["acceleration_Y"]+","+Data["acceleration_Z"]\
-                    +","+Data["angle"]+","+","+Data["azimuth"]+ ","+Data["distance_recul"]+","+Data["humidite"]+","+Data["temperature"])
+                    +","+Data["angle"]+","+Data["azimuth"]+ ","+Data["distance_recul"]+","+Data["humidite"]+","+Data["temperature"])
     if "Object" in Data:
+        date = str(datetime.datetime.timestamp(datetime.datetime.now()))
+        messages = []
+        msg = "3"+date+","
         for obj in Data["Object"]:
-            messages.append("3"+obj["X"]+","+obj["Y"]+","+obj["Z"]+","+obj["objetLabel"])
+            msg += obj["X"]+","+obj["Y"]+","+obj["Z"]+","+obj["objetLabel"]+";"
+        messages.append(msg)
     return messages
 
 def MsgToData(msg):

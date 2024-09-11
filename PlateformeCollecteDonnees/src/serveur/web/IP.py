@@ -269,7 +269,8 @@ def post_data():
                     object['label'] = obj[3] 
                     object['distance'] = object_dist
                         
-                    date = datetime.fromtimestamp(int(timestamp)/1000)
+                    date = datetime.fromtimestamp(float(timestamp))
+                    # print (date)
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
                     cursor.execute(query, (date, eui, obj[0], obj[1], obj[2], obj[3]))
                     db.commit()

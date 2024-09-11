@@ -200,15 +200,15 @@ def post_data():
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
-        
+        # print(raw_data)
         data_list = raw_data[1:].split(',')
-        
+        # print(data_list)
         if int(raw_data[0]) == 2:
             if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
                 
                 data = {
                     "eui": str(data_list[0]).lower().removesuffix("\n"),
-                    "timestamp": int(data_list[1])
+                    "timestamp": int(float(data_list[1])*1000)
                 }
                 
                 fields = [
@@ -242,7 +242,7 @@ def post_data():
                 return jsonify({"status": "success"}), 200
             else:
                 return jsonify({"status": "error", "message": "Invalid data format"}), 400
-        elif int(raw_data[0]) == 4:
+        elif int(raw_data[0]) == 3:
             print (raw_data)
             objects = raw_data[1:].split(';')
             eui = objects[0].split(',')[0].removesuffix("\n")

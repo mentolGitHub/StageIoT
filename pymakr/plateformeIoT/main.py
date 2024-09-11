@@ -68,11 +68,18 @@ def send(Q_out : Queue):
         if not Q_out.empty():
             data = Q_out.get()
             # print("data sent")
-            # print(len(data))
+            print(data)
+            s.send(data)
+        if not Q_outObj.empty():
+            data = Q_outObj.get()
+            print("data sent")
+            print(data)
             s.send(data)
 
 Q_out = Queue(2)
+Q_outObj = Queue(4)
 _thread.start_new_thread(send, (Q_out,))
+dataFromUart = uart.read(uart.any()).decode('utf-8').split('\n')
 ####### Programme principal #######
 while 1 :
     #uart.write('test')
@@ -88,14 +95,21 @@ while 1 :
     #     print(char)
     while uart.any() != 0:
         time.sleep(0.1)
-        dataFromUart = uart.read(uart.any()).decode('utf-8').strip('\n')
-        dataFromUart = dataFromUart.split(';')
+        dataFromUart = uart.read(uart.any()).decode('utf-8').split('\n')
         # print(dataFromUart)
         for msg in dataFromUart:
             if len(msg)>2:
-                if Q_out.full():
-                    Q_out.get()
-                Q_out.put(msg)
+                a = msg[0]
+                print("msg : "+msg)
+                if a == '2':
+                    if Q_out.full():
+                        Q_out.get()
+                    Q_out.put(msg)
+                elif a == '3':
+                    if Q_outObj.full():
+                        Q_outObj.get()
+                    Q_outObj.put(msg)
+                    
         
 
     if (time.time() > oldTimer + 60):

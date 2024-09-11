@@ -91,7 +91,7 @@ def run_client():
     Q_data_objects = Queue() # Queue for the objects data
     Q_send = Queue() # Queue of the data to send (through the NetworkUnit)
     Q_output = Queue() # Queue of the data output (same thing you send to the serer but you get an access for yourself in local)
-    Q_ns= Queue(1) # Queue to update the network state
+    Q_ns= Queue(1) # Queue to update the network state   !!!! NOT USED YET !!!!
 
     threadMiddleware = threading.Thread(target=MiddlewareUnit.Middlewarenode,args=[Q_data,Config])
     threadDataCollecter = threading.Thread(target=dataCollector.dataCollectornode,args=[Q_data, Q_data_objects, Q_output,Q_send,Config, db, db_cursor])

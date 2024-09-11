@@ -200,7 +200,7 @@ def post_data():
     if request.method == 'POST': 
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
-        # print(raw_data)
+        print(raw_data)
         data_list = raw_data[1:].split(',')
         # print(data_list)
         if int(raw_data[0]) == 2:

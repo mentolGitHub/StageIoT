@@ -95,12 +95,10 @@ CREATE TABLE IF NOT EXISTS Objets (
 
 
 INSERT INTO Users (username, password, role) VALUES ('a', '$2b$12$MF83CvvYYxd6QSOb4SPm4.m4PXghwwRncpURAro7sfs2AAkZ6ORuW', 'admin');
--- renvoie les données entre 2 dates d'un device / d'une liste de device
 
--- Donne la liste des device au alentours (rayon a selectionner)
+--   Ajout Capteur   --
+--   Creer une nouvelle table pour les capteurs --
+--   Pour plus de fonctionnalitées, il est possible de rajouter des colonnes dans la table Data   --
 
--- add user
--- INSERT INTO Users (username,password) VALUES (%s,%s)
 
--- verifier le mdp d'un user'
--- SELECT (password) FROM Users WHERE usename = %s;
+-- Fin ajout Capteur --

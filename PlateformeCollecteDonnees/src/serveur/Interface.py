@@ -47,6 +47,12 @@ def save_DB(data,id=0):
             case 3 :
                 table = "Obstacles"
                 query = "INSERT INTO "+ table +" "
+            
+            #### Ajouts capteurs ####
+            # ajouter une nouvelle condition pour vérifier le format de vos messages
+            # créer la query pour vos capteurs
+
+            #### Fin Ajouts capteurs ####
                     
         # print(query,data)
         # print(data)

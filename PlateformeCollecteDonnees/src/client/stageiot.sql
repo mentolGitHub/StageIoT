@@ -31,3 +31,10 @@ CREATE TABLE IF NOT EXISTS Objets (
     `z` float NOT NULL,
     `label` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--   Ajout Capteur   --
+--   Creer une nouvelle table pour les capteurs --
+--   Pour plus de fonctionnalitées, il est possible de rajouter des colonnes dans la table Data   --
+
+
+-- Fin ajout Capteur --

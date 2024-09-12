@@ -198,19 +198,23 @@ def post_data():
     cursor = db.cursor()
     
     if request.method == 'POST': 
+        # récupérer les données de la requête
         raw_data = request.get_data().decode('utf-8')
         raw_data= raw_data.removesuffix("\n")
-        # print(raw_data)
-        # print(data_list)
+
+        # Vérifier le format des données (voir la doc payloadFormat.md)
         if int(raw_data[0]) == 2:
+            # Extraire les données de la chaîne
             data_list = raw_data[1:].split(',')
-            if len(data_list) == 18:  # Assurez-vous que tous les champs attendus sont présents
-                
+            if len(data_list) == 18:  # verification du nombre de données aquises
+
+                # Créer un dictionnaire de données avec les données essentielles
                 data = {
                     "eui": str(data_list[0]).lower().removesuffix("\n"),
                     "timestamp": int(float(data_list[1])*1000)
                 }
                 
+                # Liste des données pouvant être extraites
                 fields = [
                     ("latitude", 2),
                     ("longitude", 3),
@@ -230,25 +234,39 @@ def post_data():
                     ("temperature", 17)
                 ]
                 
+                # Ajouter les données extraites au dictionnaire 
                 for field, index, *type_cast in fields:
                     try:
                         data[field] = (type_cast[0] if type_cast else float)(data_list[index])
-                    except ValueError:
+                    except ValueError: # cas si la valeur est mal transmise
                         data[field] = None
 
                 print(data)
+
+                # Ajouter les données à la file d'attente et au cache
                 Q_out.put(data)
-                add_data_to_cache(data)      
+                add_data_to_cache(data)     
+
                 return jsonify({"status": "success"}), 200
             else:
-                return jsonify({"status": "error", "message": "Invalid data format"}), 400
+                return jsonify({"status": "error", "message": "Invalid data format"}), 400 # mauvais nombre de données
+            
         elif int(raw_data[0]) == 3:
+            # Extraire les différents objets de la chaîne
             objects = raw_data[1:].split(';')
+
+            # Extraire l'eui et le timestamp
             eui = objects[0].split(',')[0]
             timestamp = objects[0].split(',')[1]
+
+            # Vérifier si l'eui est vide
             if eui == "":
                 eui = "unknown"
+            
+            # Vider les objets stockés pour l'eui
             objects_storage[eui] = []
+            
+            # Ajouter les objets au cache et à la base de données
             for i in objects[1:]:
                 obj = i.split(',')
                 if len(obj) == 4:
@@ -257,30 +275,41 @@ def post_data():
                     
                     object = {}
                     
+                    # Récupérer les coordonnées de l'émetteur (dernière position connue)
                     emetteur_lat = data_storage[eui][-1]['latitude']
                     emetteur_long = data_storage[eui][-1]['longitude']
                     
                     # Calcul de la position de l'objet
                     object_lat, object_long = calculate_object_coordinates(emetteur_lat, emetteur_long, float(object_dist), float(object_x))
                     
+                    # Ajouter les données de l'objet à la liste
                     object['lat'] = object_lat
                     object['long'] = object_long
                     object['label'] = obj[3] 
                     object['distance'] = object_dist
-                        
+                    
                     date = datetime.fromtimestamp(int(timestamp)/1000)
+
+                    # Ajouter les données à la base de données
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
                     cursor.execute(query, (date, eui, obj[0], obj[1], obj[2], obj[3]))
                     db.commit()
+
+                    # Ajouter les données à la liste d'objets
                     objects_storage[eui].append(object)
                 elif obj != ['']:
                     print (obj)
-                    return jsonify({"status": "error", "message": "Invalid object format"}), 400
+                    return jsonify({"status": "error", "message": "Invalid object format"}), 400 # mauvais format d'objet
             
-            return jsonify({"status": "success", "message": "Objets not implemented yet"}), 200
+            return jsonify({"status": "success", "message": "Objets envoyés"}), 200
+        #### Ajouts capteurs ####
+        # ajouter une nouvelle condition pour vérifier le format du message de vos capteurs
+        # ajouter vos données recues a la base de donnée et au cache
+
+        #### Fin Ajouts capteurs ####
         else:
             print (raw_data)
-            return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400
+            return jsonify({"status": "error", "message": "Message ID not implemeneted yet"}), 400 # mauvais id de message
 
 
 def add_data_to_cache(data):
@@ -294,11 +323,15 @@ def add_data_to_cache(data):
     - None
     """
     global data_storage
+    # Verifier si l'eui est déjà dans le cache
     if data['eui'] not in data_storage:
+        # Ajourter l'eui au cache
         data_storage[data['eui']] = [data]
     else:
+        # Ajouter les données au cache lié à l'eui
         data_storage[data['eui']].append(data)
-    # Supprimer les données de plus d'une heure
+
+    # Supprimer les données de plus d'une heure (amélioration: ne pas faire tous les devices a chaque fois)
     for device in data_storage:
         seuil=0
         while (data_storage[device][-1]['timestamp']-data_storage[device][seuil]['timestamp'])/1000 > 61:
@@ -322,30 +355,42 @@ def get_data():
         Raises:
             None
     """
+    # Récupérer les paramètres de la requête
     duration = request.args.get('duration')
+
+    data = {}
     
+    # Se connecter à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
+
+    # Vérifier si l'utilisateur est connecté
     username = check_user_token()
+
+    # Récuperer la liste des devices associés à l'utilisateur
     query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     cursor.execute(query,(username,))
     result= cursor.fetchall()
 
-    data = {}
+    # Si l'utilisateur a des devices associés, récupérer les données de ces devices
     if len(result) !=0:
         for device in result[:][0]:
+            # Récupérer les données de la base de données
             if duration != None and float(duration) > 60:
                 duration = float(duration)
+                
                 if (device in data_storage) and len(data_storage[device])>0:
                     args = (device,datetime.fromtimestamp(data_storage[device][-1]['timestamp']/1000-duration-1))
                 else : 
                     args = (device,datetime.fromtimestamp(datetime.now().timestamp()-duration-1))
                 
+                # Récupérer les données de la base de données
                 query = "SELECT * FROM Data WHERE source= %s and timestamp > %s"
                 cursor.execute(query,args)
                 result = cursor.fetchall()
                 data[device]=data_labels_to_json(result,"Data")
-                
+
+            # Si possible récupérer les données de la mémoire cache
             else:
                 data[device]=[]
                 if device in data_storage:
@@ -373,8 +418,12 @@ def get_recent_data():
 
 def data_labels_to_json(data,table):
     result = []
+
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor = db.cursor()
+
+    # Récupérer les labels des données
     query = "DESC "+table
     cursor.execute(query)
     desc = cursor.fetchall()
@@ -408,23 +457,30 @@ def get_euiList():
     Returns:
         A JSON response containing the list of devices eui.
     """
+    # Récupérer le nom d'utilisateur de la session
     username = session.get('username')
-    query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
-
+    
+    # Se connecter à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
+    # Récupérer la liste des devices associés à l'utilisateur
+    query = "SELECT device FROM DeviceOwners WHERE owner = %s;"
     cursor.execute(query,(username,))
     result= cursor.fetchall()
     
     devices=[]
     length = len(result[:])
+
+    # Si l'utilisateur a des devices associés, récupérer les eui de ces devices
     if length != None and length > 0:
         for device in result:
+            # Récupérer les eui des devices associés à l'utilisateur
             query = "SELECT `dev-eui`, name FROM Device WHERE `dev-eui` = %s;"
             cursor.execute(query,(device[0],))
             res = cursor.fetchall()
             devices+=res
+        # Retourner la liste des eui des devices associés à l'utilisateur en JSON
         return jsonify(devices)  
     return jsonify([])
 
@@ -460,6 +516,10 @@ def downloadall():
               "vitesse_angulaire_X", "vitesse_angulaire_Y", "vitesse_angulaire_Z", 
               "pressure", "acceleration_X", "acceleration_Y", "acceleration_Z", 
               "angle", "azimuth"]
+    #### Ajouts capteurs ####
+    # ajouter les labels de vos capteurs au header
+    
+    #### Fin Ajouts capteurs ####
     writer.writerow(header)
     
     # Write data
@@ -484,7 +544,9 @@ def download():
     Returns:
         Response: Flask response object containing the generated CSV file as an attachment.
     """
+    # Demande de donnée de l'utilisateur
     if request.method == 'POST':
+        # Récupérer les paramètres de la requête
         start_time = request.form.get('start_time')
         end_time = request.form.get('end_time')
         selected_fields = []
@@ -493,6 +555,7 @@ def download():
             for f in field:
                 selected_fields.append(f)
         
+        # Se connecter à la base de données
         db = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
         cursor = db.cursor()
         
@@ -577,9 +640,11 @@ def login():
         If login is successful, redirects to the home page.
         If login is unsuccessful, renders the login page with an error message.
     """
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
+    # Supprimer les tokens expirés
     query = "DELETE FROM Auth_Token WHERE `date-exp` < %s "
     cursor.execute(query,(datetime.now(),))
     
@@ -595,6 +660,7 @@ def login():
         result= cursor.fetchall()
         if cursor.rowcount == 1:
             pwdhash=result[0][0].encode("utf-8")
+            # Verification du mot de passe
             if check_password(pwdhash,password):
                 session['username'] = username
                 query = "INSERT INTO Auth_Token (token, user, `date-exp`) VALUES (%s, %s, %s)"
@@ -621,6 +687,8 @@ def register():
         A redirect response to the login page if the registration is successful, or the registration page
         with the registration form if there are validation errors or the username already exists.
     """
+
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
@@ -635,7 +703,7 @@ def register():
         cursor.execute(query,(username,))
         result= cursor.fetchall()
 
-
+        # Si le username existe déjà dans la base de données afficher un message d'erreur
         if len(result) > 0:
             flash('Username already exists', 'danger')
             return redirect(url_for('register'))
@@ -656,6 +724,7 @@ def logout():
     Displays a flash message to inform the user that they have been logged out.
     Redirects the user to the login page.
     """
+    # Supprimer les variables de session
     session.pop('username', None)
     session.pop('token')
     flash('You have been logged out', 'info')
@@ -691,14 +760,21 @@ def register_device():
 
     """
 
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
     cursor = db.cursor()
 
+
     form_associate = DeviceAssociationForm()
+    # Vérifier si le formulaire a été soumis et validé
     if form_associate.submit.data and form_associate.validate():
+        # Recuperation des données du formulaire
         deveui = form_associate.deveui.data
         password = form_associate.password.data
+
+        # Verifier si l'appareil est déjà enregistré
         if check_device_DB(deveui,password)>0:
+            # Verifier l'utilisateur
             username = check_user_token()
             if username:
                 add_device_user_DB(deveui,username) 
@@ -761,8 +837,11 @@ def check_device_DB(deveui,password=None):
              the number of devices found if no password is provided,
              or 0 if the device is not found in the database.
     """
+
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
+
     if password != None:
         # Verification du username/password avec ce qui est enregistré dans la db
         query = "SELECT (password) FROM Device WHERE `dev-eui` = %s;"
@@ -795,8 +874,12 @@ def check_link_device(deveui, username):
         int: The number of rows returned by the query.
 
     """
+
+    # Connexion à la base de données
     db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database = Config["db_name"])
     cursor= db.cursor()
+
+    # Vérifier si l'appareil est associé à l'utilisateur
     query = "SELECT * FROM DeviceOwners WHERE device = %s AND owner=%s"
     cursor.execute(query, (deveui, username))
     return len(cursor.fetchall())

@@ -36,6 +36,12 @@ def DataToMsg(Data):
         for obj in Data["Object"]:
             msg += obj["X"]+","+obj["Y"]+","+obj["Z"]+","+obj["objetLabel"]+";"
         messages.append(msg)
+    #### Ajouts capteurs ####
+    # ajouter une nouvelle condition pour vérifier si un capteur est présent dans le dictionnaire Data
+    # créer un message pour vos capteurs
+
+    #### Fin Ajouts capteurs ####
+
     return messages
 
 def MsgToData(msg):
@@ -72,6 +78,12 @@ def MsgToData(msg):
             Data["distance_recul"] = "0"
             Data["humidite"] = "0"
             Data["temperature"] = "0"
+
+    ##### Ajouts capteurs ####
+    # ajouter une nouvelle condition pour vérifier le format du message recu
+    # ajouter vos nouveaux capteur dans le dictionnaire Data
+
+    ##### Fin Ajouts capteurs ####
     
     return Data
 

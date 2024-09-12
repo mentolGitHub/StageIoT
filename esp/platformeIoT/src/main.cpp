@@ -175,21 +175,39 @@ void traitementReceptionUartJetson()
 
 void donneesCapteurs()
 {
-    String data = "";
+  String data = "";
 
-    // mesure de la distance
-    distanceValue = distance();
-    Serial.print("Distance: ");
-    Serial.println(distanceValue);
+  // mesure de la distance
+  distanceValue = distance();
+  Serial.print("Distance: ");
+  Serial.println(distanceValue);
 
-    // mesure de la température et de l'humidité
-    dht_mesure(&temperature, &humidity);
+  // mesure de la température et de l'humidité
+  dht_mesure(&temperature, &humidity);
 
-    data = "c" + String(distanceValue) + "," + String(temperature) + "," + String(humidity) + "\n";
+  data = "c" + String(distanceValue) + "," + String(temperature) + "," + String(humidity) + "\n";
 
-    // envoi des données
-    Serial.write(data.c_str());
+  // envoi des données
+  Serial.write(data.c_str());
+
+  // envoi des données des capteurs de l'utilisateur
 }
+
+//  Ajout capteurs
+//  Ajouter les fonctions d'envoi des données des capteurs ici
+
+void userCapteurs()
+{
+  // mesure1 = mesureCapteur1();
+  // mesure2 = mesureCapteur2();
+  // mesure3 = mesureCapteur3();
+
+  // String data = "u" + String(mesure1) + "," + String(mesure2) + "," + String(mesure3) + "\n";
+
+  // Serial.write(data.c_str());
+}
+
+//  Fin ajout capteurs
 
 
 
@@ -247,3 +265,10 @@ void dht_mesure(float* temperature, float* humidity){
     delay(delayMS);
   }
 }
+
+
+
+//  Ajout capteurs  
+//  Ajouter les fonction de mesure des capteurs ici
+
+//  Fin ajout capteurs

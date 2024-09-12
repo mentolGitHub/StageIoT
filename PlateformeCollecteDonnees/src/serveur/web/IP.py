@@ -287,8 +287,8 @@ def post_data():
                     object['long'] = object_long
                     object['label'] = obj[3] 
                     object['distance'] = object_dist
-                    
-                    date = datetime.fromtimestamp(int(timestamp)/1000)
+                        
+                    date = datetime.fromtimestamp(float(timestamp))
 
                     # Ajouter les données à la base de données
                     query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"

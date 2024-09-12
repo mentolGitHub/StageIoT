@@ -100,7 +100,7 @@ while 1 :
         for msg in dataFromUart:
             if len(msg)>2:
                 a = msg[0]
-                print("msg : "+msg)
+                # print("msg : "+msg)
                 if a == '2':
                     if Q_out.full():
                         Q_out.get()

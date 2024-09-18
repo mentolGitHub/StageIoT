@@ -241,7 +241,7 @@ def post_data():
                     except ValueError: # cas si la valeur est mal transmise
                         data[field] = None
 
-                print(data)
+                # print(data)
 
                 # Ajouter les données à la file d'attente et au cache
                 Q_out.put(data)
@@ -253,8 +253,7 @@ def post_data():
             
         elif int(raw_data[0]) == 3:
             # Extraire les différents objets de la chaîne
-            objects = raw_data[1:].split(';')
-
+            objects = raw_data[1:].split(';')[:-1]
             # Extraire l'eui et le timestamp
             eui = objects[0].split(',')[0]
             timestamp = objects[0].split(',')[1]
@@ -265,28 +264,15 @@ def post_data():
             
             # Vider les objets stockés pour l'eui
             objects_storage[eui] = []
-            
             # Ajouter les objets au cache et à la base de données
             for i in objects[1:]:
                 obj = i.split(',')
                 if len(obj) == 4:
-                    object_x = obj[0]
-                    object_dist = obj[2]
-                    
                     object = {}
-                    
-                    # Récupérer les coordonnées de l'émetteur (dernière position connue)
-                    emetteur_lat = data_storage[eui][-1]['latitude']
-                    emetteur_long = data_storage[eui][-1]['longitude']
-                    
-                    # Calcul de la position de l'objet
-                    object_lat, object_long = calculate_object_coordinates(emetteur_lat, emetteur_long, float(object_dist), float(object_x))
-                    
-                    # Ajouter les données de l'objet à la liste
-                    object['lat'] = object_lat
-                    object['long'] = object_long
-                    object['label'] = obj[3] 
-                    object['distance'] = object_dist
+                    object["x"] = obj[0]
+                    object["y"] = obj[1]
+                    object["z"] = obj[2]
+                    object['label'] = obj[3]
                         
                     date = datetime.fromtimestamp(float(timestamp))
 
@@ -788,9 +774,9 @@ def register_device():
             return redirect(url_for('register_device'))
 
     form = DeviceRegistrationForm()
-    print(form.validate_on_submit())
-    print(form.submit2.data)
-    print(form.validate())
+    # print(form.validate_on_submit())
+    # print(form.submit2.data)
+    # print(form.validate())
     if form.submit2.data and form.validate():
         # Recuperation des données du formulaire
         deveui = form.deveui.data
@@ -1205,8 +1191,8 @@ def objets_proches(deveui):
             distance = calculate_distance(latitude, longitude, objects_storage[neighbour[0]][0]['lat'], objects_storage[neighbour[0]][0]['long'])
             objects[neighbour[0]] = objects_storage[neighbour[0]]
             distances[neighbour[0]] = distance
-    print (objects)
-    print (distances)
+    # print (objects)
+    # print (distances)
     return render_template('objets_proches.html', objects=objects, distances=distances)
 
 @app.route('/getApiKey', methods=['GET'])
@@ -1227,7 +1213,6 @@ def get_api_keys():
     query = "SELECT `api-key` FROM Users WHERE username = %s"
     cursor.execute(query, (username,))
     api_keys = cursor.fetchall()
-
     return jsonify(api_keys[0][0])
 
 @app.route('/generateApiKey', methods=['GET', 'POST'])
@@ -1253,6 +1238,7 @@ def generate_api_key():
     cursor.execute(query, (api_key_str, username))
     db.commit()
     api_key = {"api_key": api_key_str}
+    
     return jsonify(api_key)
 
 
@@ -1538,6 +1524,64 @@ def apiNeighbourList(deveui):
 
     
     return jsonify(neighbours)
+
+@app.route('/api/objets_proches/<deveui>', methods=['GET'])
+
+def apiObjets_proches(deveui):
+    """
+    Retrieve nearby objects based on the given device ID.
+
+    Args:
+        deveui (str): The device ID.
+
+    Returns:
+        A rendered HTML template with the nearby objects.
+
+    """
+    key = request.args.get('key')
+    username = get_user_from_api_key(key)
+    if username is None:
+        return jsonify({"error": "Invalid API key"}), 401
+
+    db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
+    cursor = db.cursor()
+
+    size = request.args.get('size', 0.0007)
+
+    neighbours=[]
+    query = """
+        SELECT latitude, longitude
+        FROM Data
+        WHERE source = %s
+        ORDER BY timestamp DESC
+        LIMIT 1;
+    """
+    cursor.execute(query, (deveui,))
+    device_location = cursor.fetchone()
+    latitude, longitude = device_location
+
+    query = """
+        SELECT Distinct Device.`dev-eui`
+        FROM Data
+        JOIN Device ON Data.source = Device.`dev-eui`
+        JOIN DeviceOwners ON Device.`dev-eui` = DeviceOwners.device
+        AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
+        AND Data.timestamp > %s;
+    """
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15)))
+    neighbours = cursor.fetchall()
+
+    # recuperer les objets vus par ces appareils
+    objects = {}
+    distances = {}
+    print(neighbours)
+    for neighbour in neighbours:
+        if neighbour[0] in objects_storage:
+            
+            objects[neighbour[0]] = objects_storage[neighbour[0]]
+    print (objects_storage)
+    return jsonify(objects),200
+
 
 @app.route('/api/getObject/<deveui>', methods=['GET'])
 def apiGetObjects(deveui):

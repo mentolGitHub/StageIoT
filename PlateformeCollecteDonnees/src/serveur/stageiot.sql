@@ -64,22 +64,6 @@ CREATE TABLE IF NOT EXISTS Auth_Token (
     FOREIGN KEY (`user`) REFERENCES Users(`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
-CREATE TABLE IF NOT EXISTS Obstacles (
-    `id` serial,
-    `timestamp` DATETIME(3) NOT NULL,
-    `gps` POINT NOT NULL SRID 4326,
-    `altitude` float DEFAULT NULL,
-    `vitesse_X` float DEFAULT NULL,
-    `vitesse_Y` float DEFAULT NULL,
-    `vitesse_Z` float DEFAULT NULL,
-    `acceleration_X` float DEFAULT NULL,
-    `acceleration_Y` float DEFAULT NULL,
-    `acceleration_Z` float DEFAULT NULL,
-    `type` varchar(30) DEFAULT NULL,
-    `forme` POLYGON
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 CREATE TABLE IF NOT EXISTS Objets (
     `ìd` serial,
     `timestamp` DATETIME(3) NOT NULL,

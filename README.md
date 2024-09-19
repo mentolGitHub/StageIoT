@@ -34,7 +34,11 @@ La caméra OAK-D permet de facilement faire de la reconnaissance d'image (avec l
 ```
 puis creer une base de données sql et l'initialiser avec le fichier stageiot.sql
 ```sql
-    use stageiot.sql
+    create user ctolsau@localhost;
+    create database plateformeIot;
+    use plateformeIot;
+    source VotreCheminVersLeDossier/StageIoT/PlateformeCollecteDonnees/src/serveur/stageiot.sql;
+    grant all privileges on *.* to ctolsau@localhost;
 ```
 ## Configuration
 dossier config.conf pour la partie serveur

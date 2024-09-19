@@ -25,6 +25,7 @@ def save_DB(data,id=0):
         # utils.print_SQL_response(db_cursor)
         
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
+        query = ""
         
         match id :
             case 2 :
@@ -56,9 +57,10 @@ def save_DB(data,id=0):
                     
         # print(query,data)
         # print(data)
-        db_cursor.execute(query,data)
-        #print(db_cursor)
-        db.commit()
+        if (query != ""):
+            db_cursor.execute(query,data)
+            #print(db_cursor)
+            db.commit()
     except ValueError as e :
         print(e)
 

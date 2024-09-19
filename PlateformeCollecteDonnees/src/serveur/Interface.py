@@ -23,9 +23,9 @@ def save_DB(data,id=0):
         # db_cursor.execute("show tables")
         # print(db_cursor)
         # utils.print_SQL_response(db_cursor)
-        
+        query = ""
         data['timestamp']=datetime.datetime.fromtimestamp(data['timestamp'])
-        
+        # print(data)
         match id :
             case 2 :
                 table = "Data"
@@ -46,7 +46,11 @@ def save_DB(data,id=0):
                 
             case 3 :
                 table = "Obstacles"
-                query = "INSERT INTO "+ table +" "
+                
+                # Ajouter les données à la base de données
+                query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%(timestamp)s, %(eui)s, %(x)s, %(y)s, %(z)s, %(label)s)"
+                
+                
             
             #### Ajouts capteurs ####
             # ajouter une nouvelle condition pour vérifier le format de vos messages
@@ -56,9 +60,10 @@ def save_DB(data,id=0):
                     
         # print(query,data)
         # print(data)
-        db_cursor.execute(query,data)
-        #print(db_cursor)
-        db.commit()
+        if query != "":
+            db_cursor.execute(query,data)
+            #print(db_cursor)
+            db.commit()
     except ValueError as e :
         print(e)
 
@@ -98,7 +103,7 @@ def LoRa_msg_handler(msg):
 
 def IP_msg_handler(msg):
     # print(msg)
-
+    
     data = data_format
     for key in msg.keys():
         data[key]=msg[key]

@@ -77,7 +77,7 @@ def send(Q_out : Queue):
             s.send(data)
 
 Q_out = Queue(2)
-Q_outObj = Queue(4)
+Q_outObj = Queue(1)
 _thread.start_new_thread(send, (Q_out,))
 dataFromUart = uart.read(uart.any()).decode('utf-8').split('\n')
 ####### Programme principal #######

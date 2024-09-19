@@ -1,3 +1,4 @@
+import json
 from queue import Queue
 from flask import Flask, render_template, request, jsonify, send_file, redirect, url_for, session, flash, Request
 import io
@@ -18,6 +19,8 @@ import base64
 import uuid
 from Interface import data_format
 import math
+
+import Interface
 
 
 app = Flask(__name__)
@@ -256,7 +259,7 @@ def post_data():
             objects = raw_data[1:].split(';')[:-1]
             # Extraire l'eui et le timestamp
             eui = objects[0].split(',')[0]
-            timestamp = objects[0].split(',')[1]
+            timestamp = (float(objects[0].split(',')[1]))
 
             # Vérifier si l'eui est vide
             if eui == "":
@@ -269,18 +272,18 @@ def post_data():
                 obj = i.split(',')
                 if len(obj) == 4:
                     object = {}
+                    object["timestamp"]=timestamp
                     object["x"] = obj[0]
                     object["y"] = obj[1]
                     object["z"] = obj[2]
                     object['label'] = obj[3]
                         
-                    date = datetime.fromtimestamp(float(timestamp))
-
+                    data = object.copy()
+                    data['eui']=eui
                     # Ajouter les données à la base de données
-                    query = "INSERT INTO Objets (timestamp, eui, x, y, z, label) VALUES (%s, %s, %s, %s, %s, %s)"
-                    cursor.execute(query, (date, eui, obj[0], obj[1], obj[2], obj[3]))
-                    db.commit()
-
+                    Interface.save_DB(data, 3)
+                    
+                    print(object)
                     # Ajouter les données à la liste d'objets
                     objects_storage[eui].append(object)
                 elif obj != ['']:
@@ -1333,7 +1336,9 @@ def apiDevice_data(deveui):
 
     cursor.execute(query, (username, start_date, end_date, deveui))
     data = cursor.fetchall()
-
+    # print(data)
+    # print(datetime.timestamp(data[0][0]))
+    
     columns = [col[0] for col in cursor.description]
     to_remove =[]
     to_remove.append(columns.index('password'))
@@ -1351,7 +1356,9 @@ def apiDevice_data(deveui):
     data = [[row[i] for i in indexes] for row in data]
     
     result = [dict(zip(columns, row)) for row in data]
-    return jsonify(result)
+    for i in range(len(result)):
+        result[i]["timestamp"]=datetime.timestamp(result[i]["timestamp"])
+    return jsonify(result),200
 
 @app.route('/api/publicDeviceData/<deveui>', methods=['GET'])
 def publicApiDevice_data(deveui):
@@ -1550,7 +1557,7 @@ def apiObjets_proches(deveui):
 
     neighbours=[]
     query = """
-        SELECT latitude, longitude
+        SELECT latitude, longitude, angle, azimuth
         FROM Data
         WHERE source = %s
         ORDER BY timestamp DESC
@@ -1558,7 +1565,11 @@ def apiObjets_proches(deveui):
     """
     cursor.execute(query, (deveui,))
     device_location = cursor.fetchone()
-    latitude, longitude = device_location
+    # print(device_location)
+    if (device_location==None):
+        return jsonify({"error":"No device with this eui has been recorded"}), 400
+    
+    latitude, longitude, angle, azimuth = device_location
 
     query = """
         SELECT Distinct Device.`dev-eui`
@@ -1568,18 +1579,18 @@ def apiObjets_proches(deveui):
         AND POWER(Data.latitude - %s, 2) + POWER(Data.longitude - %s, 2) <= POWER(%s, 2)
         AND Data.timestamp > %s;
     """
-    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=15)))
+    cursor.execute(query, (latitude, longitude, size, datetime.now() - timedelta(seconds=30)))
     neighbours = cursor.fetchall()
-
+    # print(datetime.now().timestamp())
     # recuperer les objets vus par ces appareils
     objects = {}
     distances = {}
-    print(neighbours)
+    # print(neighbours)
     for neighbour in neighbours:
         if neighbour[0] in objects_storage:
             
             objects[neighbour[0]] = objects_storage[neighbour[0]]
-    print (objects_storage)
+    # print (objects_storage)
     return jsonify(objects),200
 
 

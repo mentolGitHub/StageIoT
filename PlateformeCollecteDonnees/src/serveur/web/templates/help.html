@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Aide - Tutoriel d'utilisation du site web</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/help.css') }}">
+</head>
+<body>
+	<header>
+		<h1>Tutoriel d'utilisation du site web</h1>
+	</header>
+	<nav>
+		<ul>
+			<li><a href="#introduction">Introduction</a></li>
+			<li><a href="#navigation">Navigation</a></li>
+			<li><a href="#fonctionnalites">Fonctionnalités</a></li>
+		</ul>
+	</nav>
+    <div class="center-button">
+        <button class="btn btn-primary" onclick="window.location.href='/'">Home</button>
+    </div>
+	<main>
+		<section id="introduction">
+			<h2>Introduction</h2>
+			<p>Bienvenue sur le tutoriel d'utilisation de la plateforme. Ce tutoriel vous guidera à travers les principales fonctionnalités et vous aidera à naviguer efficacement.</p>
+		</section>
+		<section id="navigation">
+			<h2>Navigation</h2>
+			<p>Utilisez le menu de navigation en haut de la page d'acceuil pour accéder aux différentes sections du site. Pour revenira l'accueil, il vous suffit de cliquer sur le bouton home</p>
+		</section>
+		<section id="fonctionnalites">
+			<h2>Fonctionnalités</h2>
+			<p>Notre site offre plusieurs fonctionnalités pour améliorer votre expérience :</p>
+			<ul>
+				<li><a href="#creerCompte">Création de compte</a></li>
+				<li><a href="#ajoutDevice">Ajout d'un appareil utilisateur</a></li>
+				<li><a href="#visu">Visualisation des données en temps réel</a></li>
+				<li><a href="#dlData">Téléchargement des données</a></li>
+                <li><a href="#carte">Carte interractive</a></li>
+                <li><a href="#api">Utilistaion de l'api</a></li>
+			</ul>
+		</section>
+        <section id="creerCompte">
+            <h3>Création de compte</h3>
+            <p>Pour créer un compte, cliquez sur le bouton "register" en haut à droite de la page d'accueil. Remplissez les informations requises et suivez les instructions pour terminer la création de votre compte.</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/01-CreationCompte.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+        <section id="ajoutDevice">
+            <h3>Ajout d'un appareil utilisateur</h3>
+            <p>Pour ajouter un appareil utilisateur, cliquez sur le bouton "register device" dans le menu de navigation. Remplissez les informations requises et suivez les instructions pour terminer l'ajout de votre appareil. Vous pouvez alors verifier que l'appreil a bien été ajouté dans la section device list.</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/02-AjoutDevice.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+        <section id="visu">
+            <h3>Visualisation des données en temps réel</h3>
+            <p>Pour visualiser les données en temps réel, cliquez sur le bouton "Visualize Real-time Data" dans le menu de navigation. Vous pouvez alors voir les données en temps réel de votre appareil.</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/03-VisualiserData.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+        <section id="dlData">
+            <h3>Téléchargement des données</h3>
+            <p>Pour télécharger les données, cliquez sur le bouton "Download Data" dans le menu de navigation. Vous pouvez alors télécharger les données de votre choix de votre appareil. un second bouton vous permet aussi de télécharger l'intégralité des données</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/04-TelechargerData.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+        <section id="carte">
+            <h3>Carte interractive</h3>
+            <p>Pour visualiser les données sur une carte, cliquez sur le bouton "Map" dans le menu de navigation. Vous pouvez alors voir les différents appareils proches ainsi que les objets qu'ils détectent.</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/05-Map.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+        <section id="api">
+            <h3>Utilisation de l'api</h3>
+            <p>Pour utiliser l'api, rendez vous sur la page de documentation de l'api. Vous y trouverez toutes les informations nécessaires pour utiliser l'api de la plateforme. afin de connaitre votre cé api, rendez vous sur votre page de profil , vous pourrez alors génerer votre propre clé (attention, générer une nouvelle clé annule la précédente)</p>
+            <div class="responsive-video">
+                <video controls>
+                    <source src="../static/vids/06-CleApi.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </section>
+	</main>
+	<footer>
+		<p>Clément Cognard - 2024 - Clément Tolsau</p>
+	</footer>
+</body>
+</html>

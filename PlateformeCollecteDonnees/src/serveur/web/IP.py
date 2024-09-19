@@ -545,7 +545,7 @@ def download():
                 selected_fields.append(f)
         
         # Se connecter à la base de données
-        db = mysql.connector.connect(host="localhost", user=Config["SQL_username"])
+        db = mysql.connector.connect(host="localhost", user=Config["SQL_username"], database=Config["db_name"])
         cursor = db.cursor()
         
         # Convert datetime-local input to datetime object
@@ -704,6 +704,16 @@ def register():
         flash('Account created successfully', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
+
+@app.route('/help')
+def help():
+    """
+    Renders the help.html template.
+
+    Returns:
+        The rendered help.html template.
+    """
+    return render_template('help.html')
 
 
 @app.route('/logout')

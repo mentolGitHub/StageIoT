@@ -51,6 +51,9 @@
             <button class="btn btn-primary" onclick="window.location.href='/register_device'">Register device</button>
             <button class="btn btn-primary" onclick="window.location.href='/deviceList'">Device list</button>
         </div>
+        <div class="text-center d-flex justify-content-center flex-wrap"></div>
+            <button class="btn btn-primary" onclick="window.location.href='/help'">Help ?</button>
+        </div>
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 <div class="row justify-content-center">
@@ -67,6 +70,6 @@
     <script src="{{ url_for('static', filename='index.js') }}"></script>
 
     <img id="indeximg" src="{{ url_for('static', filename='img/iotcar.png') }}" class="img-fluid" alt="IoT Image">
-    <a href="/help" class="bottom-left">Help?</a>
+    
 </body>
 </html>

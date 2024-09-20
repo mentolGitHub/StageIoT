@@ -12,6 +12,7 @@ sudo apt-get install nodejs -y
 wget "https://github.com/mentolGitHub/StageIoT/archive/"$branch".zip"
 unzip $branch.zip
 chmod -R 777 ./StageIoT-$branch
+mv ./StageIoT-$branch ../Documents/StageIoT
 rm -rf $branch.zip
 
  #=========== VSCODE ============
@@ -53,14 +54,7 @@ cd /home/local/Téléchargements/
 gdown https://drive.google.com/uc?id=1W9A_pyXGvcN3RtvXQHMTdM7Nhi7Zc0Ws
 sudo dpkg -i st-stlink-server-2.1.1-1-linux-amd64.deb
 sudo rm -rf ./$doc
-#========= GetWorkspace ==========
-mkdir /home/local/STM32CubeIDE
-gdown https://drive.google.com/uc?id=1Z_aTaIkf1KT8YM6UOLyPlDdfHrfUaeOo
-tar -xf workspace_1.15.1.tar.gz
 
-sudo cp -r ./workspace_1.15.1 /home/local/STM32CubeIDE/
-sudo rm -rf ./workspace_1.15.1
-sudo rm -rf ./workspace_1.15.1.tar.gz
 sudo chmod  -R 777 /home/local/STM32CubeIDE/
 
 echo "alias cube-ide=\"/opt/st/stm32cubeide_1.15.1/stm32cubeide &\"" >> ~/.bashrc

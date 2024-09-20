@@ -299,7 +299,7 @@ int32_t TST_TX_Start(int32_t nb_packet)
 
       if (RadioTxDone_flag == 1)
       {
-        APP_TPRINTF("");
+        APP_TPRINTF("OnTxDone\r\n");
       }
 
       if (RadioTxTimeout_flag == 1)
@@ -372,7 +372,7 @@ int32_t TST_RX_Start(int32_t nb_packet)
       {
         int16_t rssi = last_rx_rssi;
         int8_t LoraSnr_FskCfo = last_rx_LoraSnr_FskCfo;
-        APP_TPRINTF("");
+        APP_TPRINTF("OnRxDone\r\n");
         if (testParam.modulation == TEST_FSK)
         {
           APP_TPRINTF("RssiValue=%d dBm, cfo=%dkHz\r\n", rssi, LoraSnr_FskCfo);

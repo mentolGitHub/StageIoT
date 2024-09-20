@@ -43,11 +43,14 @@ echo "export PATH=$PATH:/home/local/.local/bin" >> ~/.bashrc
 cd /home/local/Téléchargements/
 gdown 1LEMij8jHZLg1Eh1vQRqx_DuPxiijYGcH
 chmod +x ./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh
-gnome-terminal -e ./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh 
+./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh 
 sudo apt-get install libncurses5 -y
 
 #========code==============
 gdown 1nrEDy77m0Y5xivelB5xfzQWvoKEGfc8d
 unzip en.i-cubeide_lrwan.zip
+
+#========= lancement cubeide ==========
+/home/local/st/stm32cubeide_1.16.1/stm32cubeide
 
 #========= fin ========

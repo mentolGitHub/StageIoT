@@ -1,0 +1,9 @@
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:229:13:tiny_snprintf_like.constprop	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:154:13:TimestampNow	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:89:6:SystemApp_Init	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:137:6:UTIL_SEQ_Idle	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:207:6:UTIL_ADV_TRACE_PreSendHook	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:218:6:UTIL_ADV_TRACE_PostSendHook	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:252:19:HAL_InitTick	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:267:10:HAL_GetTick	1
+/home/local/Téléchargements/STM32CubeExpansion_LRWAN_V2.1.0/Projects/B-L072Z-LRWAN1/Applications/SubGHz_Phy/SubGHz_Phy_PingPong/Core/Src/sys_app.c:281:6:HAL_Delay	1

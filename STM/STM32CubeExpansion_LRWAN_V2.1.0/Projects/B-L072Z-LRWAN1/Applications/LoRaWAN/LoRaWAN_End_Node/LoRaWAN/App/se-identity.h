@@ -90,49 +90,49 @@ extern "C" {
  * When set to 1 DevEui is LORAWAN_DEVICE_EUI
  * When set to 0 DevEui is automatically set with a value provided by MCU platform
  */
-#define STATIC_DEVICE_EUI                                  1
+#define STATIC_DEVICE_EUI                                  0
 
 /*!
  * end-device IEEE EUI (big endian)
  */
-#define LORAWAN_DEVICE_EUI                                 { 0x71, 0x3B, 0xD5, 0x7E, 0xD0, 0x06, 0x81, 0xE2 } //70 B3 D5 7E D0 06 81 E2
+#define LORAWAN_DEVICE_EUI                                 { 0x00, 0x80, 0xE1, 0x01, 0x01, 0x01, 0x01, 0x01 }
 
 /*!
  * App/Join server IEEE EUI (big endian)
  */
-#define LORAWAN_JOIN_EUI                                   { 0x15, 0x98, 0x75, 0x32, 0x15, 0x98, 0x75, 0x32 }
+#define LORAWAN_JOIN_EUI                                   { 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01 }
 
 /*!
  * When set to 1 DevAddr is LORAWAN_DEVICE_ADDRESS
  * When set to 0 DevAddr is automatically set with a value provided by a pseudo
  *      random generator seeded with a value provided by the MCU platform
  */
-#define STATIC_DEVICE_ADDRESS                              1
+#define STATIC_DEVICE_ADDRESS                              0
 
 /*!
  * Device address on the network (big endian)
  */
-#define LORAWAN_DEVICE_ADDRESS                             ( uint32_t )0x260BBE1E//0x0100000A
+#define LORAWAN_DEVICE_ADDRESS                             ( uint32_t )0x0100000A
 
 /*!
  * Application root key
  */
-#define LORAWAN_APP_KEY                                    2B,7E,15,16,28,AE,D2,A6,AE,F7,15,88,09,CF,4F,3C
+#define LORAWAN_APP_KEY                                    2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
 
 /*!
  * Network root key
  */
-#define LORAWAN_NWK_KEY                                    2B,7E,15,16,28,AE,D2,A6,AE,F7,15,88,09,CF,4F,3C
+#define LORAWAN_NWK_KEY                                    2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
 
 /*!
  * Forwarding Network session key
  */
-#define LORAWAN_NWK_S_KEY                                  31,BA,13,47,8D,73,13,80,2D,B2,38,23,64,12,7C,46 //2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
+#define LORAWAN_NWK_S_KEY                                  2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
 
 /*!
  * Application session key
  */
-#define LORAWAN_APP_S_KEY                                  58,6A,CC,40,A7,13,F7,A4,0E,36,B4,50,73,D7,63,DB //2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
+#define LORAWAN_APP_S_KEY                                  2B,7E,15,16,28,AE,D2,A6,AB,F7,15,88,09,CF,4F,3C
 
 /*!
  * Format commissioning keys

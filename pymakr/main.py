@@ -14,10 +14,10 @@ app_key = ubinascii.unhexlify('583FE2F370E3F43BCFE06291DCD155A1')
 #uncomment to use LoRaWAN application provided dev_eui
 dev_eui = ubinascii.unhexlify('70b3d5499e370b3d')
 #parametres LoRa
-sf = 12
-coding_rate=LoRa.CODING_4_8
+sf = 7
+coding_rate=LoRa.CODING_4_5
 
-mode = 2 # 1 = LoRaWAN pour se connecter à la passerelle, 2 = LoRa pour se connecter à une autre carte
+mode = 1 # 1 = LoRaWAN pour se connecter à la passerelle, 2 = LoRa pour se connecter à une autre carte
 
 pycom.heartbeat(False)
 print("=================== Starting program =======================")

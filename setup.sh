@@ -31,7 +31,7 @@ code --install-extension MS-CEINTL.vscode-language-pack-fr
 
 
 #========= lancement vscode ==========
-code ./StageIoT-$branch
+code ../Documents/StageIoT
 
 
 #========== GDOWN =============

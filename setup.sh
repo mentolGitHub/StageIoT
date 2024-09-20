@@ -42,6 +42,7 @@ echo "export PATH=$PATH:/home/local/.local/bin" >> ~/.bashrc
 #========= GetCubeIde ==========
 cd /home/local/Téléchargements/
 gdown 1LEMij8jHZLg1Eh1vQRqx_DuPxiijYGcH
+chmod +x ./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh
 gnome-terminal -e ./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh 
 sudo apt-get install libncurses5 -y
 

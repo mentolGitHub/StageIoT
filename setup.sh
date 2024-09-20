@@ -41,12 +41,12 @@ export PATH=$PATH:/home/local/.local/bin
 echo "export PATH=$PATH:/home/local/.local/bin" >> ~/.bashrc
 #========= GetCubeIde ==========
 cd /home/local/Téléchargements/
-gdown https://drive.google.com/file/d/1LEMij8jHZLg1Eh1vQRqx_DuPxiijYGcH
+gdown 1LEMij8jHZLg1Eh1vQRqx_DuPxiijYGcH
 gnome-terminal -e ./st-stm32cubeide_1.16.1_22882_20240916_0822_amd64.sh -y
 sudo apt-get install libncurses5 -y
 
 #========code==============
-gdown https://drive.google.com/file/d/1nrEDy77m0Y5xivelB5xfzQWvoKEGfc8d
-unzip en.cubeide_lrwan.zip
+gdown 1nrEDy77m0Y5xivelB5xfzQWvoKEGfc8d
+unzip en.i-cubeide_lrwan.zip
 
 #========= fin ========
